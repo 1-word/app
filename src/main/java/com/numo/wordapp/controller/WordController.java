@@ -1,23 +1,19 @@
 package com.numo.wordapp.controller;
 
+import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.model.Word;
 import com.numo.wordapp.service.WordService;
+import com.numo.wordapp.service.impl.WordServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class WordController {
     //Controller
-    @GetMapping("word")
-    public String word(){
-        String data = "Hello, World!";
-        return data;
-        //return "home";
-    }
 
     @RequestMapping
     @GetMapping("/test")
@@ -32,37 +28,48 @@ public class WordController {
         @Autowired
         WordService wordService;
 
-        @RequestMapping(value = "/restWord", method = RequestMethod.GET)
-        public String saveValue(){
-        //public Map<String, Object> getValue(){
-        //public @ResponseBody word getValue(){
-
-            String _word = "だんかいよそく";
-            String _mean = "단계 예측";
-            String _wread = "btlz";
-            String _memo = "test";
-
-            String data = wordService.setByWord(_word, _mean, _wread, _memo);
-
-            //Map<String, Object> map = wordRepo.findAll();
-            //Map<String, Object> map = wordService.getByAllWord();
-            //List<word> list = wordRepo.findAll();
-            //System.out.println(list.get(0).getMean());
-            //return map;
-            //String data = "value";
+        @RequestMapping(value = "/save", method = RequestMethod.POST)
+        public String setSaveWord(@RequestBody  WordDto.Request dto){
+            String data = wordService.setByWord(dto);
             return data;
         }
 
-        @RequestMapping(value = "/tWord", method = RequestMethod.GET)
-        public @ResponseBody Word getValue(){
-            Word data = wordService.getBySearchWord(1);
+        @RequestMapping(value = "/search", method = RequestMethod.GET)
+        public WordDto.Response getSearchWord(int word_id){
+            WordDto.Response dto = new WordDto.Response(wordService.getBySearchWord(word_id));
+            return dto;
+        }
+
+
+        @RequestMapping(value = "/read", method = RequestMethod.GET)
+        public List<WordDto.Response> getAllWord(){
+            //DTO를 이용하여 무한 참조 방지.
+            //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
+            List<WordDto.Response> dto =  wordService.getByAllWord().stream()
+                    .map(WordDto.Response::new)
+                    .collect(Collectors.toList());
+            return dto;
+           // return wordService.getByAllword();
+        }
+
+        @PutMapping(value = "/update/{id}")
+        public String setUpdateWord(@PathVariable("id")  int id, @RequestBody WordDto.Request dto){
+            dto.setWord_id(id);
+            String data = wordService.updateByWord(dto);
+            return data;
+        }
+
+        @DeleteMapping(value = "/remove/{id}")
+        public String setRemoveWord(@PathVariable("id") int id){
+
+            String data = wordService.removeByWord(id);
             return data;
         }
 
         @RequestMapping(value = "/Word", method = RequestMethod.GET)
-        public List<Word> getValue1(){
-           List<Word> data = wordService.getByAllWord();
-           return data;
+        public List<Word> getValue2(){
+            return   wordService.getByAllWord();
+            // return wordService.getByAllword();
         }
     }
 }

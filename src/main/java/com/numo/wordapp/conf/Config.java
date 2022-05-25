@@ -1,8 +1,5 @@
 package com.numo.wordapp.conf;
 
-import com.numo.wordapp.repository.WordRepository;
-import com.numo.wordapp.service.WordService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
