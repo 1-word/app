@@ -15,7 +15,9 @@ public interface WordService {
 
     String removeByWord(int id);
 
-    Word getBySearchWord(int word_id);
+    //Word getBySearchWord(int word_id);
+
+    List<Word> getBySearchWord(String data);
 
     List<Word> getByAllWord();
 }

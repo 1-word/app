@@ -28,6 +28,7 @@ public class SynonymServiceImpl implements SynonymService {
             });
 
         }
+        System.out.println("업데이트 완료");
         return "업데이트 완료";
     }
 }

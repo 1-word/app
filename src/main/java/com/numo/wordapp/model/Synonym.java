@@ -17,7 +17,8 @@ public class Synonym extends Timestamped{
     private int synonym_id; //기본키
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = true)
+    //fetch = FetchType.LAZY,
     @JoinColumn(name = "word_id")
     //@JsonIgnore //무한 참조 방지 애노테이션
     private Word word; //외래키
@@ -26,7 +27,8 @@ public class Synonym extends Timestamped{
     private String memo;    //메모
 
     @Builder
-    public Synonym(String synonym, String memo, Word word){
+    public Synonym(int synonym_id, String synonym, String memo, Word word){
+        this.synonym_id = synonym_id;
         this.synonym = synonym;
         this.memo = memo;
         this.word = word;

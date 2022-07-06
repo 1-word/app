@@ -4,9 +4,9 @@ import com.numo.wordapp.dto.SynonymDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
-import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
 
+import com.numo.wordapp.service.SynonymService;
 import com.numo.wordapp.service.WordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /*
- 클래스: WordService
+ 클래스: WordServiceImpl
  내용: Word, Synonym 데이터 CRUD 관리
  작성자: 정현경
  작성일: 2022.05.25
- 수정이력: 2022.05.25 WordService 작성_정현경
+ 수정이력: 2022.05.25 WordServiceImpl 작성_정현경
+          2022.06.22 CURD 작성_정현경
 */
 
 @Service
@@ -31,15 +33,23 @@ public class WordServiceImpl implements WordService {
     @Autowired
     private WordRepository wordRepository;
 
-    @Autowired
-    private SynonymRepository synonymRepository;
-
+    /*
+    * 메소드: updateByWord(WordDto.Request dto)
+    * 파라미터: 요청받은 dto값
+    * 기능: 데이터 수정(유의어 수정은 synonymServiceImpl에서)
+    * 유의사항: word의 칼럼이 추가되면 update시에 selectWord.set{colName}() 추가 필요
+    * 작성자: 정현경
+    * 작성일: 2022.06.22
+    * */
     @Override
     @Transactional
     public String updateByWord(WordDto.Request dto){
         Optional<Word> wordUpdate = wordRepository.findById(dto.getWord_id());  //db에서 조회를 하면 영속성 유지..
 
         wordUpdate.ifPresent(selectWord->{
+
+            //selectWord = dto.toEntity();
+            //칼럼 추가 시 아래 코드 작성 필요
             selectWord.setWord(dto.getWord());
             selectWord.setMean(dto.getMean());
             selectWord.setWread(dto.getWread());
@@ -47,8 +57,18 @@ public class WordServiceImpl implements WordService {
 
             wordRepository.save(selectWord);
         });
-        return "완료";
+
+        return "데이터 수정을 완료하였습니다.";
     }
+
+    /*
+    * 메소드: setByWord(WordDto.Request dto)
+    * 파라미터: 요청받은 dto값
+    * 리턴 값: String
+    * 기능: 데이터 저장
+    * 작성자: 정현경
+    * 작성일: 2022.06.22
+    * */
 
     @Override
     @Transactional
@@ -60,8 +80,17 @@ public class WordServiceImpl implements WordService {
             word.addSynonym(synonym.toEntity(word));
         }
         wordRepository.save(word);
-        return "데이터를 저장완료하였습니다.";
+        return "데이터를 저장 완료하였습니다.";
     }
+
+    /*
+    * 메소드: removeByWord(int id)
+    * 파라미터: word 기본 키 값
+    * 리턴 값: String
+    * 기능: 해당하는 키 값 데이터 삭제
+    * 작성자: 정현경
+    * 작성일: 2022.06.22
+    * */
 
     @Override
     public String removeByWord(int id){
@@ -75,7 +104,6 @@ public class WordServiceImpl implements WordService {
     }
 
     /*
-
     메소드: getBySearchWord(int word_id)
     파라미터: word 기본 키 값
     리턴 값: Word
@@ -85,9 +113,17 @@ public class WordServiceImpl implements WordService {
     작성일: 2022.05.25
     */
 
-    @Override
+    /*@Override
     public Word getBySearchWord(int word_id){
-        return wordRepository.findById(word_id).get();
+        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, wread, memo);
+        //return wordRepository.findById(word_id).get();
+    }*/
+
+    @Override
+    public List<Word> getBySearchWord(String data){
+        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, wread, memo);
+        //return wordRepository.findById(word_id).get();
+        return wordRepository.getBySearchWord(data);
     }
 
     /*
@@ -100,8 +136,9 @@ public class WordServiceImpl implements WordService {
     */
 
     @Override
-    public  List<Word> getByAllWord(){
-        return   wordRepository.getByAllWord();
+    public List<Word> getByAllWord(){
+        //return wordRepository.getByAllWord(Sort.by(Sort.Direction.DESC, "word.word_id", "synonym_id"));
+        return wordRepository.getByAllWord();
     }
 
 }

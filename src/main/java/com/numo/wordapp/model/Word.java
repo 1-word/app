@@ -25,6 +25,7 @@ import java.util.List;
 public class Word extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment로 값 지정.
+
     private int word_id;    //기본키
 
     private String word;    //단어

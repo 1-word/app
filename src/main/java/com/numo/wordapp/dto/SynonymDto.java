@@ -8,14 +8,14 @@ public class SynonymDto {
     @Getter
     @Setter
     public static class Request {
-        private int synonym_id;
-        private String synonym;
-        private String memo;
+        private int synonym_id=0;
+        private String synonym="";
+        private String memo="";
         //private Word word;
 
         public Synonym toEntity(){
             Synonym synonyms = Synonym.builder()
-                    //.synonym_id(synonym_id)
+                    .synonym_id(synonym_id)
                     .synonym(synonym)
                     .memo(memo)
                     .build();
