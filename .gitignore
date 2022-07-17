@@ -35,3 +35,11 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### frontEnd ###
+/frontend/**
+/src/main/resources/static/**
+
+## log ##
+/log/
+/was-logs/

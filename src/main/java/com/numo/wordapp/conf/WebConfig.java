@@ -11,7 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
         //CORS 설정
         registry.addMapping("/**")  //모든 url패턴
                 .allowedMethods("*")    //모든 method
-                .allowedOrigins("http://localhost:3000", "http://localhost:8080");  //해당하는 url
+                .allowedOrigins("http://localhost:3000"
+                        , "http://localhost:8080"
+                        , "http://144.24.78.52:3000");  //해당하는 url
     }
 
 }

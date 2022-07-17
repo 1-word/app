@@ -1,5 +1,6 @@
-package com.numo.wordapp.comm;
+package com.numo.wordapp.comm.advice;
 
+import com.numo.wordapp.comm.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;

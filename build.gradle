@@ -24,7 +24,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'junit:junit:4.13.1'
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
-    //implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+    implementation 'org.springframework.boot:spring-boot-starter-aop:2.7.0'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:1.16'
+    //implementation 'org.jasypt:jasypt:1.9.3'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
    // runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -33,11 +35,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-def webappDir = "$projectDir/frontend"
+/*def webappDir = "$projectDir/frontend"
 
 sourceSets {
     main {
@@ -81,3 +79,8 @@ task installReact(type: Exec) {
         commandLine 'npm', 'install'
     }
 }
+*/
+tasks.named('test') {
+    useJUnitPlatform()
+}
+

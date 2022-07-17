@@ -1,5 +1,6 @@
 package com.numo.wordapp;
 
+import com.numo.wordapp.conf.property.DatabaseConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

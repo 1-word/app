@@ -6,68 +6,83 @@ import "./wordPaper.css";
 //class WordPaper extends React.Component {
 function WordPaper(){
     const [datas, setDatas] = useState([
-		{
-		"word":"ありがとう",
-		"mean":"감사합니다",
-		"synonym":"こんにちは",
-		"read":"아리가또"
-		},
-		{
-		"word":"おひさしぶりですねおひ",
-		"mean":"얼굴이 화끈해지다",
-		"synonym":"あり",
-		"read":"곤니찌와"
-		},
-		{
-		"word":"おねがいします。",
-		"mean":"부탁합니다.",
-		"synonym":"どういたし",
-		"read":"곤니찌와"
-		}
+        {
+            "word_id": 0,
+            "word": "",
+            "mean": "",
+            "wread": "",
+            "memo": "",
+            "synonyms": [
+                {
+                    "synonym_id": 0,
+                    "synonym": "",
+                    "memo": ""
+                },
+                {
+                    "synonym_id": 0,
+                    "synonym": "",
+                    "memo": ""
+                }
+            ]
+        }
 	]);
     var datasList = datas;
 
     useEffect(() => {
     console.log('1234');
-    axios.get('https://webhook.site/10df5162-f210-4aae-b221-2f155c347a31')
+    //axios.get('https://webhook.site/10df5162-f210-4aae-b221-2f155c347a31')
+    axios.get('http://localhost:8088/read')
     .then((Response)=> {
       /*
         Response Data:
-          num: 기본키
+          word_id: 기본키
           word: 단어
           mean: 뜻
-          read: 발음
-          synonym: 유의어
+          wread: 발음
+          memo: 메모
+          synonyms: [ {
+                synonym_id: 기본키
+                synonym: 유의어
+                memo: 메모
+          }]
       */
      console.log(Response);
-      datasList = Response.data.datas;
+      datasList = Response.data;
       console.log(datasList);
       console.log('data request success!');
-      setDatas(datasList);
+      setDatas(datasList);  //서버에서 가져온 값 매핑
     })
     .catch((Error)=>{console.log(Error)})
     }, []);
 
    //const gridDatas = ["단어1"];
-   console.log('data inserting...');
+   console.log('data printing...');
    console.log(datasList)
-   const dataList = datasList.map((data, idx) => (
-        <div data-layer="6909790e-736b-4068-9bde-22b8aafb2f9e" className="frame" key={idx}>  {/*단어 출력   */}    
-                <div data-layer="89ebe899-0e45-4ea6-8f2c-ca4739a7c2c4" className="frame83f7e349">                     
-                    <div data-layer="3c2fe693-b4c1-48b0-b9de-f5002ff6e3ae" className="wordea5202cf">                        
-                        <div data-layer="ab94a4f6-4906-4ad2-aeb3-1c2fd9a084f9" className="xd9f3fdf8">{datas[idx].synonym}</div>
-                        <div data-layer="343914fc-1682-46a3-941b-96330a183255" className="x16d628d6">{datas[idx].word}</div>
-                        <div data-layer="76e59f55-5af8-4d36-a431-a01b3546a5eb" className="xe5e28e22">                            
+    //console.log("auto rebuild test")
+    console.log(datasList[0].synonyms[0].synonym)
+    datasList.map((data, idx) => {
+        console.log(idx)
+        console.log(data.synonyms)
+    })
+        const dataList = datasList.map((data, idx) =>(
+
+        <div data-layer="6909790e-736b-4068-9bde-22b8aafb2f9e" className="frame" key={data.word_id}>  {/*단어 출력   */}
+                <div data-layer="89ebe899-0e45-4ea6-8f2c-ca4739a7c2c4" className="frame83f7e349">
+                    <div data-layer="3c2fe693-b4c1-48b0-b9de-f5002ff6e3ae" className="wordea5202cf">
+                        <div data-layer="ab94a4f6-4906-4ad2-aeb3-1c2fd9a084f9" className="xd9f3fdf8">data</div>
+                        <div data-layer="343914fc-1682-46a3-941b-96330a183255" className="x16d628d6">{data.word}</div>
+                        <div data-layer="76e59f55-5af8-4d36-a431-a01b3546a5eb" className="xe5e28e22">
                         <div data-layer="cb4f3478-2577-4f0e-8f57-6e76720fcd45" className="bgd197c3b9"></div>
-                            <div data-layer="c09f06c1-e973-4bb6-94a6-e62cf4c9c8ce" className="x5ee0a870">유의어</div>
+                         <div data-layer="c09f06c1-e973-4bb6-94a6-e62cf4c9c8ce" className="x5ee0a870">유의어</div>
+
 </div>
                         <svg data-layer="05e05e3d-5039-4cd6-bdd5-e8f9872abca5" preserveAspectRatio="none" viewBox="0 -0.100006103515625 471 0.20001220703125" className="x465a364d58"><path d="M 0 0 L 471 0"  /></svg>
-                        <div data-layer="7f93ff02-fe4d-46a3-85f8-ef0bd6e286f3" className="xf63f2ca8">{datas[idx].read}</div>
+                        <div data-layer="7f93ff02-fe4d-46a3-85f8-ef0bd6e286f3" className="xf63f2ca8">{data.wread}</div>
 </div>
-                    <div data-layer="2b8a537a-52d4-443b-8afe-1fa775ca1bb2" className="xd106727b">                        
-                    <div data-layer="8a5195a4-7500-4a08-bd6c-e291c1484bc6" className="x4154b626">{datas[idx].mean}</div>
-                        <div data-layer="a6582daa-f835-469e-a078-c2d0af94769a" className="xb9a31159">                            
-                        <div data-layer="49ff9157-f320-48f8-9a97-073867d2ddf1" className="x14234af3f3655">                                
+                    <div data-layer="2b8a537a-52d4-443b-8afe-1fa775ca1bb2" className="xd106727b">
+                    <div data-layer="8a5195a4-7500-4a08-bd6c-e291c1484bc6" className="x4154b626">{data.mean}</div>
+                        <div data-layer="a6582daa-f835-469e-a078-c2d0af94769a" className="xb9a31159">
+                        <div data-layer="49ff9157-f320-48f8-9a97-073867d2ddf1" className="x14234af3f3655">
                         <svg data-layer="6b660e44-b7c5-4e19-a147-64f20ad3857d" preserveAspectRatio="none" viewBox="-0.75 -0.75 33.5 33.5" className="x310c67a98e"><path d="M 16 0 C 24.83655548095703 0 32 7.163444519042969 32 16 C 32 24.83655548095703 24.83655548095703 32 16 32 C 7.163444519042969 32 0 24.83655548095703 0 16 C 0 7.163444519042969 7.163444519042969 0 16 0 Z"  /></svg>
                                 <svg data-layer="bf8c44f4-60d6-4ec9-9975-2227681e765f" preserveAspectRatio="none" viewBox="-1.414306640625 -1.414215087890625 14.82861328125 14.82843017578125" className="x4423e7f69e"><path d="M 12 0 L 0 12"  /></svg>
                                 <svg data-layer="34dc9fa2-91fd-45a8-8f0a-28b4fd6a3bd8" preserveAspectRatio="none" viewBox="-1.414306640625 -1.414215087890625 14.82861328125 14.82843017578125" className="x45f1b00efe"><path d="M 12 12 L 0 0"  /></svg>

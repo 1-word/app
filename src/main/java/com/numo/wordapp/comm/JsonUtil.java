@@ -18,7 +18,7 @@ public class JsonUtil {
     ObjectMapper mapper = new ObjectMapper();
     String json = "";
 
-    JsonUtil(Object obj){
+    public JsonUtil(Object obj){
         makeJson(obj);
     }
 
