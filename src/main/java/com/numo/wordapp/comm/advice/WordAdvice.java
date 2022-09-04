@@ -36,6 +36,7 @@ public class WordAdvice {
     @Before("cut()")
     public void before(JoinPoint joinPoint){
 
+        String cls = joinPoint.getSignature().getDeclaringTypeName();
         //실행되는 함수 이름 읽어옴
         String method = joinPoint.getSignature().getName();
 
@@ -43,7 +44,8 @@ public class WordAdvice {
         Object[] args = joinPoint.getArgs();
 
         //System.out.println("[before method] method: " + method);
-        log.info("[before method] method: " + method + "()");
+        //log.info("[before method] method: " + method + "()");
+        log.info("[WordAdvice before]: {} {}()", cls, method);
         if (args.length != 0) {
             JsonUtil jsonUtil = new JsonUtil(args);
             //System.out.println("[before method] args: " + jsonUtil.getJson());

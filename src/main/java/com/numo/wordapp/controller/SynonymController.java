@@ -9,8 +9,11 @@ import java.util.List;
 
 @RestController
 public class SynonymController {
-    @Autowired
     SynonymService synonymService;
+
+    public SynonymController(SynonymService synonymService){
+        this.synonymService = synonymService;
+    }
 
     @PutMapping(value = "/update")
     public String setUpdateWord(@RequestBody List<SynonymDto.Request> dto){

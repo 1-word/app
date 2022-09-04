@@ -4,8 +4,7 @@ import com.numo.wordapp.security.jwt.JwtAccessDeniedHandler;
 import com.numo.wordapp.security.jwt.JwtAuthenticationEntryPoint;
 import com.numo.wordapp.security.jwt.JwtSecurityConfig;
 import com.numo.wordapp.security.jwt.TokenProvider;
-import jdk.jfr.Enabled;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,7 +15,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -52,7 +56,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
         http
                 .csrf().disable()  //토큰을 사용하므로 csrf 설정 disable
+                .cors().configurationSource(corsConfigurationSource())
 
+                .and()
                 .exceptionHandling() //에러 핸들링
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
@@ -73,10 +79,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/api/v1/admin/**")
                 .access("hasRole('ROLE_ADMIN')")*/
-                .anyRequest().authenticated() //나머지 요청들은 모두 인증되어야 함
-                //.anyRequest().permitAll()  //나머지 요청들은 인증 없음
+                //.anyRequest().authenticated() //나머지 요청들은 모두 인증되어야 함
+                .anyRequest().permitAll()  //나머지 요청들은 인증 없음
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));   //filter 등록
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowCredentials(true);   //내 서버가 응답할 때 json을 자바스크립트에서 처리할 수 있게 할지를 설정
+        //config.addAllowedOriginPattern("*");   //모든 ip에 응답 허용
+        config.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000", "http://144.24.78.52:3000", "http://localhost:8088"));  //해당 ip cors 허용
+        config.addAllowedHeader("*");   // 모든 header에 응답 허용
+        config.addAllowedMethod("*");   //모든 post, get, put, delete, patch 요청 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

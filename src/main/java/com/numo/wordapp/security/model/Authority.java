@@ -1,13 +1,15 @@
 package com.numo.wordapp.security.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="roles")
 public class Authority {
 
