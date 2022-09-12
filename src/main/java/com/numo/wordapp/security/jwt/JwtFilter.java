@@ -25,7 +25,9 @@ public class JwtFilter extends GenericFilterBean {
 
     //토큰의 인증정보를 SecurityContext에 저장하는 역할 수행
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
         //request에서 토큰을 받아옴
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String jwt = resolveToken(httpServletRequest);

@@ -1,21 +1,20 @@
 package com.numo.wordapp.service.impl;
 
+import com.numo.wordapp.comm.advice.exception.UserNotFoundCException;
 import com.numo.wordapp.dto.SynonymDto;
 import com.numo.wordapp.dto.WordDto;
+import com.numo.wordapp.model.ErrorCode;
 import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
+import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
 
-import com.numo.wordapp.service.SynonymService;
 import com.numo.wordapp.service.WordService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /*
  클래스: WordServiceImpl
@@ -24,41 +23,58 @@ import java.util.stream.Collectors;
  작성일: 2022.05.25
  수정이력: 2022.05.25 WordServiceImpl 작성_정현경
           2022.06.22 CURD 작성_정현경
+          2022.09.11 update 로직 수정/SynonymService삭제 후 해당 기능 update로 이전_정현경
 */
 
 @Service
-@RequiredArgsConstructor
 public class WordServiceImpl implements WordService {
 
-    @Autowired
-    private WordRepository wordRepository;
+    private final WordRepository wordRepository;
+    private final SynonymRepository synonymRepository;
+
+    public WordServiceImpl(WordRepository wordRepository,
+                           SynonymRepository synonymRepository){
+        this.wordRepository = wordRepository;
+        this.synonymRepository = synonymRepository;
+    }
 
     /*
     * 메소드: updateByWord(WordDto.Request dto)
     * 파라미터: 요청받은 dto값
     * 기능: 데이터 수정(유의어 수정은 synonymServiceImpl에서)
-    * 유의사항: word의 칼럼이 추가되면 update시에 selectWord.set{colName}() 추가 필요
+    * 유의사항: word의 칼럼이 추가되면 update시에 word.set{colName}() 추가 필요
     * 작성자: 정현경
     * 작성일: 2022.06.22
     * */
     @Override
     @Transactional
     public String updateByWord(WordDto.Request dto){
-        Optional<Word> wordUpdate = wordRepository.findById(dto.getWord_id());  //db에서 조회를 하면 영속성 유지..
+        // 1. 해당 단어 유효한지 검색
+        Word word = wordRepository.findById(dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.UserNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
 
-        wordUpdate.ifPresent(selectWord->{
+        // 2. 유의어 업데이트
+        int size = 0;
+        for (SynonymDto.Request synonym : dto.getSynonyms()){
+            synonym.setSynonym_id(word.getSynonyms().get(size).getSynonym_id());
+            Optional<Synonym> synonymUpdate = synonymRepository.findById(synonym.getSynonym_id());
+            synonymUpdate.ifPresent(updateSynonym->{
+                //유의어 테이블 컬럼 추가 시 아래 코드 작성 필요
+                updateSynonym.setSynonym(synonym.getSynonym());
+                updateSynonym.setMemo(synonym.getMemo());
+                synonymRepository.save(updateSynonym);
+            });
+            size++;
+        }
 
-            //selectWord = dto.toEntity();
-            //칼럼 추가 시 아래 코드 작성 필요
-            selectWord.setWord(dto.getWord());
-            selectWord.setMean(dto.getMean());
-            selectWord.setWread(dto.getWread());
-            selectWord.setMemo(dto.getMemo());
+        // 3 단어 업데이트
+        //단어 테이블 컬럼 추가 시 아래 코드 작성 필요
+        word.setWord(dto.getWord());
+        word.setMean(dto.getMean());
+        word.setWread(dto.getWread());
+        word.setMemo(dto.getMemo());
 
-            wordRepository.save(selectWord);
-        });
-
-        return "데이터 수정을 완료하였습니다.";
+        wordRepository.save(word);
+        return "저장완료";
     }
 
     /*
@@ -76,7 +92,6 @@ public class WordServiceImpl implements WordService {
         Word word = dto.toEntity();
         List<SynonymDto.Request> synonyms = dto.getSynonyms();
         for (SynonymDto.Request synonym : synonyms) {
-            Synonym s = synonym.toEntity(word);
             word.addSynonym(synonym.toEntity(word));
         }
         wordRepository.save(word);

@@ -1,15 +1,12 @@
 package com.numo.wordapp.comm.advice;
 
-import com.numo.wordapp.comm.JsonUtil;
+import com.numo.wordapp.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
 
 @Slf4j
 @Aspect //AOP로 정의하는 클래스 지정

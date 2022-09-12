@@ -72,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()// httpServletRequest를 사용하는 요청들에 대한 접근제한 설정
-                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/api/login").permitAll()
                 /*.antMatchers("api/v1/user/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("api/v1/manager/**")

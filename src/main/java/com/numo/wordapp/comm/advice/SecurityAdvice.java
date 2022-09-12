@@ -1,9 +1,7 @@
 package com.numo.wordapp.comm.advice;
 
-import com.numo.wordapp.comm.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.numo.wordapp.comm;
+package com.numo.wordapp.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

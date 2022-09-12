@@ -31,7 +31,7 @@ public class Word extends Timestamped{
     private String word;    //단어
     private String mean;    //뜻
     private String wread;   //읽는법
-    private String memo= "first";    //메모
+    private String memo;    //메모
 
     //양방향 관계, 단어가 삭제되면 유의어도 삭제되도록 CascadeType.REMOVE속성 사용.
     //@OneToMany(mappedBy = "word", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -48,18 +48,6 @@ public class Word extends Timestamped{
         this.wread = wread;
         this.memo = memo;
     }
-
-
-    /*//단방향 관계 설정
-    @ManyToOne
-    @JoinColumn(name="word_id")
-    private Synonym synonym;
-    */
-    /*@CreatedDate
-    private LocalDateTime create_time;   //생성 날짜
-
-    @LastModifiedDate
-    private LocalDateTime update_time;     //업데이트 날짜*/
 
     public static Word createWord(WordDto.Request dto){
         return Word.builder()

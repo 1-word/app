@@ -26,7 +26,7 @@ public class UserController {
     // HEADER로 토큰 정보 받아서 확인
     @GetMapping("/user")
     //USER, ADMIN 두가지 권한 모두 허용
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    //@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     public UserDto.Response getMyUserInfo(){
         //return ResponseEntity.ok(userService.getMyUserWithAuthorities().get());
         //return ResponseEntity.ok(userService.getMyUserWithAuthorities().get());
@@ -36,7 +36,7 @@ public class UserController {
     // // HEADER로 토큰 정보 받아서 확인
     @GetMapping("/user/{username}")
     // ADMIN권한만 허용
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public UserDto.Response getUserInfo(@PathVariable String username){
         return new UserDto.Response(userService.getUserWithAuthorities(username).get());
     }

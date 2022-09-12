@@ -8,7 +8,7 @@ public class SynonymDto {
     @Getter
     @Setter
     public static class Request {
-        private int synonym_id=0;
+        private int synonym_id;
         private String synonym="";
         private String memo="";
         //private Word word;
