@@ -6,6 +6,7 @@ public class TokenCException extends RuntimeException {
     }
 
     public TokenCException(String msg) {
-        super(msg);
+        System.out.println(msg);
+        //super(msg);
     }
 }

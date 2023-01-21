@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/word")
 public class WordController{
     private final WordService wordService;
     private final ResponseService responseService;
@@ -21,35 +22,34 @@ public class WordController{
         this.responseService = responseService;
     }
 
-    @RequestMapping(value = "/search/{data}", method = RequestMethod.GET)
-    public ListResult<WordDto.Response> getSearchWord(@PathVariable("data") String data){
-        //WordDto.Response dto = new WordDto.Response(wordService.getBySearchWord(data));
+    @RequestMapping(value = "/search/{user_id}/{data}", method = RequestMethod.GET)
+    public ListResult<WordDto.Response> getSearchWord(@PathVariable("user_id") String user_id, @PathVariable("data") String data){
         List<WordDto.Response> dto = null;
         System.out.println(data);
         if(data.equals("all")) {
-            dto =  wordService.getByAllWord().stream()
+            dto =  wordService.getByAllWord(user_id).stream()
                     .map(WordDto.Response::new)
                     .collect(Collectors.toList());
         }else{
-            dto = wordService.getBySearchWord(data).stream()
+            dto = wordService.getBySearchWord(user_id, data).stream()
                     .map(WordDto.Response::new)
                     .collect(Collectors.toList());
         }
         return responseService.getListResult(dto);
     }
 
-    @RequestMapping(value = "/read", method = RequestMethod.GET)
-    public ListResult<WordDto.Response> getAllWord(){
+    @RequestMapping(value = "/read/{user_id}", method = RequestMethod.GET)
+    public ListResult<WordDto.Response> getAllWord(@PathVariable("user_id") String user_id){
         //DTO를 이용하여 무한 참조 방지.
         //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
-        List<WordDto.Response> dto =  wordService.getByAllWord().stream()
+        List<WordDto.Response> dto =  wordService.getByAllWord(user_id).stream()
                 .map(WordDto.Response::new)
                 .collect(Collectors.toList());
         return responseService.getListResult(dto);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public SingleResult<String> setSaveWord(@RequestBody  WordDto.Request dto){
+    public SingleResult<String> setSaveWord(@RequestBody WordDto.Request dto){
         String data = wordService.setByWord(dto);
         return responseService.getSingleResult(data);
     }

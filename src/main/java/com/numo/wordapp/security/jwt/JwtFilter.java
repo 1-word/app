@@ -1,5 +1,6 @@
 package com.numo.wordapp.security.jwt;
 
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,10 @@ public class JwtFilter extends GenericFilterBean {
         }else{
             log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
+
+        log.info("jwtFilter 실행");
+        //Claims c = tokenProvider.parseClaims(jwt);
+        //log.info("claim 생성");
         chain.doFilter(request, response);
     }
 

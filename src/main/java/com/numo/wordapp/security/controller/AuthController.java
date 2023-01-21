@@ -79,9 +79,10 @@ public class AuthController {
         return responseService.getSingleResult(userService.login(loginDto));
     }
 
+    //로그인 시 SecurityContext 객체에 저장..
     public void SecurityContextSave(LoginDto loginDto){
         UsernamePasswordAuthenticationToken authenticationToken=
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+                new UsernamePasswordAuthenticationToken(loginDto.getUser_id(), loginDto.getPassword());
 
         //토큰을 이용하여 authenticate메소드가 실행될 때 loadUserByUsername 메소드 실행(CustomUserDetailsService.loadUserByUsername())
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

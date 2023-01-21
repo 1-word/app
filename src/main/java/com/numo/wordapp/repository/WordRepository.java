@@ -31,9 +31,9 @@ public interface WordRepository extends JpaRepository<Word, Integer> {
 
     // fetch join으로 중복 sql문장 조회 방지, left join으로 synonym에 값이 없어도 출력되도록 함
     // order by로 값 정렬
-    @Query("SELECT distinct w FROM Word w left join fetch w.synonyms s order by w.word_id desc, s.synonym_id asc")
+    @Query("SELECT distinct w FROM Word w left join fetch w.synonyms s where w.user_id = ?1 order by w.word_id desc, s.synonym_id asc")
     //List<Word> getByAllWord(Sort sort);
-    List<Word> getByAllWord();
+    List<Word> getByAllWord(String user_id);
 
 
    @EntityGraph(attributePaths = {"synonym"})
@@ -55,11 +55,12 @@ public interface WordRepository extends JpaRepository<Word, Integer> {
     @Query("SELECT distinct w " +
             "FROM Word w " +
             "left join fetch w.synonyms s " +
-            "WHERE w.word LIKE %?1%" +
-            "OR w.mean LIKE %?1%" +
-            "OR w.wread LIKE %?1%" +
-            "OR w.memo LIKE %?1%" +
-            "OR s.synonym LIKE %?1%" +
+            "WHERE w.user_id = :user_id " +
+            "AND (w.word LIKE %:data% " +
+            "OR w.mean LIKE %:data% " +
+            "OR w.wread LIKE %:data% " +
+            "OR w.memo LIKE %:data% " +
+            "OR s.synonym LIKE %:data%) " +
             "order by w.word_id desc, s.synonym_id asc")
-   List<Word> getBySearchWord(@Param("data") String data);
+   List<Word> getBySearchWord(@Param("user_id") String user_id, @Param("data") String data);
 }

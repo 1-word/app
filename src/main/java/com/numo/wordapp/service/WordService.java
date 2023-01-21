@@ -17,7 +17,7 @@ public interface WordService {
 
     //Word getBySearchWord(int word_id);
 
-    List<Word> getBySearchWord(String data);
+    List<Word> getBySearchWord(String user_id, String data);
 
-    List<Word> getByAllWord();
+    List<Word> getByAllWord(String user_id);
 }

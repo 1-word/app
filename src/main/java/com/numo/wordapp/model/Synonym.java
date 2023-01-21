@@ -16,7 +16,6 @@ public class Synonym extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int synonym_id; //기본키
 
-
     @ManyToOne(optional = true)
     //fetch = FetchType.LAZY,
     @JoinColumn(name = "word_id")

@@ -18,8 +18,8 @@ public class RefreshToken extends Timestamped {
     @Column(name = "token_id")
     private Long id;
 
-    @Column(name = "token_key", nullable = false)
-    private Long key;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @Column(name = "token", nullable = false)
     private String token;
@@ -30,8 +30,8 @@ public class RefreshToken extends Timestamped {
     }
 
     @Builder
-    public RefreshToken(Long key, String token){
-        this.key = key;
+    public RefreshToken(String user_id, String token){
+        this.userId = user_id;
         this.token = token;
     }
 }

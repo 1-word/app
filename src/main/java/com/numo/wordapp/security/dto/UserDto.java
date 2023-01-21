@@ -14,7 +14,7 @@ public class UserDto {
         public static class Request{
                 @NotNull
                 @Size(min = 3, max = 50)
-                private String username;
+                private String user_id;
 
                 @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                 @NotNull
@@ -28,11 +28,11 @@ public class UserDto {
 
         @Getter
         public static class Response{
-                private String username;
+                private String user_id;
                 private String nickname;
 
                 public Response(User user){
-                        this.username = user.getUsername();
+                        this.user_id = user.getUserId();
                         this.nickname = user.getNickname();
                 }
         }

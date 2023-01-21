@@ -13,6 +13,7 @@ public class WordDto {
     @Setter
     public static class Request{
         private int word_id;
+        private String user_id;
         private String word;
         private String mean;
         private String wread;
@@ -23,6 +24,7 @@ public class WordDto {
         public Word toEntity(){
             Word words = Word.builder()
                     //.word_id(word_id)
+                    .user_id(user_id)
                     .word(word)
                     .mean(mean)
                     .wread(wread)

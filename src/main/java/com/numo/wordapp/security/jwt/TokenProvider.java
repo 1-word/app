@@ -44,11 +44,10 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto.response createTokenDto(Long userPk, List<String> roles){
-        // Claims에 user 구분을 위한 userPk 및 authorities 목록 삽입.
-        Claims claims = Jwts.claims().setSubject(String.valueOf(userPk));
+    public TokenDto.response createTokenDto(String user_id, List<String> roles){
+        // Claims에 user 구분을 위한 user_id 및 authorities 목록 삽입.
+        Claims claims = Jwts.claims().setSubject(user_id);
         claims.put(AUTHORITIES_KEY, roles);
-
         // 생성날짜, 만료날짜를 위한 Date
         Date now = new Date();
 
@@ -110,7 +109,7 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    private Claims parseClaims(String token){
+    public Claims parseClaims(String token){
         try {
             //jwt 토큰 복호화
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJwt(token).getBody();

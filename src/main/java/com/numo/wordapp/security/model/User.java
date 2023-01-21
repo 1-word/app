@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,13 +19,15 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name="user")
 public class User extends Timestamped {
-    @JsonIgnore
+//    @JsonIgnore
+//    @Id
+//    @Column(name = "user_id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long userId;
+
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-
-    private String username;
+    private String userId;
 
     private String nickname;
     private String password;
@@ -38,18 +41,16 @@ public class User extends Timestamped {
             inverseJoinColumns = @JoinColumn(name = "authority_name", referencedColumnName = "authority_name"))
     private Set<Authority> authorities;
 
-    /*@Enumerated(EnumType.STRING)
-    private Role role;
-    */
     public void setPassword(String password){
         this.password = password;
     }
 
-    /*@Builder
-    public User(String username, String nickname, String password, Role role){
-        this.username = username;
-        this.nickname = nickname;
-        this.password = password;
-        this.role = role;
-    }*/
+    public List<String> getAuthNameList(){
+        Set<Authority> authoritys = this.getAuthorities();
+        List<String> list = new ArrayList<>();
+        for (Authority authority : authoritys){
+            list.add(authority.getAuthorityName());
+        }
+        return list;
+    }
 }

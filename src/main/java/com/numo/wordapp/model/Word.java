@@ -27,6 +27,7 @@ public class Word extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment로 값 지정.
 
     private int word_id;    //기본키
+    private String user_id;
 
     private String word;    //단어
     private String mean;    //뜻
@@ -42,7 +43,8 @@ public class Word extends Timestamped{
     private List<Synonym> synonyms = new ArrayList<>(); //초기화 선언
 
     @Builder
-    public Word(String word, String mean, String wread, String memo){
+    public Word(String user_id, String word, String mean, String wread, String memo){
+        this.user_id = user_id;
         this.word = word;
         this.mean = mean;
         this.wread = wread;

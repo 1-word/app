@@ -3,7 +3,7 @@ package com.numo.wordapp.service.impl;
 import com.numo.wordapp.comm.advice.exception.UserNotFoundCException;
 import com.numo.wordapp.dto.SynonymDto;
 import com.numo.wordapp.dto.WordDto;
-import com.numo.wordapp.model.ErrorCode;
+import com.numo.wordapp.comm.advice.exception.ErrorCode;
 import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
 import com.numo.wordapp.repository.SynonymRepository;
@@ -53,6 +53,7 @@ public class WordServiceImpl implements WordService {
         Word word = wordRepository.findById(dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.UserNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
 
         // 2. 유의어 업데이트
+        // 20230120 업데이트 시 업데이트할 유의어 수와 저장된 수가 같지 않으면 오류가 발생함..... 조치 필요
         int size = 0;
         for (SynonymDto.Request synonym : dto.getSynonyms()){
             synonym.setSynonym_id(word.getSynonyms().get(size).getSynonym_id());
@@ -72,6 +73,7 @@ public class WordServiceImpl implements WordService {
         word.setMean(dto.getMean());
         word.setWread(dto.getWread());
         word.setMemo(dto.getMemo());
+        //word.setUser_id(dto.getUser_id());
 
         wordRepository.save(word);
         return "저장완료";
@@ -135,10 +137,10 @@ public class WordServiceImpl implements WordService {
     }*/
 
     @Override
-    public List<Word> getBySearchWord(String data){
+    public List<Word> getBySearchWord(String user_id, String data){
         //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, wread, memo);
         //return wordRepository.findById(word_id).get();
-        return wordRepository.getBySearchWord(data);
+        return wordRepository.getBySearchWord(user_id, data);
     }
 
     /*
@@ -151,9 +153,9 @@ public class WordServiceImpl implements WordService {
     */
 
     @Override
-    public List<Word> getByAllWord(){
+    public List<Word> getByAllWord(String user_id){
         //return wordRepository.getByAllWord(Sort.by(Sort.Direction.DESC, "word.word_id", "synonym_id"));
-        return wordRepository.getByAllWord();
+        return wordRepository.getByAllWord(user_id);
     }
 
 }
