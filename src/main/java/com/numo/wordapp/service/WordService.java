@@ -11,7 +11,7 @@ public interface WordService {
     String updateByWord(WordDto.Request dto);
 
     @Transactional
-    String setByWord(WordDto.Request dto);
+    Word setByWord(WordDto.Request dto);
 
     String removeByWord(int id);
 

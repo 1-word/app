@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface WordRepository extends JpaRepository<Word, Integer> {
-
     //Query(value= "select word_id, word, mean, wread, memo, update_dt from word", nativeQuery = true)
     //List<word>
     /*String sql = "SELECT new map(" +

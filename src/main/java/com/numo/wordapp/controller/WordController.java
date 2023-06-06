@@ -49,9 +49,9 @@ public class WordController{
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public SingleResult<String> setSaveWord(@RequestBody WordDto.Request dto){
-        String data = wordService.setByWord(dto);
-        return responseService.getSingleResult(data);
+    public SingleResult<WordDto.Response> setSaveWord(@RequestBody WordDto.Request dto){
+        WordDto.Response wdr = new WordDto.Response(wordService.setByWord(dto));
+        return responseService.getSingleResult(wdr);
     }
 
     @PutMapping(value = "/update/{id}")

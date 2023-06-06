@@ -15,21 +15,21 @@ import com.numo.wordapp.model.Word;
 
 public class JsonUtil {
 
-    ObjectMapper mapper = new ObjectMapper();
-    String json = "";
+    ObjectMapper mapper;
 
-    public JsonUtil(Object obj){
-        makeJson(obj);
+    public JsonUtil(){
+       this.mapper = new ObjectMapper();
     }
 
-    public void makeJson(Object obj){
+    private String makeJson(Object obj){
+        String json = "";
         try {
-            //json = mapper.writeValueAsString(obj);
             //json 정렬
             json = mapper.enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        return json;
     }
 
     public void makeObject(Class c){
@@ -37,7 +37,7 @@ public class JsonUtil {
 
     }
 
-    public String getJson() {
-        return json;
+    public String getJson(Object obj) {
+        return makeJson(obj);
     }
 }

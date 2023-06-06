@@ -1,7 +1,6 @@
 package com.numo.wordapp.security.jwt;
 
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
-import com.numo.wordapp.comm.advice.exception.TokenCException;
 import com.numo.wordapp.service.ResponseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +24,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        responseService.setResponseError(response, HttpStatus.FORBIDDEN.value(), ErrorCode.UnrecongizedRole);
+        responseService.setResponseError(response, HttpStatus.FORBIDDEN.value(), ErrorCode.UnrecognizedRole);
     }
 }

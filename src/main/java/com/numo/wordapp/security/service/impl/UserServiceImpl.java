@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService{
 
         // refreshToken 검색
         RefreshToken refreshToken = refreshTokenRepository.findByUserId(user.getUserId())
-                        .orElseThrow(() -> new TokenCException(ErrorCode.rfTokenNotFound.getDescription()));
+                        .orElseThrow(() -> new TokenCException(ErrorCode.RefreshTokenNotFound.getDescription()));
 
         // 리프레시 토큰 불일치 에러
         if (!refreshToken.getToken().equals(tokenDto.getRefreshToken()))

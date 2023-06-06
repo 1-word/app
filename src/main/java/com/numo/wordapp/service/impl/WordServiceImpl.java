@@ -10,11 +10,14 @@ import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
 
 import com.numo.wordapp.service.WordService;
+import com.numo.wordapp.util.ProcessBuilderUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /*
  클래스: WordServiceImpl
@@ -45,6 +48,8 @@ public class WordServiceImpl implements WordService {
     * 유의사항: word의 칼럼이 추가되면 update시에 word.set{colName}() 추가 필요
     * 작성자: 정현경
     * 작성일: 2022.06.22
+    * 수정일: 2023.06.04
+    * 수정내용: 2023.06.04 - 업데이트할 유의어 갯수가 더 많으면 에러났던 이슈 수정
     * */
     @Override
     @Transactional
@@ -52,30 +57,42 @@ public class WordServiceImpl implements WordService {
         // 1. 해당 단어 유효한지 검색
         Word word = wordRepository.findById(dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.UserNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
 
-        // 2. 유의어 업데이트
-        // 20230120 업데이트 시 업데이트할 유의어 수와 저장된 수가 같지 않으면 오류가 발생함..... 조치 필요
-        int size = 0;
-        for (SynonymDto.Request synonym : dto.getSynonyms()){
-            synonym.setSynonym_id(word.getSynonyms().get(size).getSynonym_id());
-            Optional<Synonym> synonymUpdate = synonymRepository.findById(synonym.getSynonym_id());
-            synonymUpdate.ifPresent(updateSynonym->{
-                //유의어 테이블 컬럼 추가 시 아래 코드 작성 필요
-                updateSynonym.setSynonym(synonym.getSynonym());
-                updateSynonym.setMemo(synonym.getMemo());
-                synonymRepository.save(updateSynonym);
-            });
-            size++;
-        }
-
-        // 3 단어 업데이트
+        // 2 단어 업데이트
         //단어 테이블 컬럼 추가 시 아래 코드 작성 필요
         word.setWord(dto.getWord());
         word.setMean(dto.getMean());
         word.setWread(dto.getWread());
         word.setMemo(dto.getMemo());
-        //word.setUser_id(dto.getUser_id());
-
         wordRepository.save(word);
+
+        // 3. 유의어 업데이트
+        List<Synonym> existingSynonyms = word.getSynonyms();
+        List<SynonymDto.Request> inputSynonyms = dto.getSynonyms();
+
+        // 현재 유의어 갯수 확인
+        for (int i=0; i < existingSynonyms.size(); i++){
+            Synonym existingSynonym = existingSynonyms.get(i);
+            if (i < inputSynonyms.size()){
+                SynonymDto.Request inputSynonym = inputSynonyms.get(i);
+                existingSynonym.setSynonym(inputSynonym.getSynonym());
+                existingSynonym.setMemo(inputSynonym.getMemo());
+                synonymRepository.save(existingSynonym);
+            }else{  // 현재 유의어 갯수보다 적으면 delete 실행
+                synonymRepository.deleteSynonym(existingSynonym.getSynonym_id());
+            }
+        }
+
+        // 현재 유의어 갯수보다 update할 유의어 갯수가 더 많으면 insert 실행
+        for (int i = existingSynonyms.size(); i < inputSynonyms.size(); i++) {
+            SynonymDto.Request inputSynonym = inputSynonyms.get(i);
+            Synonym newSynonym = Synonym.builder()
+                            .synonym(inputSynonym.getSynonym())
+                            .memo(inputSynonym.getMemo())
+                            .word(word)
+                            .build();
+            synonymRepository.save(newSynonym);
+        }
+
         return "저장완료";
     }
 
@@ -90,14 +107,15 @@ public class WordServiceImpl implements WordService {
 
     @Override
     @Transactional
-    public String setByWord(WordDto.Request dto){
+    public Word setByWord(WordDto.Request dto){
         Word word = dto.toEntity();
         List<SynonymDto.Request> synonyms = dto.getSynonyms();
         for (SynonymDto.Request synonym : synonyms) {
             word.addSynonym(synonym.toEntity(word));
         }
-        wordRepository.save(word);
-        return "데이터를 저장 완료하였습니다.";
+        String fileName = word.getWord() + "_" + System.currentTimeMillis();
+        word.setSoundPath(fileName);
+        return wordRepository.save(word);
     }
 
     /*

@@ -1,8 +1,12 @@
 package com.numo.wordapp.comm.advice;
 
+import com.numo.wordapp.model.Word;
+import com.numo.wordapp.service.impl.WordServiceImpl;
 import com.numo.wordapp.util.JsonUtil;
+import com.numo.wordapp.util.ProcessBuilderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Aspect //AOP로 정의하는 클래스 지정
 @Component  //빈 등록
 public class WordAdvice {
+    JsonUtil jsonUtil = new JsonUtil();
     // @Slf4j가 있으면 해당 역할을 대신 한다.
     // private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -44,10 +49,20 @@ public class WordAdvice {
         //log.info("[before method] method: " + method + "()");
         log.info("[WordAdvice before]: {} {}()", cls, method);
         if (args.length != 0) {
-            JsonUtil jsonUtil = new JsonUtil(args);
-            //System.out.println("[before method] args: " + jsonUtil.getJson());
-            log.info("[before method] args: " + jsonUtil.getJson());
+            log.info("[before method] args: " + jsonUtil.getJson(args));
         }
     }
 
+    /**
+     * {@link WordServiceImpl} setByWord()의 실행이 종료되면 pk값과 name을 가져와 gtts모듈을 이용하여 text를 mp3로 변환
+     * @param joinPoint, word}
+     *
+     * */
+    @AfterReturning(value = "execution(* com.numo.wordapp.service.impl.WordServiceImpl.setByWord(..))", returning = "word")
+    public void textToAudio(JoinPoint joinPoint, Word word){
+        log.info("[WordAdvice.textToAudio()]: fileName: {}, word: {}", word.getSoundPath(), word.getWord());
+        int code = new ProcessBuilderUtil(word.getSoundPath(), word.getWord()).run();
+        log.info("[textToAudio() Return]: {}", code);
+        //System.out.println("processBuilder Util run");
+    }
 }
