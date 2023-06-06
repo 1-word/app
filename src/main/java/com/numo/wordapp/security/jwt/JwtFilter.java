@@ -41,13 +41,14 @@ public class JwtFilter extends GenericFilterBean {
             //SecurityContext에 Authentication객체 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("Security Context에 '{}'인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+            String id = tokenProvider.parseClaims(jwt).getSubject();
+            log.info("login: "+id);
         }else{
             log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
 
         log.info("jwtFilter 실행");
-        //Claims c = tokenProvider.parseClaims(jwt);
-        //log.info("claim 생성");
+
         chain.doFilter(request, response);
     }
 

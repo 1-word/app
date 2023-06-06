@@ -10,14 +10,11 @@ import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
 
 import com.numo.wordapp.service.WordService;
-import com.numo.wordapp.util.ProcessBuilderUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /*
  클래스: WordServiceImpl
@@ -50,12 +47,13 @@ public class WordServiceImpl implements WordService {
     * 작성일: 2022.06.22
     * 수정일: 2023.06.04
     * 수정내용: 2023.06.04 - 업데이트할 유의어 갯수가 더 많으면 에러났던 이슈 수정
+    *         2023.06.06 - 로그인 한 사용자가 아니면 업데이트 못하도록 수정
     * */
     @Override
     @Transactional
     public String updateByWord(WordDto.Request dto){
         // 1. 해당 단어 유효한지 검색
-        Word word = wordRepository.findById(dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.UserNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
+        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.DataNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
 
         // 2 단어 업데이트
         //단어 테이블 컬럼 추가 시 아래 코드 작성 필요
@@ -128,12 +126,12 @@ public class WordServiceImpl implements WordService {
     * */
 
     @Override
-    public String removeByWord(int id){
-        Optional<Word> word = wordRepository.findById(id);
-
-        word.ifPresent(removeWord->{
-            wordRepository.delete(removeWord);
-        });
+    public String removeByWord(WordDto.Request dto){
+       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.DataNotFound.getDescription()));
+       wordRepository.delete(word);
+//        word.ifPresent(removeWord->{
+//            wordRepository.delete(removeWord);
+//        });
 
         return "데이터 삭제를 완료하였습니다.";
     }

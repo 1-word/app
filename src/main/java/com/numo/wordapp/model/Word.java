@@ -1,15 +1,9 @@
 package com.numo.wordapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.numo.wordapp.dto.WordDto;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +19,11 @@ import java.util.List;
 public class Word extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment로 값 지정.
-    private int word_id;    //기본키
-    private String user_id;
+    @Column(name = "word_id")
+    private int wordId;    //기본키
+
+    @Column(name = "user_id")
+    private String userId;
 
     private String word;    //단어
     private String mean;    //뜻
@@ -43,8 +40,8 @@ public class Word extends Timestamped{
     private List<Synonym> synonyms = new ArrayList<>(); //초기화 선언
 
     @Builder
-    public Word(String user_id, String word, String mean, String wread, String memo){
-        this.user_id = user_id;
+    public Word(String userId, String word, String mean, String wread, String memo){
+        this.userId = userId;
         this.word = word;
         this.mean = mean;
         this.wread = wread;

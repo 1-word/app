@@ -112,7 +112,7 @@ public class TokenProvider implements InitializingBean {
     public Claims parseClaims(String token){
         try {
             //jwt 토큰 복호화
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJwt(token).getBody();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

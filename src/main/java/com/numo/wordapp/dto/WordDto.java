@@ -1,10 +1,8 @@
 package com.numo.wordapp.dto;
 
-import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +25,7 @@ public class WordDto {
         public Word toEntity(){
             Word words = Word.builder()
                     //.word_id(word_id)
-                    .user_id(user_id)
+                    .userId(user_id)
                     .word(word)
                     .mean(mean)
                     .wread(wread)
@@ -53,7 +51,7 @@ public class WordDto {
         private List<SynonymDto.Response> synonyms;
 
         public Response(Word words){
-            this.word_id = words.getWord_id();
+            this.word_id = words.getWordId();
             this.word = words.getWord();
             this.mean = words.getMean();
             this.wread = words.getWread();
