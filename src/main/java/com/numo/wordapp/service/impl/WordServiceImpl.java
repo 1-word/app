@@ -4,12 +4,15 @@ import com.numo.wordapp.comm.advice.exception.UserNotFoundCException;
 import com.numo.wordapp.dto.SynonymDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
+import com.numo.wordapp.model.Sound;
 import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
+import com.numo.wordapp.repository.SoundRepository;
 import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
 
 import com.numo.wordapp.service.WordService;
+import com.numo.wordapp.util.ProcessBuilderUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +34,14 @@ public class WordServiceImpl implements WordService {
 
     private final WordRepository wordRepository;
     private final SynonymRepository synonymRepository;
+    private final SoundRepository soundRepository;
 
     public WordServiceImpl(WordRepository wordRepository,
-                           SynonymRepository synonymRepository){
+                           SynonymRepository synonymRepository,
+                           SoundRepository soundRepository){
         this.wordRepository = wordRepository;
         this.synonymRepository = synonymRepository;
+        this.soundRepository = soundRepository;
     }
 
     /*
@@ -111,9 +117,36 @@ public class WordServiceImpl implements WordService {
         for (SynonymDto.Request synonym : synonyms) {
             word.addSynonym(synonym.toEntity(word));
         }
-        String fileName = word.getWord() + "_" + System.currentTimeMillis();
+
+        Optional<String> soundPathOptional = soundRepository.findByWord(word.getWord())
+                .map(sound -> sound.getSoundPath());
+
+        String fileName = soundPathOptional.orElse(null);
+        if(fileName == null || fileName == ""){ // 해당 하는 단어의 sound가 없으면 sound파일 생성 및 데이터베이스에 추가
+            fileName = createSoundFile(word.getWord());
+        }
         word.setSoundPath(fileName);
         return wordRepository.save(word);
+    }
+
+    private String createSoundFile(String wordName){
+        //String fileName = wordName + "_" + System.currentTimeMillis();
+        String fileName = "p_"+ wordName;
+
+        // 1. sound 테이블에 데이터 insert
+        Sound sound = Sound.builder()
+                .word(wordName)
+                .soundPath(fileName)
+                .memo("")
+                .build();
+
+        soundRepository.save(sound);
+
+        // 2. 발음 파일 생성
+        int code = new ProcessBuilderUtil(wordName, fileName).run();
+        //파일생성 실패 시
+        if(code != 0) fileName = "";
+        return fileName;
     }
 
     /*

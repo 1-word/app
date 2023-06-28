@@ -10,7 +10,7 @@ public class ProcessBuilderUtil {
     private String path;
     String[] command = new String[3];
 
-    public ProcessBuilderUtil(String fileName, String text){
+    public ProcessBuilderUtil(String text, String fileName){
         this.setEnvironment();
         this.fileName = fileName;
         // gtts 초기 텍스트 대체

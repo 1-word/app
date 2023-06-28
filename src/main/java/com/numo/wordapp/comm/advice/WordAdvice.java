@@ -58,7 +58,7 @@ public class WordAdvice {
      * @param joinPoint, word}
      *
      * */
-    @AfterReturning(value = "execution(* com.numo.wordapp.service.impl.WordServiceImpl.setByWord(..))", returning = "word")
+    //@AfterReturning(value = "execution(* com.numo.wordapp.service.impl.WordServiceImpl.setByWord(..))", returning = "word")
     public void textToAudio(JoinPoint joinPoint, Word word){
         log.info("[WordAdvice.textToAudio()]: fileName: {}, word: {}", word.getSoundPath(), word.getWord());
         int code = new ProcessBuilderUtil(word.getSoundPath(), word.getWord()).run();

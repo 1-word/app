@@ -128,6 +128,8 @@ public class UserServiceImpl implements UserService{
         String accessToken = tokenDto.getAccessToken();
         Authentication authentication = tokenProvider.getAuthentication(accessToken);
 
+        System.out.println("AccessToken: " + authentication.getName());
+
         // userPk로 유저 검색
         User user = userRepository.findById(authentication.getName())
                         .orElseThrow(() -> new UserNotFoundCException(ErrorCode.UserNotFound.getDescription()));

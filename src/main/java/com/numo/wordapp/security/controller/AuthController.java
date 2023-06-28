@@ -68,6 +68,10 @@ public class AuthController {
         return responseService.getSingleResult();
     }*/
 
+    /**
+     * {@link com.numo.wordapp.security.service.impl.UserServiceImpl}
+     * @param tokenDto
+     * */
     @PostMapping("reissue")
     public SingleResult<TokenDto.response> reissue(@RequestBody TokenDto.request tokenDto){
         return responseService.getSingleResult(userService.reissue(tokenDto));

@@ -27,7 +27,7 @@ public class WordController{
 
     @RequestMapping(value = "/search/{data}", method = RequestMethod.GET)
     public ListResult<WordDto.Response> getSearchWord(@PathVariable("data") String data){
-        user_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        user_id = getUserId();
         List<WordDto.Response> dto = null;
         System.out.println(data);
         if(data.equals("all")) {
@@ -44,7 +44,7 @@ public class WordController{
 
     @RequestMapping(value = "/read", method = RequestMethod.GET)
     public ListResult<WordDto.Response> getAllWord(){
-        user_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        user_id = getUserId();
         //DTO를 이용하여 무한 참조 방지.
         //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
         List<WordDto.Response> dto =  wordService.getByAllWord(user_id).stream()
@@ -55,14 +55,14 @@ public class WordController{
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public SingleResult<WordDto.Response> setSaveWord(@RequestBody WordDto.Request dto){
-        user_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        user_id = getUserId();
         WordDto.Response wdr = new WordDto.Response(wordService.setByWord(dto));
         return responseService.getSingleResult(wdr);
     }
 
     @PutMapping(value = "/update/{id}")
     public SingleResult<String> setUpdateWord(@PathVariable("id")  int id, @RequestBody WordDto.Request dto){
-        user_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        user_id = getUserId();
         dto.setWord_id(id);
         String data = wordService.updateByWord(dto);
         return responseService.getSingleResult(data);
@@ -70,11 +70,15 @@ public class WordController{
 
     @DeleteMapping(value = "/remove/{id}")
     public SingleResult<String> setRemoveWord(@PathVariable("id") int id) {
-        user_id = SecurityContextHolder.getContext().getAuthentication().getName();
+        user_id = getUserId();
         WordDto.Request dto = new WordDto.Request();
         dto.setWord_id(id);
         dto.setUser_id(user_id);
         String data = wordService.removeByWord(dto);
         return responseService.getSingleResult(data);
+    }
+
+    private String getUserId(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

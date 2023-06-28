@@ -73,6 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()// httpServletRequest를 사용하는 요청들에 대한 접근제한 설정
                 .antMatchers("/api/login/**").permitAll()
                 .antMatchers("/api/signup/**").permitAll()
+                .antMatchers("/api/reissue/**").permitAll()
                 .antMatchers("word/**").access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 /*.antMatchers("api/v1/user/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")

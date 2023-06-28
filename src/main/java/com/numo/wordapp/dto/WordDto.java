@@ -3,6 +3,7 @@ package com.numo.wordapp.dto;
 import com.numo.wordapp.model.Word;
 import lombok.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class WordDto {
         private String memo;
         private String soundPath;
         private List<SynonymDto.Response> synonyms;
+        private String update_time;
 
         public Response(Word words){
             this.word_id = words.getWordId();
@@ -60,6 +62,11 @@ public class WordDto {
             //synonymsDto에 맞게 컬럼 생성
             //stream을 이용하여 List<Synonyms> => List<SynonymDto.Response>로 형 변환
             this.synonyms = words.getSynonyms().stream().map(SynonymDto.Response::new).collect(Collectors.toList());
+            try{
+                this.update_time = words.getUpdate_time().format(DateTimeFormatter.ISO_DATE);
+            }catch (Exception e){
+                this.update_time = "";
+            }
         }
     }
 }
