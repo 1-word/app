@@ -10,8 +10,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
@@ -20,4 +18,12 @@ public abstract class Timestamped {
 
     @LastModifiedDate
     private LocalDateTime update_time;     //업데이트 날짜
+
+    public LocalDateTime getUpdate_time() {
+        return update_time;
+    }
+
+    public void setUpdate_time(LocalDateTime update_time) {
+        this.update_time = update_time;
+    }
 }

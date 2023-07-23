@@ -18,7 +18,7 @@ public interface WordService {
     * 수정내용: 2023.06.04 - 업데이트할 유의어 갯수가 더 많으면 에러났던 이슈 수정
     * */
     @Transactional
-    String updateByWord(WordDto.Request dto);
+    String updateByWord(WordDto.Request dto, String type);
 
     @Transactional
     Word setByWord(WordDto.Request dto);

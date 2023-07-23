@@ -2,7 +2,7 @@ package com.numo.wordapp.security.service.impl;
 
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
 import com.numo.wordapp.comm.advice.exception.TokenCException;
-import com.numo.wordapp.comm.advice.exception.UserNotFoundCException;
+import com.numo.wordapp.comm.advice.exception.CustomException;
 import com.numo.wordapp.security.dto.LoginDto;
 import com.numo.wordapp.security.dto.TokenDto;
 import com.numo.wordapp.security.dto.UserDto;
@@ -41,11 +41,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public TokenDto.response login(LoginDto loginDto){
         User user = userRepository.findOneWithAuthoritiesByUserId(loginDto.getUser_id())
-                .orElseThrow(() -> new UserNotFoundCException("해당하는 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException("해당하는 회원이 없습니다."));
 
         // 패스워드 일치 확인
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword()))
-            throw new UserNotFoundCException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException("비밀번호가 일치하지 않습니다.");
 
         //해당 ID로된 토큰이 있는지 확인하고 있다면 update를 해줌
         //""은 찾지 못한 것을 뜻함.
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService{
 
         // userPk로 유저 검색
         User user = userRepository.findById(authentication.getName())
-                        .orElseThrow(() -> new UserNotFoundCException(ErrorCode.UserNotFound.getDescription()));
+                        .orElseThrow(() -> new CustomException(ErrorCode.UserNotFound.getDescription()));
 
         // refreshToken 검색
         RefreshToken refreshToken = refreshTokenRepository.findByUserId(user.getUserId())

@@ -28,9 +28,9 @@ public class ExceptionAdvice {
         return responseService.getFailResult();
     }
 
-    @ExceptionHandler(UserNotFoundCException.class)
+    @ExceptionHandler(CustomException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult userNotFoundException(HttpServletRequest request, UserNotFoundCException e){
+    protected CommonResult userNotFoundException(HttpServletRequest request, CustomException e){
         return responseService.getFailResult();
     }
 

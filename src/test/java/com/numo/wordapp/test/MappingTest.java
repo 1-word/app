@@ -9,6 +9,31 @@ import com.numo.wordapp.util.ModelMapperUtil;
 import java.util.List;
 
 public class MappingTest {
+    public enum updateType{
+        ALL("all", 0){
+            @Override
+            public String updateByWordType(Word word){
+                return "a";
+            }
+        },
+        MEMO("memo", 1){
+            @Override
+            public String updateByWordType(Word word){
+                return "b";
+            }
+        };
+
+        String typeName;
+        int type;
+
+        updateType(String typeName, int type) {
+            this.typeName = typeName;
+            this.type = type;
+        }
+
+        public abstract String updateByWordType(Word word);
+    }
+
     public static void main(String[] args) {
         WordDto.Request wrdto = new WordDto.Request();
         SynonymDto.Request sydto = new SynonymDto.Request();
@@ -23,10 +48,12 @@ public class MappingTest {
         wrdto.setMemo("memo");
         wrdto.setSynonyms(List.of(sydto));
 
-        Word convertwObject = new ModelMapperUtil().of(wrdto, Word.class);
-        Synonym sObject = new ModelMapperUtil().of(sydto, Synonym.class);
+        //System.out.println( WordDto.updateType.ALL.name());
+        //System.out.println(WordDto.updateType.ALL.ordinal());
+        //Word convertwObject = new ModelMapperUtil().of(wrdto, Word.class);
+        //Synonym sObject = new ModelMapperUtil().of(sydto, Synonym.class);
 
-        System.out.println(convertwObject);
-        System.out.println(wrdto);
+        //System.out.println(convertwObject);
+        //System.out.println(wrdto);
     }
 }

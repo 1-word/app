@@ -1,6 +1,6 @@
 package com.numo.wordapp.service.impl;
 
-import com.numo.wordapp.comm.advice.exception.UserNotFoundCException;
+import com.numo.wordapp.comm.advice.exception.CustomException;
 import com.numo.wordapp.dto.SynonymDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
@@ -13,9 +13,12 @@ import com.numo.wordapp.repository.WordRepository;
 
 import com.numo.wordapp.service.WordService;
 import com.numo.wordapp.util.ProcessBuilderUtil;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +38,24 @@ public class WordServiceImpl implements WordService {
     private final WordRepository wordRepository;
     private final SynonymRepository synonymRepository;
     private final SoundRepository soundRepository;
+
+    public enum UpdateType{
+        all{
+            @Override
+            public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word){
+                return updateAll(jpaRepositories, dto, word);
+            }
+        },
+        memo{
+            @Override
+            public String updateByWordType(List<JpaRepository> jpaRepositories,WordDto.Request dto, Word word){
+                 WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
+                return updateMemo(wordRepository, dto, word);
+            }
+        };
+
+        public abstract String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word);
+    }
 
     public WordServiceImpl(WordRepository wordRepository,
                            SynonymRepository synonymRepository,
@@ -57,16 +78,32 @@ public class WordServiceImpl implements WordService {
     * */
     @Override
     @Transactional
-    public String updateByWord(WordDto.Request dto){
+    public String updateByWord(WordDto.Request dto, String type){
         // 1. 해당 단어 유효한지 검색
-        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.DataNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
+        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
+        try{
+            UpdateType updateType = UpdateType.valueOf(type);
+            List<JpaRepository> jpaRepositories = new ArrayList<>();
+            jpaRepositories.add(wordRepository);
+            jpaRepositories.add(synonymRepository);
+            updateType.updateByWordType(jpaRepositories, dto, word);
+        }catch (Exception e){
+            throw new CustomException(ErrorCode.TypeNotFound.getDescription());
+        }
 
+        return "저장완료";
+    }
+
+    public static String updateAll(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word){
+        WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
+        SynonymRepository synonymRepository = (SynonymRepository) jpaRepositories.get(1);
         // 2 단어 업데이트
         //단어 테이블 컬럼 추가 시 아래 코드 작성 필요
-        word.setWord(dto.getWord());
+        //word.setWord(dto.getWord());  //word는 업데이트 불필요(pk값)_20230701
         word.setMean(dto.getMean());
         word.setWread(dto.getWread());
-        word.setMemo(dto.getMemo());
+        if (dto.getMemo() != null) word.setMemo(dto.getMemo());
+        word.setUpdate_time(LocalDateTime.now());
         wordRepository.save(word);
 
         // 3. 유의어 업데이트
@@ -90,14 +127,19 @@ public class WordServiceImpl implements WordService {
         for (int i = existingSynonyms.size(); i < inputSynonyms.size(); i++) {
             SynonymDto.Request inputSynonym = inputSynonyms.get(i);
             Synonym newSynonym = Synonym.builder()
-                            .synonym(inputSynonym.getSynonym())
-                            .memo(inputSynonym.getMemo())
-                            .word(word)
-                            .build();
+                    .synonym(inputSynonym.getSynonym())
+                    .memo(inputSynonym.getMemo())
+                    .word(word)
+                    .build();
             synonymRepository.save(newSynonym);
         }
+        return "완료";
+    }
 
-        return "저장완료";
+    public static String updateMemo(WordRepository wordRepository, WordDto.Request dto, Word word){
+        word.setMemo(dto.getMemo());
+        wordRepository.save(word);
+        return "완료";
     }
 
     /*
@@ -128,7 +170,10 @@ public class WordServiceImpl implements WordService {
         word.setSoundPath(fileName);
         return wordRepository.save(word);
     }
-
+    /**
+     * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
+     * @param wordName 단어명
+     * */
     private String createSoundFile(String wordName){
         //String fileName = wordName + "_" + System.currentTimeMillis();
         String fileName = "p_"+ wordName;
@@ -160,7 +205,7 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public String removeByWord(WordDto.Request dto){
-       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new UserNotFoundCException(ErrorCode.DataNotFound.getDescription()));
+       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound.getDescription()));
        wordRepository.delete(word);
 //        word.ifPresent(removeWord->{
 //            wordRepository.delete(removeWord);
