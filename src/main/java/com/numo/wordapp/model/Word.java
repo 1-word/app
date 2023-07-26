@@ -30,6 +30,10 @@ public class Word extends Timestamped{
     private String wread;   //읽는법
     private String memo;    //메모
     private String soundPath;   //230423추가 발음 파일 경로
+    private String memorization;    //230724추가 암기여부 Y/N
+
+    @Column(name = "folder_id")
+    private Integer folderId;
 
     //양방향 관계, 단어가 삭제되면 유의어도 삭제되도록 CascadeType.REMOVE속성 사용.
     //@OneToMany(mappedBy = "word", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -40,22 +44,15 @@ public class Word extends Timestamped{
     private List<Synonym> synonyms = new ArrayList<>(); //초기화 선언
 
     @Builder
-    public Word(String userId, String word, String mean, String wread, String memo){
+    public Word(String userId, String word, String mean, String wread, String memo, String memorization){
         this.userId = userId;
         this.word = word;
         this.mean = mean;
         this.wread = wread;
         this.memo = memo;
+        this.memorization = memorization;
     }
 
-    public static Word createWord(WordDto.Request dto){
-        return Word.builder()
-                .word(dto.getWord())
-                .mean(dto.getMean())
-                .wread(dto.getWread())
-                .mean(dto.getMean())
-                .build();
-    }
     // 연관관계 설정
     // word는 연관관계의 주인이 아님, 그러므로 addSynonym 메소드를 통해 데이터 삽입해준다.
     public void addSynonym(Synonym synonym){
@@ -65,16 +62,5 @@ public class Word extends Timestamped{
         if(synonym.getWord() != this){
             synonym.setWord(this);
         }
-    }
-
-    public void addSynonym(List<Synonym> synonyms){
-        this.synonyms = synonyms;
-    }
-
-    public void update(Word word){
-        this.word = word.getWord();
-        this.mean = word.getMean();
-        this.wread = word.getWread();
-        this.memo = word.getMemo();
     }
 }

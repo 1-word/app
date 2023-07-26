@@ -1,6 +1,8 @@
 package com.numo.wordapp.service;
 
+import com.numo.wordapp.dto.FolderDto;
 import com.numo.wordapp.dto.WordDto;
+import com.numo.wordapp.model.Folder;
 import com.numo.wordapp.model.Word;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,4 +32,6 @@ public interface WordService {
     List<Word> getBySearchWord(String user_id, String data);
 
     List<Word> getByAllWord(String user_id);
+
+    List<Word> getByFolderWord(String user_id, int folder_id);
 }

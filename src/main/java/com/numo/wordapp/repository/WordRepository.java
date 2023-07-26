@@ -20,6 +20,9 @@ public interface WordRepository extends JpaRepository<Word, Integer> {
     @Query("SELECT distinct w FROM Word w left join fetch w.synonyms s where w.userId = ?1 order by w.update_time desc, s.synonym_id asc")
     List<Word> getByAllWord(String user_id);
 
+    @Query("SELECT distinct w FROM Word w left join fetch w.synonyms s where w.userId = ?1 and w.folderId = ?2 order by w.update_time desc, s.synonym_id asc")
+    List<Word> getByFolderWord(String userId, int folderId);
+
    @EntityGraph(attributePaths = {"synonym"})
     List<Word> findAll();
 

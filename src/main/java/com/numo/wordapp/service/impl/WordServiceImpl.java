@@ -7,6 +7,7 @@ import com.numo.wordapp.comm.advice.exception.ErrorCode;
 import com.numo.wordapp.model.Sound;
 import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
+import com.numo.wordapp.repository.FolderRepository;
 import com.numo.wordapp.repository.SoundRepository;
 import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
@@ -38,6 +39,7 @@ public class WordServiceImpl implements WordService {
     private final WordRepository wordRepository;
     private final SynonymRepository synonymRepository;
     private final SoundRepository soundRepository;
+    private final FolderRepository folderRepository;
 
     public enum UpdateType{
         all{
@@ -52,6 +54,13 @@ public class WordServiceImpl implements WordService {
                  WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
                 return updateMemo(wordRepository, dto, word);
             }
+        },
+        memorization{
+            @Override
+            public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word) {
+                WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
+                return updateMemorization(wordRepository, dto, word);
+            }
         };
 
         public abstract String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word);
@@ -59,10 +68,12 @@ public class WordServiceImpl implements WordService {
 
     public WordServiceImpl(WordRepository wordRepository,
                            SynonymRepository synonymRepository,
-                           SoundRepository soundRepository){
+                           SoundRepository soundRepository,
+                           FolderRepository folderRepository){
         this.wordRepository = wordRepository;
         this.synonymRepository = synonymRepository;
         this.soundRepository = soundRepository;
+        this.folderRepository = folderRepository;
     }
 
     /*
@@ -138,6 +149,12 @@ public class WordServiceImpl implements WordService {
 
     public static String updateMemo(WordRepository wordRepository, WordDto.Request dto, Word word){
         word.setMemo(dto.getMemo());
+        wordRepository.save(word);
+        return "완료";
+    }
+
+    public static String updateMemorization(WordRepository wordRepository, WordDto.Request dto, Word word){
+        word.setMemorization(dto.getMemorization());
         wordRepository.save(word);
         return "완료";
     }
@@ -252,4 +269,8 @@ public class WordServiceImpl implements WordService {
         return wordRepository.getByAllWord(user_id);
     }
 
+    @Override
+    public List<Word> getByFolderWord(String user_id, int folder_id){
+        return wordRepository.getByFolderWord(user_id, folder_id);
+    }
 }

@@ -1,9 +1,12 @@
 package com.numo.wordapp.controller;
 
+import com.numo.wordapp.dto.FolderDto;
 import com.numo.wordapp.dto.WordDto;
+import com.numo.wordapp.model.Folder;
 import com.numo.wordapp.model.ListResult;
 import com.numo.wordapp.model.SingleResult;
 import com.numo.wordapp.model.Word;
+import com.numo.wordapp.service.FolderService;
 import com.numo.wordapp.service.ResponseService;
 import com.numo.wordapp.service.WordService;
 import com.numo.wordapp.service.impl.WordServiceImpl;
@@ -18,13 +21,16 @@ import java.util.stream.Collectors;
 public class WordController{
     private final WordService wordService;
     private final ResponseService responseService;
+    private final FolderService folderService;
 
     private String user_id;
 
     public WordController(WordService wordService,
-                          ResponseService responseService){
+                          ResponseService responseService,
+                          FolderService folderService){
         this.wordService = wordService;
         this.responseService = responseService;
+        this.folderService = folderService;
     }
 
     @RequestMapping(value = "/search/{type}", method = RequestMethod.GET)
@@ -41,14 +47,25 @@ public class WordController{
         return responseService.getListResult(res);
     }
 
-    @RequestMapping(value = "/read", method = RequestMethod.GET)
+    @GetMapping(value = "/read")
     public ListResult<WordDto.Response> getAllWord(){
         user_id = getUserId();
         //DTO를 이용하여 무한 참조 방지.
         //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
-        List<WordDto.Response> dto =  wordService.getByAllWord(user_id).stream()
+        List<WordDto.Response> dto = wordService.getByAllWord(user_id).stream()
                 .map(WordDto.Response::new)
                 .collect(Collectors.toList());
+        return responseService.getListResult(dto);
+    }
+
+    @GetMapping(value = "/read/{folderId}")
+    public ListResult<WordDto.Response> getFolderWord(@PathVariable("folderId") int folder_id){
+        user_id = getUserId();
+            //DTO를 이용하여 무한 참조 방지.
+            //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
+        List<WordDto.Response> dto = wordService.getByFolderWord(user_id,folder_id).stream()
+                    .map(WordDto.Response::new)
+                    .collect(Collectors.toList());
         return responseService.getListResult(dto);
     }
 
@@ -76,6 +93,42 @@ public class WordController{
         dto.setWord_id(id);
         dto.setUser_id(user_id);
         String data = wordService.removeByWord(dto);
+        return responseService.getSingleResult(data);
+    }
+
+    @GetMapping(value = "/folder")
+    public ListResult<FolderDto.Response> getFolderName(){
+        user_id = getUserId();
+        List<FolderDto.Response> fdto =  folderService.getByFolderName(user_id).stream()
+                .map(FolderDto.Response::new)
+                .collect(Collectors.toList());
+        return responseService.getListResult(fdto);
+    }
+
+    @PostMapping (value = "/folder")
+    public SingleResult<Folder> setFolder(@RequestBody FolderDto.Request fdto){
+        user_id = getUserId();
+        fdto.setUser_id(user_id);
+        Folder data = folderService.setByFolder(fdto);
+        return responseService.getSingleResult(data);
+    }
+
+    @PutMapping (value = "/folder/{id}")
+    public SingleResult<Folder> updateFolder(@PathVariable("id") int id, @RequestBody FolderDto.Request fdto){
+        user_id = getUserId();
+        fdto.setFolder_id(id);
+        fdto.setUser_id(user_id);
+        Folder data = folderService.updateByFolder(fdto);
+        return responseService.getSingleResult(data);
+    }
+
+    @DeleteMapping(value="/folder/{id}")
+    public SingleResult<String> removeFolder(@PathVariable("id") int id){
+        user_id = getUserId();
+        FolderDto.Request fdto = new FolderDto.Request();
+        fdto.setFolder_id(id);
+        fdto.setUser_id(user_id);
+        String data = folderService.removeByFolder(fdto);
         return responseService.getSingleResult(data);
     }
 

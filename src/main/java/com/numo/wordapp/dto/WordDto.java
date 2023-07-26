@@ -20,6 +20,7 @@ public class WordDto {
         private String mean;
         private String wread;
         private String memo;
+        private String memorization;
         private List<SynonymDto.Request> synonyms;
         //private SynonymDto.Request synonym;
 
@@ -31,6 +32,7 @@ public class WordDto {
                     .mean(mean)
                     .wread(wread)
                     .memo(memo)
+                    .memorization(memorization)
                     //.synonyms(synonyms.stream().map(Synonym::new).collect(Collectors.toList()))
                     .build();
             return words;
