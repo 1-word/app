@@ -29,7 +29,7 @@ public class User extends Timestamped {
     @Column(name = "user_id")
     private String userId;
 
-    private String nickname;
+    private String username;
     private String password;
 
     @JsonIgnore

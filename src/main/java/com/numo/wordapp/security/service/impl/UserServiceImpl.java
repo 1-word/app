@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService{
         User user = User.builder()
                 .userId((userDto.getUser_id()))
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .nickname(userDto.getNickname())
+                .username(userDto.getUsername())
                 .authorities(Collections.singleton(authority))
                 .activated(true)
                 .build();

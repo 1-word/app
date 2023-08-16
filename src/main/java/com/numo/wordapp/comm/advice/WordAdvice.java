@@ -33,9 +33,12 @@ public class WordAdvice {
 
     //포인트컷 정의   컨트롤러 패키지 하위 클래스 전부 적용
     @Pointcut("execution(* com.numo.wordapp.controller..*.*(..))")
-    private void cut(){}
+    private void wordControllerCut(){}
 
-    @Before("cut()")
+    @Pointcut("execution(* com.numo.wordapp.controller..*.*(..))")
+    private void securityControllerCut(){}
+
+    @Before("wordControllerCut() || securityControllerCut()")
     public void before(JoinPoint joinPoint){
 
         String cls = joinPoint.getSignature().getDeclaringTypeName();

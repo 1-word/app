@@ -23,17 +23,17 @@ public class UserDto {
 
                 @NotNull
                 @Size(min = 3, max = 50)
-                private String nickname;
+                private String username;
         }
 
         @Getter
         public static class Response{
                 private String user_id;
-                private String nickname;
+                private String username;
 
                 public Response(User user){
                         this.user_id = user.getUserId();
-                        this.nickname = user.getNickname();
+                        this.username = user.getUsername();
                 }
         }
 }

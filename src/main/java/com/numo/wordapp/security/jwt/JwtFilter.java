@@ -34,6 +34,8 @@ public class JwtFilter extends GenericFilterBean {
         String jwt = resolveToken(httpServletRequest);
         String requestURI = httpServletRequest.getRequestURI();
 
+        log.info("requestURI: {}", requestURI);
+
         //유효성 검증
         if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
             //정상이면 SecurityContext에 저장

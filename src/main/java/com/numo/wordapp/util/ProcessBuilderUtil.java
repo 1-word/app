@@ -2,7 +2,9 @@ package com.numo.wordapp.util;
 
 import com.numo.wordapp.conf.property.ApplicationContextProvider;
 import com.numo.wordapp.conf.property.PropertyConfig;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ProcessBuilderUtil {
     private String program;
     private String gttsCommand = "gtts-cli '0_gttsText' -l ja --output 0_gttsFileName.mp3";
@@ -21,6 +23,7 @@ public class ProcessBuilderUtil {
     }
 
     public int run(){
+        log.info("file_path: {}", this.command[2]);
         int exitCode = 0;
         try {
             ProcessBuilder pb = new ProcessBuilder(this.command);
@@ -28,6 +31,7 @@ public class ProcessBuilderUtil {
             exitCode = p.waitFor();
             p.destroy();
         }catch (Exception e){
+            log.info(e.toString());
         }
         return exitCode;
     }
