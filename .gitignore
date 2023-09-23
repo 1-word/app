@@ -5,6 +5,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 /src/test/**/config/
+/src/main/resources/application-env.properties
+/src/main/resources/logback-spring-env.xml
 
 ### STS ###
 .apt_generated

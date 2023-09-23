@@ -21,6 +21,7 @@ public class WordDto {
         private String wread;
         private String memo;
         private String memorization;
+        private Integer folder_id;
         private List<SynonymDto.Request> synonyms;
         //private SynonymDto.Request synonym;
 
@@ -33,6 +34,7 @@ public class WordDto {
                     .wread(wread)
                     .memo(memo)
                     .memorization(memorization)
+                    .folderId(folder_id)
                     //.synonyms(synonyms.stream().map(Synonym::new).collect(Collectors.toList()))
                     .build();
             return words;
@@ -53,6 +55,7 @@ public class WordDto {
         private String soundPath;
         private List<SynonymDto.Response> synonyms;
         private String update_time;
+        private String memorization;
 
         public Response(Word words){
             this.word_id = words.getWordId();
@@ -61,6 +64,7 @@ public class WordDto {
             this.wread = words.getWread();
             this.memo = words.getMemo();
             this.soundPath = words.getSoundPath();
+            this.memorization = words.getMemorization();
             //synonymsDto에 맞게 컬럼 생성
             //stream을 이용하여 List<Synonyms> => List<SynonymDto.Response>로 형 변환
             this.synonyms = words.getSynonyms().stream().map(SynonymDto.Response::new).collect(Collectors.toList());

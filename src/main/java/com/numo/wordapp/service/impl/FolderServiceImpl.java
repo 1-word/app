@@ -31,6 +31,8 @@ public class FolderServiceImpl implements FolderService {
         //folder.setUserId(fdto.getUser_id());
         folder.setFolderName(fdto.getFolder_name());
         folder.setMemo(fdto.getMemo());
+        folder.setColor(fdto.getColor());
+        folder.setBackground(fdto.getBackground());
         return folderRepository.save(folder);
     }
 

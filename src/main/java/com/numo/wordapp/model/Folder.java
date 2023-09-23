@@ -21,14 +21,20 @@ public class Folder extends Timestamped{
     @Column(name = "folder_name")
     private String folderName;
 
+    //230923 폴더 컬러 추가
+    private String background;
+    private String color;
+
     private String memo;
 
     @Builder
-    public Folder(int folderId, String userId, String folderName, String memo) {
+    public Folder(int folderId, String userId, String folderName, String memo, String color, String background) {
         this.folderId = folderId;
         this.userId = userId;
         this.folderName = folderName;
         this.memo = memo;
+        this.color = color;
+        this.background = background;
     }
 
     public int getFolderId() {
@@ -57,5 +63,19 @@ public class Folder extends Timestamped{
 
     public void setMemo(String memo) {
         this.memo = memo;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getColor(){ return color;}
+
+    public void setBackground(String background) {
+        this.background = background;
+    }
+
+    public String getBackground() {
+        return background;
     }
 }

@@ -44,13 +44,14 @@ public class Word extends Timestamped{
     private List<Synonym> synonyms = new ArrayList<>(); //초기화 선언
 
     @Builder
-    public Word(String userId, String word, String mean, String wread, String memo, String memorization){
+    public Word(String userId, String word, String mean, String wread, String memo, String memorization, Integer folderId){
         this.userId = userId;
         this.word = word;
         this.mean = mean;
         this.wread = wread;
         this.memo = memo;
         this.memorization = memorization;
+        this.folderId = folderId;
     }
 
     // 연관관계 설정

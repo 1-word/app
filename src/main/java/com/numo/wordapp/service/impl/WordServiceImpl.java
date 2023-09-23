@@ -81,6 +81,7 @@ public class WordServiceImpl implements WordService {
     * 파라미터: 요청받은 dto값
     * 기능: 데이터 수정(유의어 수정은 synonymServiceImpl에서)
     * 유의사항: word의 칼럼이 추가되면 update시에 word.set{colName}() 추가 필요
+    *         !! WordDto.Request 형식의 user_id, word_id 필수 !!
     * 작성자: 정현경
     * 작성일: 2022.06.22
     * 수정일: 2023.06.04
