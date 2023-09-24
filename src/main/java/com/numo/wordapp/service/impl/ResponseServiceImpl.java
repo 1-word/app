@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -30,6 +31,14 @@ public class ResponseServiceImpl implements ResponseService {
     public <T> ListResult<T> getListResult(List<T> list) {
         ListResult<T> result = new ListResult<>();
         result.setList(list);
+        setSuccessResult(result);
+        return result;
+    }
+
+    @Override
+    public <T> ListResult<T> getListResult(HashMap<String, T> datas) {
+        ListResult<T> result = new ListResult<>();
+        result.setDatas(datas);
         setSuccessResult(result);
         return result;
     }

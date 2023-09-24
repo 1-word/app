@@ -61,6 +61,13 @@ public class WordServiceImpl implements WordService {
                 WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
                 return updateMemorization(wordRepository, dto, word);
             }
+        },
+        wordFolder{
+            @Override
+            public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word) {
+                WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
+                return updateWordFolder(wordRepository, dto, word);
+            }
         };
 
         public abstract String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word);
@@ -148,14 +155,20 @@ public class WordServiceImpl implements WordService {
         return "완료";
     }
 
-    public static String updateMemo(WordRepository wordRepository, WordDto.Request dto, Word word){
+    private static String updateMemo(WordRepository wordRepository, WordDto.Request dto, Word word){
         word.setMemo(dto.getMemo());
         wordRepository.save(word);
         return "완료";
     }
 
-    public static String updateMemorization(WordRepository wordRepository, WordDto.Request dto, Word word){
+    private static String updateMemorization(WordRepository wordRepository, WordDto.Request dto, Word word){
         word.setMemorization(dto.getMemorization());
+        wordRepository.save(word);
+        return "완료";
+    }
+
+    private static String updateWordFolder(WordRepository wordRepository, WordDto.Request dto, Word word){
+        word.setFolderId(dto.getFolder_id());
         wordRepository.save(word);
         return "완료";
     }

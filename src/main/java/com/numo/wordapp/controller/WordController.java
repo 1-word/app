@@ -13,6 +13,8 @@ import com.numo.wordapp.service.impl.WordServiceImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,25 +50,37 @@ public class WordController{
     }
 
     @GetMapping(value = "/read")
-    public ListResult<WordDto.Response> getAllWord(){
+    public ListResult<Object> getFolderNameAndAllWord(){
         user_id = getUserId();
         //DTO를 이용하여 무한 참조 방지.
         //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
         List<WordDto.Response> dto = wordService.getByAllWord(user_id).stream()
                 .map(WordDto.Response::new)
                 .collect(Collectors.toList());
-        return responseService.getListResult(dto);
+        List<FolderDto.Response> fdto =  folderService.getByFolderName(user_id).stream()
+                .map(FolderDto.Response::new)
+                .collect(Collectors.toList());
+        HashMap<String, Object> datas = new HashMap<>();
+        datas.put("folder", fdto);
+        datas.put("word", dto);
+        return responseService.getListResult(datas);
     }
 
     @GetMapping(value = "/read/{folderId}")
-    public ListResult<WordDto.Response> getFolderWord(@PathVariable("folderId") int folder_id){
+    public ListResult<Object> getFolderWord(@PathVariable("folderId") int folder_id){
         user_id = getUserId();
             //DTO를 이용하여 무한 참조 방지.
             //stream을 이용하여 List<Word> 자료형을 List<WordDto.Response>로 변환
         List<WordDto.Response> dto = wordService.getByFolderWord(user_id,folder_id).stream()
                     .map(WordDto.Response::new)
                     .collect(Collectors.toList());
-        return responseService.getListResult(dto);
+        List<FolderDto.Response> fdto =  folderService.getByFolderName(user_id).stream()
+                .map(FolderDto.Response::new)
+                .collect(Collectors.toList());
+        HashMap<String, Object> datas = new HashMap<>();
+        datas.put("folder", fdto);
+        datas.put("word", dto);
+        return responseService.getListResult(datas);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

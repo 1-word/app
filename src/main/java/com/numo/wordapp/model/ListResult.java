@@ -3,10 +3,26 @@ package com.numo.wordapp.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.List;
 
-@Getter
-@Setter
 public class ListResult<T> extends CommonResult {
     private List<T> list;
+    private HashMap<String, T> datas;
+
+    public void setList(List<T> list) {
+        this.list = list;
+    }
+
+    public List<T> getList() {
+        return list;
+    }
+
+    public void setDatas(HashMap<String, T> datas) {
+        this.datas = datas;
+    }
+
+    public HashMap<String, T> getDatas() {
+        return datas;
+    }
 }
