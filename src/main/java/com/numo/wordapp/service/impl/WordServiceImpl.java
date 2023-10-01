@@ -12,6 +12,7 @@ import com.numo.wordapp.repository.SoundRepository;
 import com.numo.wordapp.repository.SynonymRepository;
 import com.numo.wordapp.repository.WordRepository;
 
+import com.numo.wordapp.security.model.WordType;
 import com.numo.wordapp.service.WordService;
 import com.numo.wordapp.util.ProcessBuilderUtil;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -196,7 +197,7 @@ public class WordServiceImpl implements WordService {
 
         String fileName = soundPathOptional.orElse(null);
         if(fileName == null || fileName == ""){ // 해당 하는 단어의 sound가 없으면 sound파일 생성 및 데이터베이스에 추가
-            fileName = createSoundFile(word.getWord());
+            fileName = createSoundFile(word.getWord(), dto.getType());
         }
         word.setSoundPath(fileName);
         return wordRepository.save(word);
@@ -205,9 +206,10 @@ public class WordServiceImpl implements WordService {
      * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
      * @param wordName 단어명
      * */
-    private String createSoundFile(String wordName){
+    private String createSoundFile(String wordName, String type){
         //String fileName = wordName + "_" + System.currentTimeMillis();
-        String fileName = "p_"+ wordName;
+        String fileName = "p_"+ wordName.replaceAll("\\s", "");
+        int code = 0;
 
         // 1. sound 테이블에 데이터 insert
         Sound sound = Sound.builder()
@@ -219,7 +221,14 @@ public class WordServiceImpl implements WordService {
         soundRepository.save(sound);
 
         // 2. 발음 파일 생성
-        int code = new ProcessBuilderUtil(wordName, fileName).run();
+        if (type.equals(WordType.JP.getValue())) {
+            code = new ProcessBuilderUtil(wordName, fileName).run();
+        }
+
+        if (type.equals(WordType.EN.getValue())){
+            code = new ProcessBuilderUtil(wordName, fileName, WordType.valueOf(type).getTtsType()).run();
+        }
+
         //파일생성 실패 시
         if(code != 0) fileName = "";
         return fileName;

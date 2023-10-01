@@ -1,6 +1,8 @@
 package com.numo.wordapp.model;
 
 import com.numo.wordapp.dto.WordDto;
+import com.numo.wordapp.security.model.Authority;
+import com.numo.wordapp.security.model.WordType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,6 +34,9 @@ public class Word extends Timestamped{
     private String soundPath;   //230423추가 발음 파일 경로
     private String memorization;    //230724추가 암기여부 Y/N
 
+    @Enumerated(EnumType.STRING)
+    private WordType type;   //20230930추가 단어 타입 (영어, 일본어 등)
+
     @Column(name = "folder_id")
     private Integer folderId;
 
@@ -44,7 +49,7 @@ public class Word extends Timestamped{
     private List<Synonym> synonyms = new ArrayList<>(); //초기화 선언
 
     @Builder
-    public Word(String userId, String word, String mean, String wread, String memo, String memorization, Integer folderId){
+    public Word(String userId, String word, String mean, String wread, String memo, String memorization, Integer folderId, WordType type){
         this.userId = userId;
         this.word = word;
         this.mean = mean;
@@ -52,6 +57,7 @@ public class Word extends Timestamped{
         this.memo = memo;
         this.memorization = memorization;
         this.folderId = folderId;
+        this.type = type;
     }
 
     // 연관관계 설정
