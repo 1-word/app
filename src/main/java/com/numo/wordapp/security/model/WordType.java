@@ -1,7 +1,7 @@
 package com.numo.wordapp.security.model;
 
 public enum WordType {
-    EN("EN", "en"), JP("JP", "ja"), KO("KO", "ja");
+    EN("EN", "en"), JP("JP", "ja"), KO("KO", "ko");
     private String wordType;
     private String ttsType;
 

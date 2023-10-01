@@ -1,5 +1,6 @@
 package com.numo.wordapp.dto;
 
+import com.numo.wordapp.model.Folder;
 import com.numo.wordapp.model.Word;
 import com.numo.wordapp.security.model.WordType;
 import lombok.*;
@@ -23,7 +24,7 @@ public class WordDto {
         private String memo;
         private String memorization;
         private Integer folder_id;
-        private String type;
+        //private String type;
         private List<SynonymDto.Request> synonyms;
         //private SynonymDto.Request synonym;
 
@@ -37,7 +38,7 @@ public class WordDto {
                     .memo(memo)
                     .memorization(memorization)
                     .folderId(folder_id)
-                    .type(WordType.valueOf(type))
+                    //.type(WordType.valueOf(type))
                     //.synonyms(synonyms.stream().map(Synonym::new).collect(Collectors.toList()))
                     .build();
             return words;
@@ -58,8 +59,10 @@ public class WordDto {
         private String soundPath;
         private List<SynonymDto.Response> synonyms;
         private String update_time;
+        private String create_time;
         private String memorization;
         private String type;
+        private FolderDto.Response folder;
 
         public Response(Word words){
             this.word_id = words.getWordId();
@@ -73,10 +76,11 @@ public class WordDto {
             //synonymsDto에 맞게 컬럼 생성
             //stream을 이용하여 List<Synonyms> => List<SynonymDto.Response>로 형 변환
             this.synonyms = words.getSynonyms().stream().map(SynonymDto.Response::new).collect(Collectors.toList());
-            try{
-                this.update_time = words.getUpdate_time().format(DateTimeFormatter.ISO_DATE);
-            }catch (Exception e){
-                this.update_time = "";
+            this.update_time = words.getUpdate_time();
+            this.create_time = words.getCreate_time();
+//            this.folder = words.getFolder();
+            if (words.getFolder() != null) {
+                this.folder = new FolderDto.Response(words.getFolder());
             }
         }
     }

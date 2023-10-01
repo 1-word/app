@@ -43,4 +43,5 @@ public class FolderDto {
             this.memo = folder.getMemo();
         }
     }
+
 }

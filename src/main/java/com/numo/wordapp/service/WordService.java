@@ -23,7 +23,7 @@ public interface WordService {
     String updateByWord(WordDto.Request dto, String type);
 
     @Transactional
-    Word setByWord(WordDto.Request dto);
+    Word setByWord(WordDto.Request dto, String type);
 
     String removeByWord(WordDto.Request dto);
 

@@ -83,11 +83,11 @@ public class WordController{
         return responseService.getListResult(datas);
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public SingleResult<WordDto.Response> setSaveWord(@RequestBody WordDto.Request dto){
+    @RequestMapping(value = "/save/{type}", method = RequestMethod.POST)
+    public SingleResult<WordDto.Response> setSaveWord(@RequestBody WordDto.Request dto, @PathVariable("type") String type){
         user_id = getUserId();
         dto.setUser_id(user_id);
-        WordDto.Response wdr = new WordDto.Response(wordService.setByWord(dto));
+        WordDto.Response wdr = new WordDto.Response(wordService.setByWord(dto, type));
         return responseService.getSingleResult(wdr);
     }
 

@@ -4,6 +4,7 @@ import com.numo.wordapp.comm.advice.exception.CustomException;
 import com.numo.wordapp.dto.SynonymDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
+import com.numo.wordapp.model.Folder;
 import com.numo.wordapp.model.Sound;
 import com.numo.wordapp.model.Synonym;
 import com.numo.wordapp.model.Word;
@@ -108,6 +109,7 @@ public class WordServiceImpl implements WordService {
             jpaRepositories.add(synonymRepository);
             updateType.updateByWordType(jpaRepositories, dto, word);
         }catch (Exception e){
+            System.out.println(e);
             throw new CustomException(ErrorCode.TypeNotFound.getDescription());
         }
 
@@ -169,27 +171,36 @@ public class WordServiceImpl implements WordService {
     }
 
     private static String updateWordFolder(WordRepository wordRepository, WordDto.Request dto, Word word){
-        word.setFolderId(dto.getFolder_id());
+        Folder folder = new Folder();
+        folder.setFolderId(dto.getFolder_id());
+        word.setFolder(folder);
         wordRepository.save(word);
         return "완료";
     }
 
-    /*
+    /**
     * 메소드: setByWord(WordDto.Request dto)
-    * 파라미터: 요청받은 dto값
-    * 리턴 값: String
-    * 기능: 데이터 저장
+    * @param dto {@link WordDto.Request}
+    * @return Word {@link Word}
+    * @note
     * 작성자: 정현경
     * 작성일: 2022.06.22
     * */
 
     @Override
     @Transactional
-    public Word setByWord(WordDto.Request dto){
+    public Word setByWord(WordDto.Request dto, String type){
         Word word = dto.toEntity();
         List<SynonymDto.Request> synonyms = dto.getSynonyms();
         for (SynonymDto.Request synonym : synonyms) {
             word.addSynonym(synonym.toEntity(word));
+        }
+
+        //folder_id 입력
+        if (dto.getFolder_id() != null) {
+            Folder folder = new Folder();
+            folder.setFolderId(dto.getFolder_id());
+            word.setFolder(folder);
         }
 
         Optional<String> soundPathOptional = soundRepository.findByWord(word.getWord())
@@ -197,7 +208,7 @@ public class WordServiceImpl implements WordService {
 
         String fileName = soundPathOptional.orElse(null);
         if(fileName == null || fileName == ""){ // 해당 하는 단어의 sound가 없으면 sound파일 생성 및 데이터베이스에 추가
-            fileName = createSoundFile(word.getWord(), dto.getType());
+            fileName = createSoundFile(word.getWord(), type);
         }
         word.setSoundPath(fileName);
         return wordRepository.save(word);
@@ -221,12 +232,10 @@ public class WordServiceImpl implements WordService {
         soundRepository.save(sound);
 
         // 2. 발음 파일 생성
-        if (type.equals(WordType.JP.getValue())) {
+        if(type == null || type == "") {
             code = new ProcessBuilderUtil(wordName, fileName).run();
-        }
-
-        if (type.equals(WordType.EN.getValue())){
-            code = new ProcessBuilderUtil(wordName, fileName, WordType.valueOf(type).getTtsType()).run();
+        }else{
+           code = new ProcessBuilderUtil(wordName, fileName, WordType.valueOf(type).getTtsType()).run();
         }
 
         //파일생성 실패 시

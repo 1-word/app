@@ -3,6 +3,7 @@ package com.numo.wordapp.model;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.security.model.Authority;
 import com.numo.wordapp.security.model.WordType;
+import io.swagger.models.auth.In;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,8 +38,12 @@ public class Word extends Timestamped{
     @Enumerated(EnumType.STRING)
     private WordType type;   //20230930추가 단어 타입 (영어, 일본어 등)
 
-    @Column(name = "folder_id")
-    private Integer folderId;
+//    @Column(name = "folder_id")
+//    private Integer folderId;
+
+    @OneToOne
+    @JoinColumn(name="folder_id")
+    private Folder folder;
 
     //양방향 관계, 단어가 삭제되면 유의어도 삭제되도록 CascadeType.REMOVE속성 사용.
     //@OneToMany(mappedBy = "word", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -56,7 +61,7 @@ public class Word extends Timestamped{
         this.wread = wread;
         this.memo = memo;
         this.memorization = memorization;
-        this.folderId = folderId;
+//        this.folderId = folderId;
         this.type = type;
     }
 
@@ -69,5 +74,13 @@ public class Word extends Timestamped{
         if(synonym.getWord() != this){
             synonym.setWord(this);
         }
+    }
+
+    public void setFolderId(Integer id){
+        folder.setFolderId(id);
+    }
+
+    public int getFolderId(){
+        return folder.getFolderId();
     }
 }

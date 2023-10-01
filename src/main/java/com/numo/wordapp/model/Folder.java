@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "folder")
 public class Folder extends Timestamped{
     @Id
@@ -36,6 +36,8 @@ public class Folder extends Timestamped{
         this.color = color;
         this.background = background;
     }
+
+    public void setFolderId(int folderId){ this.folderId = folderId; }
 
     public int getFolderId() {
         return folderId;
