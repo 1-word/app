@@ -6,10 +6,9 @@ import com.numo.wordapp.util.JsonUtil;
 import com.numo.wordapp.util.ProcessBuilderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -38,8 +37,14 @@ public class WordAdvice {
     @Pointcut("execution(* com.numo.wordapp.controller..*.*(..))")
     private void securityControllerCut(){}
 
-    @Before("wordControllerCut() || securityControllerCut()")
-    public void before(JoinPoint joinPoint){
+    /**
+     * 1. /word로 들어오는 URL에 해당하는 파라미터 출력<br>
+     * 2. 토큰의 ID를 파라미터의 가장 앞에 추가
+     * @param joinPoint
+     * @return Object ({@link com.numo.wordapp.controller.WordController}의 각 메서드의 파라미터 값)
+     * */
+    @Around("wordControllerCut() || securityControllerCut()")
+    public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
 
         String cls = joinPoint.getSignature().getDeclaringTypeName();
         //실행되는 함수 이름 읽어옴
@@ -48,12 +53,18 @@ public class WordAdvice {
         //메서드 매개변수 배열 읽어옴
         Object[] args = joinPoint.getArgs();
 
+        //jwt ID 확인
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        //ID 추가
+        args[0] = id;
         //System.out.println("[before method] method: " + method);
         //log.info("[before method] method: " + method + "()");
         log.info("[WordAdvice before]: {} {}()", cls, method);
         if (args.length != 0) {
             log.info("[before method] args: " + jsonUtil.getJson(args));
         }
+
+        return joinPoint.proceed(args);
     }
 
     /**

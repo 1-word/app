@@ -203,6 +203,8 @@ public class WordServiceImpl implements WordService {
             word.setFolder(folder);
         }
 
+        word.setType(WordType.valueOf(type));
+
         Optional<String> soundPathOptional = soundRepository.findByWord(word.getWord())
                 .map(sound -> sound.getSoundPath());
 
