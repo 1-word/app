@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository;
 
-import com.numo.wordapp.model.Sound;
+import com.numo.wordapp.model.word.Sound;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

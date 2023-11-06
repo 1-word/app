@@ -1,5 +1,6 @@
-package com.numo.wordapp.model;
+package com.numo.wordapp.model.word;
 
+import com.numo.wordapp.model.Timestamped;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "folder")
-public class Folder extends Timestamped{
+public class Folder extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "folder_id")

@@ -1,9 +1,7 @@
-package com.numo.wordapp.model;
+package com.numo.wordapp.model.word;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.numo.wordapp.dto.SynonymDto;
+import com.numo.wordapp.model.Timestamped;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 
@@ -12,7 +10,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "sound")
-public class Sound extends Timestamped{
+public class Sound extends Timestamped {
     @Id
     private String word; //기본키
 

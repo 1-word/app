@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CustomException extends RuntimeException{
-    public CustomException(){
+    ErrorCode errorCode;
+    public CustomException() {
         super();
+        Exception e = new Exception();
     }
 
     public CustomException(String msg){
@@ -14,7 +16,8 @@ public class CustomException extends RuntimeException{
     }
 
     public CustomException(ErrorCode errorCode){
-        super(errorCode.getDescription());
-        log.info("errorCode: {}, errorMsg: {}", errorCode.getCode(),errorCode.getDescription());
+        super(errorCode.getRemark());
+        this.errorCode = errorCode;
+        log.info("errorCode: {}, errorMsg", errorCode.getCode(), errorCode.getRemark());
     }
 }

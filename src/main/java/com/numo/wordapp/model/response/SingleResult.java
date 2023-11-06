@@ -1,4 +1,4 @@
-package com.numo.wordapp.model;
+package com.numo.wordapp.model.response;
 
 import lombok.Getter;
 import lombok.Setter;

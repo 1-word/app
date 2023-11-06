@@ -1,29 +1,29 @@
 package com.numo.wordapp.service.impl;
 
 import com.numo.wordapp.comm.advice.exception.CustomException;
-import com.numo.wordapp.dto.SynonymDto;
+import com.numo.wordapp.dto.WordDetailMainDto;
+import com.numo.wordapp.dto.WordDetailSubDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
-import com.numo.wordapp.model.Folder;
-import com.numo.wordapp.model.Sound;
-import com.numo.wordapp.model.Synonym;
-import com.numo.wordapp.model.Word;
-import com.numo.wordapp.repository.FolderRepository;
-import com.numo.wordapp.repository.SoundRepository;
-import com.numo.wordapp.repository.SynonymRepository;
-import com.numo.wordapp.repository.WordRepository;
+import com.numo.wordapp.model.word.Folder;
+import com.numo.wordapp.model.word.Sound;
+import com.numo.wordapp.model.word.Word;
+import com.numo.wordapp.model.word.GttsCode;
+import com.numo.wordapp.model.word.detail.WordDetailMain;
+import com.numo.wordapp.model.word.detail.WordDetailSub;
+import com.numo.wordapp.model.word.detail.WordDetailTitle;
+import com.numo.wordapp.repository.*;
 
-import com.numo.wordapp.security.model.WordType;
 import com.numo.wordapp.service.WordService;
 import com.numo.wordapp.util.ProcessBuilderUtil;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /*
  클래스: WordServiceImpl
@@ -42,16 +42,34 @@ public class WordServiceImpl implements WordService {
     private final SynonymRepository synonymRepository;
     private final SoundRepository soundRepository;
     private final FolderRepository folderRepository;
+    private final WordDetailMainRepository wordDetailMainRepository;
+    private final WordDetailSubRepository wordDetailSubRepository;
+
+    public WordServiceImpl(WordRepository wordRepository,
+                           SynonymRepository synonymRepository,
+                           SoundRepository soundRepository,
+                           FolderRepository folderRepository,
+                           WordDetailMainRepository wordDetailMainRepository,
+                           WordDetailSubRepository wordDetailSubRepository){
+        this.wordRepository = wordRepository;
+        this.synonymRepository = synonymRepository;
+        this.soundRepository = soundRepository;
+        this.folderRepository = folderRepository;
+        this.wordDetailMainRepository = wordDetailMainRepository;
+        this.wordDetailSubRepository = wordDetailSubRepository;
+    }
 
     public enum UpdateType{
         all{
             @Override
+            @Transactional
             public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word){
                 return updateAll(jpaRepositories, dto, word);
             }
         },
         memo{
             @Override
+            @Transactional
             public String updateByWordType(List<JpaRepository> jpaRepositories,WordDto.Request dto, Word word){
                  WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
                 return updateMemo(wordRepository, dto, word);
@@ -59,6 +77,7 @@ public class WordServiceImpl implements WordService {
         },
         memorization{
             @Override
+            @Transactional
             public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word) {
                 WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
                 return updateMemorization(wordRepository, dto, word);
@@ -66,6 +85,7 @@ public class WordServiceImpl implements WordService {
         },
         wordFolder{
             @Override
+            @Transactional
             public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word) {
                 WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
                 return updateWordFolder(wordRepository, dto, word);
@@ -73,16 +93,6 @@ public class WordServiceImpl implements WordService {
         };
 
         public abstract String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word);
-    }
-
-    public WordServiceImpl(WordRepository wordRepository,
-                           SynonymRepository synonymRepository,
-                           SoundRepository soundRepository,
-                           FolderRepository folderRepository){
-        this.wordRepository = wordRepository;
-        this.synonymRepository = synonymRepository;
-        this.soundRepository = soundRepository;
-        this.folderRepository = folderRepository;
     }
 
     /*
@@ -101,7 +111,7 @@ public class WordServiceImpl implements WordService {
     @Transactional
     public String updateByWord(WordDto.Request dto, String type){
         // 1. 해당 단어 유효한지 검색
-        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound.getDescription()));  //db에서 조회를 하면 영속성 유지..
+        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));  //db에서 조회를 하면 영속성 유지..
         try{
             UpdateType updateType = UpdateType.valueOf(type);
             List<JpaRepository> jpaRepositories = new ArrayList<>();
@@ -110,50 +120,60 @@ public class WordServiceImpl implements WordService {
             updateType.updateByWordType(jpaRepositories, dto, word);
         }catch (Exception e){
             System.out.println(e);
-            throw new CustomException(ErrorCode.TypeNotFound.getDescription());
+            throw new CustomException(ErrorCode.TypeNotFound);
         }
 
         return "저장완료";
     }
 
+
+    /**
+     * 단어 데이터 업데이트
+     * @param jpaRepositories {@link WordRepository}, {@link WordDetailMainRepository}
+     * @param dto {@link WordDto}
+     * @param word {@link Word}
+     * @return 저장된 단어 데이터 {@link Word}
+     * */
     public static String updateAll(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word){
         WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
-        SynonymRepository synonymRepository = (SynonymRepository) jpaRepositories.get(1);
+        WordDetailMainRepository wordDetailMainRepository = (WordDetailMainRepository) jpaRepositories.get(1);
         // 2 단어 업데이트
         //단어 테이블 컬럼 추가 시 아래 코드 작성 필요
         //word.setWord(dto.getWord());  //word는 업데이트 불필요(pk값)_20230701
         word.setMean(dto.getMean());
-        word.setWread(dto.getWread());
+        word.setRead(dto.getRead());
         if (dto.getMemo() != null) word.setMemo(dto.getMemo());
-        word.setUpdate_time(LocalDateTime.now());
+        word.setNowTime();
         wordRepository.save(word);
 
-        // 3. 유의어 업데이트
-        List<Synonym> existingSynonyms = word.getSynonyms();
-        List<SynonymDto.Request> inputSynonyms = dto.getSynonyms();
+        // 3. 디테일 데이터 업데이트
+        List<WordDetailMain> existingWordDetailMains = word.getWordDetailMains();
+        List<WordDetailMainDto.Request> inputWordDetailMainsMain = dto.getWordDetails();
 
-        // 현재 유의어 갯수 확인
-        for (int i=0; i < existingSynonyms.size(); i++){
-            Synonym existingSynonym = existingSynonyms.get(i);
-            if (i < inputSynonyms.size()){
-                SynonymDto.Request inputSynonym = inputSynonyms.get(i);
-                existingSynonym.setSynonym(inputSynonym.getSynonym());
-                existingSynonym.setMemo(inputSynonym.getMemo());
-                synonymRepository.save(existingSynonym);
-            }else{  // 현재 유의어 갯수보다 적으면 delete 실행
-                synonymRepository.deleteSynonym(existingSynonym.getSynonym_id());
+        // 현재 디테일 갯수 확인
+        for (int i = 0; i < existingWordDetailMains.size(); i++){
+            WordDetailMain existingWordDetailMain = existingWordDetailMains.get(i);
+            if (i < inputWordDetailMainsMain.size()){
+                WordDetailMainDto.Request inputWordDetailMain = inputWordDetailMainsMain.get(i);
+                existingWordDetailMain.setContent(inputWordDetailMain.getContent());
+                existingWordDetailMain.setMemo(inputWordDetailMain.getMemo());
+                wordDetailMainRepository.save(existingWordDetailMain);
+            }else{  // 현재 디테일 갯수보다 적으면 delete 실행
+                //해당하는 단어의 모든 디테일 데이터 삭제
+                wordDetailMainRepository.deleteWordDetail(dto.getWord_id());
             }
         }
 
         // 현재 유의어 갯수보다 update할 유의어 갯수가 더 많으면 insert 실행
-        for (int i = existingSynonyms.size(); i < inputSynonyms.size(); i++) {
-            SynonymDto.Request inputSynonym = inputSynonyms.get(i);
-            Synonym newSynonym = Synonym.builder()
-                    .synonym(inputSynonym.getSynonym())
-                    .memo(inputSynonym.getMemo())
+        for (int i = existingWordDetailMains.size(); i < inputWordDetailMainsMain.size(); i++) {
+            WordDetailMainDto.Request inputWordDetailMain = inputWordDetailMainsMain.get(i);
+            WordDetailMain newWordDetailMain = WordDetailMain.builder()
+                    .content(inputWordDetailMain.getContent())
+                    .memo(inputWordDetailMain.getMemo())
                     .word(word)
+                    .wordDetailTitle(inputWordDetailMain.toEntity().getWordDetailTitle())
                     .build();
-            synonymRepository.save(newSynonym);
+            wordDetailMainRepository.save(newWordDetailMain);
         }
         return "완료";
     }
@@ -179,7 +199,7 @@ public class WordServiceImpl implements WordService {
     }
 
     /**
-    * 메소드: setByWord(WordDto.Request dto)
+    * 메소드: saveWord(WordDto.Request dto)
     * @param dto {@link WordDto.Request}
     * @return Word {@link Word}
     * @note
@@ -189,11 +209,27 @@ public class WordServiceImpl implements WordService {
 
     @Override
     @Transactional
-    public Word setByWord(WordDto.Request dto, String type){
+    public Word saveWord(WordDto.Request dto, String type){
         Word word = dto.toEntity();
-        List<SynonymDto.Request> synonyms = dto.getSynonyms();
-        for (SynonymDto.Request synonym : synonyms) {
-            word.addSynonym(synonym.toEntity(word));
+        List<WordDetailMainDto.Request> inputWordDetailMainsMain = dto.getWordDetails();
+//        List<WordDetailMain> newWordDetailMains = inputWordDetailMainsMain.stream()
+//                .map(inputWordDetailMain -> inputWordDetailMain.toEntity(word, new WordDetailTitle(inputWordDetailMain.getTitle_id())))
+//                .collect(Collectors.toList());
+//
+//        newWordDetailMains.forEach(wd -> wd.getWordDetailSub().forEach(wd::addWordDetailSub));
+//
+//        word.addWordDetailMain(newWordDetailMains);
+
+        for (WordDetailMainDto.Request inputWordDetailMain : inputWordDetailMainsMain) {
+            WordDetailMain wd = inputWordDetailMain.toEntity(word, new WordDetailTitle(inputWordDetailMain.getTitle_id()));
+            List<WordDetailSub> ds = wd.getWordDetailSub();
+//            for(int i=0; i<ds.size(); i++){
+//                wd.addWordDetailSub(ds.get(i));
+//            }
+            for (WordDetailSub detailSub : ds) {
+                wd.addWordDetailSub(detailSub);
+            }
+            word.addWordDetailMain(wd);
         }
 
         //folder_id 입력
@@ -203,7 +239,7 @@ public class WordServiceImpl implements WordService {
             word.setFolder(folder);
         }
 
-        word.setType(WordType.valueOf(type));
+        word.setLang(GttsCode.valueOf(type));
 
         Optional<String> soundPathOptional = soundRepository.findByWord(word.getWord())
                 .map(sound -> sound.getSoundPath());
@@ -219,7 +255,8 @@ public class WordServiceImpl implements WordService {
      * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
      * @param wordName 단어명
      * */
-    private String createSoundFile(String wordName, String type){
+    @Transactional
+    public String createSoundFile(String wordName, String type){
         //String fileName = wordName + "_" + System.currentTimeMillis();
         String fileName = "p_"+ wordName.replaceAll("\\s", "");
         int code = 0;
@@ -237,7 +274,7 @@ public class WordServiceImpl implements WordService {
         if(type == null || type == "") {
             code = new ProcessBuilderUtil(wordName, fileName).run();
         }else{
-           code = new ProcessBuilderUtil(wordName, fileName, WordType.valueOf(type).getTtsType()).run();
+           code = new ProcessBuilderUtil(wordName, fileName, GttsCode.valueOf(type).getTTS()).run();
         }
 
         //파일생성 실패 시
@@ -255,8 +292,9 @@ public class WordServiceImpl implements WordService {
     * */
 
     @Override
+    @Transactional
     public String removeByWord(WordDto.Request dto){
-       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound.getDescription()));
+       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
        wordRepository.delete(word);
 //        word.ifPresent(removeWord->{
 //            wordRepository.delete(removeWord);
@@ -277,13 +315,13 @@ public class WordServiceImpl implements WordService {
 
     /*@Override
     public Word getBySearchWord(int word_id){
-        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, wread, memo);
+        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, read, memo);
         //return wordRepository.findById(word_id).get();
     }*/
 
     @Override
     public List<Word> getBySearchWord(String user_id, String data){
-        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, wread, memo);
+        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, read, memo);
         //return wordRepository.findById(word_id).get();
         return wordRepository.getBySearchWord(user_id, data);
     }
@@ -299,7 +337,6 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public List<Word> getByAllWord(String user_id){
-        //return wordRepository.getByAllWord(Sort.by(Sort.Direction.DESC, "word.word_id", "synonym_id"));
         return wordRepository.getByAllWord(user_id);
     }
 

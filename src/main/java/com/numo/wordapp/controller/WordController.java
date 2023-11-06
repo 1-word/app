@@ -2,16 +2,15 @@ package com.numo.wordapp.controller;
 
 import com.numo.wordapp.dto.FolderDto;
 import com.numo.wordapp.dto.WordDto;
-import com.numo.wordapp.model.Folder;
-import com.numo.wordapp.model.ListResult;
-import com.numo.wordapp.model.SingleResult;
-import com.numo.wordapp.model.Word;
+import com.numo.wordapp.model.word.Folder;
+import com.numo.wordapp.model.response.ListResult;
+import com.numo.wordapp.model.response.SingleResult;
+import com.numo.wordapp.model.word.Word;
 import com.numo.wordapp.service.FolderService;
 import com.numo.wordapp.service.ResponseService;
 import com.numo.wordapp.service.WordService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +51,6 @@ public class WordController{
     @GetMapping(value = {"/read/", "/read/{folder_id}" })
     public ListResult<Object> getWord(String userId, @PathVariable(required = false)Optional<Integer> folder_id){
         int folderId = folder_id.orElse(0);
-        System.out.println(folderId);
 
         List<Word> res = null;
         if (folderId == 0){
@@ -72,14 +70,17 @@ public class WordController{
         return responseService.getListResult(datas);
     }
 
-    @RequestMapping(value = "/save/{type}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{type}", method = RequestMethod.POST)
     public SingleResult<WordDto.Response> setSaveWord(String userId, @PathVariable("type") String type, @RequestBody WordDto.Request dto){
         dto.setUser_id(userId);
-        WordDto.Response wdr = new WordDto.Response(wordService.setByWord(dto, type));
-        return responseService.getSingleResult(wdr);
+        return responseService.getSingleResult(new WordDto.Response(wordService.saveWord(dto, type)));
     }
 
-    @PutMapping(value = "/update/{type}/{id}")
+    /**
+     *
+     * @param type {@link com.numo.wordapp.service.impl.WordServiceImpl.UpdateType}
+     * */
+    @PutMapping(value = "/{type}/{id}")
     public SingleResult<String> setUpdateWord(String userId, @PathVariable("type") String type, @PathVariable("id")  int id, @RequestBody WordDto.Request dto){
         dto.setWord_id(id);
         dto.setUser_id(userId);
@@ -87,7 +88,7 @@ public class WordController{
         return responseService.getSingleResult(data);
     }
 
-    @DeleteMapping(value = "/remove/{id}")
+    @DeleteMapping(value = "/{id}")
     public SingleResult<String> setRemoveWord(String userId, @PathVariable("id") int id) {
         WordDto.Request dto = new WordDto.Request();
         dto.setWord_id(id);

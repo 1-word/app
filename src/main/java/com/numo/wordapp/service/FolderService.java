@@ -1,7 +1,7 @@
 package com.numo.wordapp.service;
 
 import com.numo.wordapp.dto.FolderDto;
-import com.numo.wordapp.model.Folder;
+import com.numo.wordapp.model.word.Folder;
 
 import java.util.List;
 

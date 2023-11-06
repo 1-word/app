@@ -40,12 +40,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public TokenDto.response login(LoginDto loginDto){
+        System.out.println("ee");
         User user = userRepository.findOneWithAuthoritiesByUserId(loginDto.getUser_id())
-                .orElseThrow(() -> new CustomException("해당하는 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.LoginIDFail));
 
         // 패스워드 일치 확인
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword()))
-            throw new CustomException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.LoginPWFail);
 
         //해당 ID로된 토큰이 있는지 확인하고 있다면 update를 해줌
         //""은 찾지 못한 것을 뜻함.
@@ -84,7 +85,7 @@ public class UserServiceImpl implements UserService{
     public User signup(UserDto.Request userDto){
         //Username 확인
         if (userRepository.findOneWithAuthoritiesByUserId(userDto.getUser_id()).orElse(null) != null) {
-            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
+            throw new CustomException(ErrorCode.DuplicatedIdFound);
         }
 
         //권한은 ROLE_USER
@@ -121,7 +122,7 @@ public class UserServiceImpl implements UserService{
     public TokenDto.response reissue(TokenDto.request tokenDto){
         // 만료된 refresh token 에러
         if (!tokenProvider.validateToken(tokenDto.getRefreshToken())){
-            throw new TokenCException(ErrorCode.ExpiredToken.getDescription());
+            throw new CustomException(ErrorCode.ExpiredToken);
         }
 
         // AccessToken 에서 username(Pk) 가져오기
@@ -132,15 +133,15 @@ public class UserServiceImpl implements UserService{
 
         // userPk로 유저 검색
         User user = userRepository.findById(authentication.getName())
-                        .orElseThrow(() -> new CustomException(ErrorCode.UserNotFound.getDescription()));
+                        .orElseThrow(() -> new CustomException(ErrorCode.UserNotFound));
 
         // refreshToken 검색
         RefreshToken refreshToken = refreshTokenRepository.findByUserId(user.getUserId())
-                        .orElseThrow(() -> new TokenCException(ErrorCode.RefreshTokenNotFound.getDescription()));
+                        .orElseThrow(() -> new CustomException(ErrorCode.RefreshTokenNotFound));
 
         // 리프레시 토큰 불일치 에러
         if (!refreshToken.getToken().equals(tokenDto.getRefreshToken()))
-            throw new TokenCException("토큰 정보가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.RefreshTokenNotEqual);
 
         return createRefreshToken(user, refreshToken);
     }

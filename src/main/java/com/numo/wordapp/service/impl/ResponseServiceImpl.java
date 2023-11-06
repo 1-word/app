@@ -2,12 +2,11 @@ package com.numo.wordapp.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
-import com.numo.wordapp.model.CommonResponse;
-import com.numo.wordapp.model.CommonResult;
-import com.numo.wordapp.model.ListResult;
-import com.numo.wordapp.model.SingleResult;
+import com.numo.wordapp.model.response.CommonResponse;
+import com.numo.wordapp.model.response.CommonResult;
+import com.numo.wordapp.model.response.ListResult;
+import com.numo.wordapp.model.response.SingleResult;
 import com.numo.wordapp.service.ResponseService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 

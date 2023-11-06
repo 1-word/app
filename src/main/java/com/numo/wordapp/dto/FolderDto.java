@@ -1,11 +1,10 @@
 package com.numo.wordapp.dto;
 
-import com.numo.wordapp.model.Folder;
-import lombok.Builder;
+import com.numo.wordapp.model.word.Folder;
 import lombok.Getter;
 import lombok.Setter;
 
-public class FolderDto {
+public class FolderDto{
     @Getter
     @Setter
     public static class Request{

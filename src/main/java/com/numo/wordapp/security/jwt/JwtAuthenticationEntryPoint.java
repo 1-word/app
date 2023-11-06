@@ -1,12 +1,8 @@
 package com.numo.wordapp.security.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
-import com.numo.wordapp.comm.advice.exception.TokenCException;
-import com.numo.wordapp.model.CommonResult;
 import com.numo.wordapp.service.ResponseService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

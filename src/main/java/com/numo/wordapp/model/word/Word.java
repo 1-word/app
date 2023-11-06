@@ -1,9 +1,7 @@
-package com.numo.wordapp.model;
+package com.numo.wordapp.model.word;
 
-import com.numo.wordapp.dto.WordDto;
-import com.numo.wordapp.security.model.Authority;
-import com.numo.wordapp.security.model.WordType;
-import io.swagger.models.auth.In;
+import com.numo.wordapp.model.Timestamped;
+import com.numo.wordapp.model.word.detail.WordDetailMain;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,10 +14,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 //@DynamicUpdate //변경한 필드만 업데이트
-@Table(name = "word")
+@Table(name = "word_master")
 //@MappedSuperclass
 //@EntityListeners(AuditingEntityListener.class)
-public class Word extends Timestamped{
+public class Word extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment로 값 지정.
     @Column(name = "word_id")
@@ -30,51 +28,59 @@ public class Word extends Timestamped{
 
     private String word;    //단어
     private String mean;    //뜻
-    private String wread;   //읽는법
+    @Column(name = "`read`")
+    private String read;   //읽는법
     private String memo;    //메모
     private String soundPath;   //230423추가 발음 파일 경로
     private String memorization;    //230724추가 암기여부 Y/N
 
     @Enumerated(EnumType.STRING)
-    private WordType type;   //20230930추가 단어 타입 (영어, 일본어 등)
+    private GttsCode lang;   //20230930추가 단어 타입 (영어, 일본어 등)
 
 //    @Column(name = "folder_id")
 //    private Integer folderId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name="folder_id")
     private Folder folder;
 
     //양방향 관계, 단어가 삭제되면 유의어도 삭제되도록 CascadeType.REMOVE속성 사용.
     //@OneToMany(mappedBy = "word", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @OneToMany(mappedBy = "word", //연관관계 주인은 synonym이다.
+    @OneToMany(mappedBy = "word", // fk인스턴스
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<Synonym> synonyms = new ArrayList<>(); //초기화 선언
+    private List<WordDetailMain> wordDetailMains = new ArrayList<>(); //초기화 선언
 
     @Builder
-    public Word(String userId, String word, String mean, String wread, String memo, String memorization, Integer folderId, WordType type){
+    public Word(String userId, String word, String mean, String read, String memo, String memorization, Integer folderId, GttsCode lang){
         this.userId = userId;
         this.word = word;
         this.mean = mean;
-        this.wread = wread;
+        this.read = read;
         this.memo = memo;
         this.memorization = memorization;
 //        this.folderId = folderId;
-        this.type = type;
+        this.lang = lang;
     }
 
     // 연관관계 설정
-    // word는 연관관계의 주인이 아님, 그러므로 addSynonym 메소드를 통해 데이터 삽입해준다.
-    public void addSynonym(Synonym synonym){
-        //System.out.println("[Word]addSynonym: : "+synonym);
-        //synonym.setWord(synonym.getWord());
-        this.synonyms.add(synonym);
-        if(synonym.getWord() != this){
-            synonym.setWord(this);
+    // word는 연관관계의 주인이 아님, 메소드를 통해 데이터 삽입해준다.
+    public void addWordDetailMain(WordDetailMain wordDetailMain){
+        this.wordDetailMains.add(wordDetailMain);
+        if(wordDetailMain.getWord() != this){
+            wordDetailMain.setWord(this);
         }
     }
+
+//    public void addWordDetailMain(List<WordDetailMain> wordDetailMains){
+//        this.wordDetailMains = wordDetailMains;
+//        for (WordDetailMain wordDetailMain : wordDetailMains) {
+//            if (wordDetailMain.getWord() != this) {
+//                wordDetailMain.setWord(this);
+//            }
+//        }
+//    }
 
     public void setFolderId(Integer id){
         folder.setFolderId(id);

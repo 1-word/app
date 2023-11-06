@@ -28,6 +28,10 @@ public abstract class Timestamped {
         this.update_time = update_time;
     }
 
+    public void setNowTime() {
+        this.update_time = LocalDateTime.now();
+    }
+
     public String getCreate_time(){
         return getDateTime(create_time);
     }

@@ -1,28 +1,16 @@
 package com.numo.wordapp.security.controller;
 
-import com.numo.wordapp.model.SingleResult;
+import com.numo.wordapp.model.response.SingleResult;
 import com.numo.wordapp.security.dto.LoginDto;
 import com.numo.wordapp.security.dto.TokenDto;
-import com.numo.wordapp.security.dto.UserDto;
-import com.numo.wordapp.security.jwt.JwtFilter;
 import com.numo.wordapp.security.jwt.TokenProvider;
-import com.numo.wordapp.security.model.User;
 import com.numo.wordapp.security.service.UserService;
 import com.numo.wordapp.service.ResponseService;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
@@ -85,7 +73,7 @@ public class AuthController {
 
     //로그인 시 SecurityContext 객체에 저장..
     public void SecurityContextSave(LoginDto loginDto){
-        UsernamePasswordAuthenticationToken authenticationToken=
+        UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUser_id(), loginDto.getPassword());
 
         //토큰을 이용하여 authenticate메소드가 실행될 때 loadUserByUsername 메소드 실행(CustomUserDetailsService.loadUserByUsername())

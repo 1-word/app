@@ -3,7 +3,7 @@ package com.numo.wordapp.service.impl;
 import com.numo.wordapp.comm.advice.exception.CustomException;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
 import com.numo.wordapp.dto.FolderDto;
-import com.numo.wordapp.model.Folder;
+import com.numo.wordapp.model.word.Folder;
 import com.numo.wordapp.repository.FolderRepository;
 import com.numo.wordapp.service.FolderService;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public Folder updateByFolder(FolderDto.Request fdto){
         Folder folder = folderRepository.findByFolderIdAndUserId(fdto.getFolder_id(), fdto.getUser_id())
-                .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound.getDescription()));
+                .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
         //folder.setUserId(fdto.getUser_id());
         folder.setFolderName(fdto.getFolder_name());
         folder.setMemo(fdto.getMemo());
@@ -44,8 +44,12 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public String removeByFolder(FolderDto.Request fdto){
         Folder folder = folderRepository.findByFolderIdAndUserId(fdto.getFolder_id(), fdto.getUser_id())
-                .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound.getDescription()));
-        folderRepository.delete(folder);
+                .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
+        try {
+            folderRepository.delete(folder);
+        }catch (Exception e){
+            throw new CustomException(ErrorCode.AssociatedDataExists);
+        }
         return "데이터 삭제를 완료하였습니다.";
     }
 }

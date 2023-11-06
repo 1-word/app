@@ -1,9 +1,9 @@
 package com.numo.wordapp.service;
 
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
-import com.numo.wordapp.model.CommonResult;
-import com.numo.wordapp.model.ListResult;
-import com.numo.wordapp.model.SingleResult;
+import com.numo.wordapp.model.response.CommonResult;
+import com.numo.wordapp.model.response.ListResult;
+import com.numo.wordapp.model.response.SingleResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

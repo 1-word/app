@@ -3,7 +3,6 @@ package com.numo.wordapp.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.numo.wordapp.model.Word;
 
 /*
 * 클래스명: JsonUtil

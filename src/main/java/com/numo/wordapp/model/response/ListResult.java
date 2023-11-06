@@ -1,7 +1,4 @@
-package com.numo.wordapp.model;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.numo.wordapp.model.response;
 
 import java.util.HashMap;
 import java.util.List;

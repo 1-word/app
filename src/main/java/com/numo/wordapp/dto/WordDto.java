@@ -1,15 +1,12 @@
 package com.numo.wordapp.dto;
 
-import com.numo.wordapp.model.Folder;
-import com.numo.wordapp.model.Word;
-import com.numo.wordapp.security.model.WordType;
+import com.numo.wordapp.model.word.Word;
 import lombok.*;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WordDto {
+public class WordDto{
     /**
      * 클라이언트 -> API
      */
@@ -20,12 +17,12 @@ public class WordDto {
         private String user_id;
         private String word;
         private String mean;
-        private String wread;
+        private String read;
         private String memo;
         private String memorization;
         private Integer folder_id;
         //private String type;
-        private List<SynonymDto.Request> synonyms;
+        private List<WordDetailMainDto.Request> wordDetails;
         //private SynonymDto.Request synonym;
 
         public Word toEntity(){
@@ -34,11 +31,11 @@ public class WordDto {
                     .userId(user_id)
                     .word(word)
                     .mean(mean)
-                    .wread(wread)
+                    .read(read)
                     .memo(memo)
                     .memorization(memorization)
                     .folderId(folder_id)
-                    //.type(WordType.valueOf(type))
+                    //.type(Gtts.valueOf(type))
                     //.synonyms(synonyms.stream().map(Synonym::new).collect(Collectors.toList()))
                     .build();
             return words;
@@ -54,10 +51,10 @@ public class WordDto {
         private int word_id;
         private String word;
         private String mean;
-        private String wread;
+        private String read;
         private String memo;
         private String soundPath;
-        private List<SynonymDto.Response> synonyms;
+        private List<WordDetailMainDto.Response> wordDetails;
         private String update_time;
         private String create_time;
         private String memorization;
@@ -68,14 +65,14 @@ public class WordDto {
             this.word_id = words.getWordId();
             this.word = words.getWord();
             this.mean = words.getMean();
-            this.wread = words.getWread();
+            this.read = words.getRead();
             this.memo = words.getMemo();
             this.soundPath = words.getSoundPath();
             this.memorization = words.getMemorization();
-            this.type = words.getType().getValue();
+            this.type = words.getLang().getValue();
             //synonymsDto에 맞게 컬럼 생성
             //stream을 이용하여 List<Synonyms> => List<SynonymDto.Response>로 형 변환
-            this.synonyms = words.getSynonyms().stream().map(SynonymDto.Response::new).collect(Collectors.toList());
+            this.wordDetails = words.getWordDetailMains().stream().map(WordDetailMainDto.Response::new).collect(Collectors.toList());
             this.update_time = words.getUpdate_time();
             this.create_time = words.getCreate_time();
 //            this.folder = words.getFolder();

@@ -61,9 +61,7 @@
         <appender-ref ref="DAILY_ROLLING_FILE_APPENDER" />
     </logger>
     -->
-    <logger name="org.hibernate.SQL" level="DEBUG">
-    </logger>
-
-<!--     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>-->
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"></logger>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+<!--    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>-->
 </configuration>

@@ -1,4 +1,4 @@
-package com.numo.wordapp.model;
+package com.numo.wordapp.model.response;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;

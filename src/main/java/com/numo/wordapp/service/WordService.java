@@ -1,9 +1,7 @@
 package com.numo.wordapp.service;
 
-import com.numo.wordapp.dto.FolderDto;
 import com.numo.wordapp.dto.WordDto;
-import com.numo.wordapp.model.Folder;
-import com.numo.wordapp.model.Word;
+import com.numo.wordapp.model.word.Word;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public interface WordService {
     String updateByWord(WordDto.Request dto, String type);
 
     @Transactional
-    Word setByWord(WordDto.Request dto, String type);
+    Word saveWord(WordDto.Request dto, String type);
 
     String removeByWord(WordDto.Request dto);
 

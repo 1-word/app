@@ -1,6 +1,6 @@
 package com.numo.wordapp.comm.advice;
 
-import com.numo.wordapp.model.Word;
+import com.numo.wordapp.model.word.Word;
 import com.numo.wordapp.service.impl.WordServiceImpl;
 import com.numo.wordapp.util.JsonUtil;
 import com.numo.wordapp.util.ProcessBuilderUtil;

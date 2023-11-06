@@ -1,6 +1,5 @@
 package com.numo.wordapp.util;
 
-import com.numo.wordapp.model.Word;
 import org.modelmapper.ModelMapper;
 
 /****
