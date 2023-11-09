@@ -78,7 +78,7 @@ public class WordController{
 
     /**
      *
-     * @param type {@link com.numo.wordapp.service.impl.WordServiceImpl.UpdateType}
+     * @param type: all, memorization, memo, wordFolder {@link com.numo.wordapp.service.impl.WordServiceImpl.UpdateType}
      * */
     @PutMapping(value = "/{type}/{id}")
     public SingleResult<String> setUpdateWord(String userId, @PathVariable("type") String type, @PathVariable("id")  int id, @RequestBody WordDto.Request dto){

@@ -20,7 +20,7 @@ public class JsonUtil {
        this.mapper = new ObjectMapper();
     }
 
-    private String makeJson(Object obj){
+    public String makeJson(Object obj){
         String json = "";
         try {
             //json 정렬

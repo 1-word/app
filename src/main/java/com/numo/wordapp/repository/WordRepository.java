@@ -1,6 +1,8 @@
 package com.numo.wordapp.repository;
 
 import com.numo.wordapp.model.word.Word;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +19,9 @@ public interface WordRepository extends JpaRepository<Word, Integer> {
     // order by로 값 정렬
 //    @Query("SELECT distinct w FROM Word w left join fetch w.details d left join fetch w.folder f where w.userId = ?1 order by w.update_time desc, d.detailId")
 //    List<Word> getByAllWord(String user_id);
+    @Query(value = "SELECT distinct w FROM Word w left join fetch w.folder f left join fetch w.wordDetailMains dm where w.userId = ?1 order by w.update_time desc",
+    countQuery = "Select count(w) from Word w where w.userId = ?1")
+    Page<Word> getByPageWord(Pageable pageable, String user_id);
 
 //    @Query("SELECT distinct w FROM Word w left join fetch w.folder f where w.userId = ?1 order by w.update_time desc")
     @Query("SELECT distinct w FROM Word w left join fetch w.folder f where w.userId = ?1 order by w.update_time desc")

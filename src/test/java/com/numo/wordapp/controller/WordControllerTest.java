@@ -1,5 +1,8 @@
 package com.numo.wordapp.controller;
 
+import com.numo.wordapp.dto.WordDto;
+import com.numo.wordapp.service.WordService;
+import com.numo.wordapp.test.WordServiceTest;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -8,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.Table;
 
@@ -23,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class WordControllerTest {
     @Autowired  //빈 주입..
     private MockMvc mvc; //웹 API테스트할 때 사용, (http get, post등에 대한 api 테스트 가능)
+    @Autowired
+    private WordService wordService;
+
 
     @DisplayName("[API][GET]Word ControllerTest")
     @Test
@@ -31,5 +38,11 @@ public class WordControllerTest {
         mvc.perform(get("/test"))   //get 요청
                 .andExpect(status().isOk()) //결과 검증.. isOk:: status가 200인지 아닌지 검증
                 .andExpect(content().string(data)); //응답 본분의 내용 검증
+    }
+
+    @DisplayName("[API][PUT]단어 데이터 저장 테스트")
+    @Test
+    public void wordSaveTest() throws Exception{
+
     }
 }

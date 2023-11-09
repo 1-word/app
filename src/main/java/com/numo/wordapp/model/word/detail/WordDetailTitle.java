@@ -21,9 +21,9 @@ public class WordDetailTitle extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "title_type")
-//    private TitleCode titleType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "title_type")
+    private TitleCode titleType;
 
     @Column(name = "title_name")
     private String titleName;

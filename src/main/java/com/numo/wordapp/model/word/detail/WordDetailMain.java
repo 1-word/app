@@ -28,7 +28,7 @@ public class WordDetailMain extends Timestamped {
     private WordDetailTitle wordDetailTitle;
 
     @OneToMany(mappedBy = "wordDetailMain",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<WordDetailSub> wordDetailSub = new ArrayList<>();

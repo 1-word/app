@@ -1,11 +1,8 @@
 package com.numo.wordapp.dto;
 
-import com.numo.wordapp.model.word.detail.WordDetailMain;
 import com.numo.wordapp.model.word.detail.WordDetailSub;
 import com.numo.wordapp.model.word.detail.WordDetailTitle;
 import lombok.Getter;
-
-import java.util.List;
 
 public class WordDetailSubDto {
     @Getter

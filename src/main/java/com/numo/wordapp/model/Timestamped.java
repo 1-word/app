@@ -1,7 +1,5 @@
 package com.numo.wordapp.model;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -28,7 +26,7 @@ public abstract class Timestamped {
         this.update_time = update_time;
     }
 
-    public void setNowTime() {
+    public void setUpdateTimeNow() {
         this.update_time = LocalDateTime.now();
     }
 

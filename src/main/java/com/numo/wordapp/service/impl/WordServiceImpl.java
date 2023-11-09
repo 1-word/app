@@ -2,7 +2,6 @@ package com.numo.wordapp.service.impl;
 
 import com.numo.wordapp.comm.advice.exception.CustomException;
 import com.numo.wordapp.dto.WordDetailMainDto;
-import com.numo.wordapp.dto.WordDetailSubDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.comm.advice.exception.ErrorCode;
 import com.numo.wordapp.model.word.Folder;
@@ -16,14 +15,14 @@ import com.numo.wordapp.repository.*;
 
 import com.numo.wordapp.service.WordService;
 import com.numo.wordapp.util.ProcessBuilderUtil;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /*
  클래스: WordServiceImpl
@@ -63,36 +62,30 @@ public class WordServiceImpl implements WordService {
         all{
             @Override
             @Transactional
-            public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word){
-                return updateAll(jpaRepositories, dto, word);
+            public String updateByWordType(WordDto.Request dto, Word word){
+                return "updateAll";
             }
         },
         memo{
             @Override
-            @Transactional
-            public String updateByWordType(List<JpaRepository> jpaRepositories,WordDto.Request dto, Word word){
-                 WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
-                return updateMemo(wordRepository, dto, word);
+            public String updateByWordType(WordDto.Request dto, Word word){
+                return "updateMemo";
             }
         },
         memorization{
             @Override
-            @Transactional
-            public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word) {
-                WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
-                return updateMemorization(wordRepository, dto, word);
+            public String updateByWordType(WordDto.Request dto, Word word) {
+                return "updateMemorization";
             }
         },
         wordFolder{
             @Override
-            @Transactional
-            public String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word) {
-                WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
-                return updateWordFolder(wordRepository, dto, word);
+            public String updateByWordType(WordDto.Request dto, Word word) {
+                return "updateWordFolder";
             }
         };
 
-        public abstract String updateByWordType(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word);
+        public abstract String updateByWordType(WordDto.Request dto, Word word);
     }
 
     /*
@@ -113,11 +106,18 @@ public class WordServiceImpl implements WordService {
         // 1. 해당 단어 유효한지 검색
         Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));  //db에서 조회를 하면 영속성 유지..
         try{
+            // 2. 업데이트 타입 확인
             UpdateType updateType = UpdateType.valueOf(type);
-            List<JpaRepository> jpaRepositories = new ArrayList<>();
-            jpaRepositories.add(wordRepository);
-            jpaRepositories.add(synonymRepository);
-            updateType.updateByWordType(jpaRepositories, dto, word);
+            String methodName = updateType.updateByWordType(dto, word);
+            // 3. 타입에 알맞는 함수 실행
+//            Class c = Class.forName("com.numo.wordapp.service.impl.WordServiceImpl");
+//            c.getMethod(methodName, WordDto.Request.class, Word.class).invoke(this, dto, word);
+
+//            Method m = c.getMethod(methodName, WordDto.Request.class, Word.class);
+//            Method m = c.getDeclaredMethod(methodName);
+            Method m = this.getClass().getDeclaredMethod(methodName, WordDto.Request.class, Word.class);
+            m.setAccessible(true);  // private 메서드 접근
+            m.invoke(this, dto, word);
         }catch (Exception e){
             System.out.println(e);
             throw new CustomException(ErrorCode.TypeNotFound);
@@ -129,68 +129,84 @@ public class WordServiceImpl implements WordService {
 
     /**
      * 단어 데이터 업데이트
-     * @param jpaRepositories {@link WordRepository}, {@link WordDetailMainRepository}
+     * updateByWord()에서 Controller로 들어온 type이 all이면 실행됨
      * @param dto {@link WordDto}
      * @param word {@link Word}
      * @return 저장된 단어 데이터 {@link Word}
      * */
-    public static String updateAll(List<JpaRepository> jpaRepositories, WordDto.Request dto, Word word){
-        WordRepository wordRepository = (WordRepository) jpaRepositories.get(0);
-        WordDetailMainRepository wordDetailMainRepository = (WordDetailMainRepository) jpaRepositories.get(1);
-        // 2 단어 업데이트
-        //단어 테이블 컬럼 추가 시 아래 코드 작성 필요
-        //word.setWord(dto.getWord());  //word는 업데이트 불필요(pk값)_20230701
+    // commit 자동 수행 및 예외 발생 시 롤백
+    @Transactional(rollbackFor = Exception.class)
+    String updateAll(WordDto.Request dto, Word word){
+        // 1. 단어 업데이트
+        // 단어 테이블 컬럼 추가 시 아래 코드 작성 필요
+        // word.setWord(dto.getWord());  //word는 업데이트 불필요(pk값)_20230701
         word.setMean(dto.getMean());
         word.setRead(dto.getRead());
         if (dto.getMemo() != null) word.setMemo(dto.getMemo());
-        word.setNowTime();
-        wordRepository.save(word);
+        word.setUpdateTimeNow();
 
-        // 3. 디테일 데이터 업데이트
-        List<WordDetailMain> existingWordDetailMains = word.getWordDetailMains();
-        List<WordDetailMainDto.Request> inputWordDetailMainsMain = dto.getWordDetails();
+        // 2. 원래 있는 데이터는 그대로 업데이트 하되
+        // 원래 있는 데이터보다 많아지면 add해야함.
 
-        // 현재 디테일 갯수 확인
-        for (int i = 0; i < existingWordDetailMains.size(); i++){
-            WordDetailMain existingWordDetailMain = existingWordDetailMains.get(i);
-            if (i < inputWordDetailMainsMain.size()){
-                WordDetailMainDto.Request inputWordDetailMain = inputWordDetailMainsMain.get(i);
-                existingWordDetailMain.setContent(inputWordDetailMain.getContent());
-                existingWordDetailMain.setMemo(inputWordDetailMain.getMemo());
-                wordDetailMainRepository.save(existingWordDetailMain);
-            }else{  // 현재 디테일 갯수보다 적으면 delete 실행
-                //해당하는 단어의 모든 디테일 데이터 삭제
-                wordDetailMainRepository.deleteWordDetail(dto.getWord_id());
+        // 외래키는 변해도 상관 없다.
+        // PK는 변할 수 없다.
+
+        // 현재 케이스..
+        // 1. 데이터베이스에 저장된 갯수보다 수정한 데이터 갯수가 더 많음
+        // word에 addDetail..
+        // 2. 데이터베이스에 저장된 갯수보다 수정한 데이터 갯수가 더 적음
+        // 2-1. 현재 있는 데이터를 전부 삭제 후 다시 입력할 것인가?
+        // 2-2. 수정한 데이터 갯수만 남긴 뒤 setter로 수정할 것인가?
+
+        // 3. dto에서는 관련 id값이 없음.. word에서 가져와야함!
+        // dto => word
+        int detailMainMax = word.getWordDetailMains().size();
+        int detailMainDtoMax = dto.getWordDetails().size();
+        // 원래있는 데이터보다 업데이트 할 데이터가 적을 때 데이터 삭제를 위한 max값 계산.
+        int max = detailMainMax > detailMainDtoMax? detailMainMax : detailMainDtoMax;
+        for (int i=0; i<max; i++){
+            // 데이터베이스(word)에 저장된 데이터 갯수보다, 현재 update할 데이터(dto) 갯수가 더 적으면 삭제해줌
+            if (detailMainMax > detailMainDtoMax && i > detailMainDtoMax-1){
+                // detailSub도 같이 삭제가 되어야함
+                word.getWordDetailMains().remove(word.getWordDetailMains().get(i));
+                continue;
             }
-        }
 
-        // 현재 유의어 갯수보다 update할 유의어 갯수가 더 많으면 insert 실행
-        for (int i = existingWordDetailMains.size(); i < inputWordDetailMainsMain.size(); i++) {
-            WordDetailMainDto.Request inputWordDetailMain = inputWordDetailMainsMain.get(i);
-            WordDetailMain newWordDetailMain = WordDetailMain.builder()
-                    .content(inputWordDetailMain.getContent())
-                    .memo(inputWordDetailMain.getMemo())
-                    .word(word)
-                    .wordDetailTitle(inputWordDetailMain.toEntity().getWordDetailTitle())
-                    .build();
-            wordDetailMainRepository.save(newWordDetailMain);
+            WordDetailMainDto.Request wdDto = dto.getWordDetails().get(i);
+
+            // 원래 있는 데이터보다 많으면 add 해줌
+            if (i > detailMainMax-1){
+                WordDetailMain wd = wdDto.toEntity(word, new WordDetailTitle(wdDto.getTitle_id()));
+                word.addWordDetailMain(wd);
+                continue;
+            }
+
+            // 원래 데이터와 크기가 같다면 값만 업데이트
+            word.getWordDetailMains().get(i).setContent(wdDto.getContent());
+            word.getWordDetailMains().get(i).setMemo(wdDto.getMemo());
+            word.getWordDetailMains().get(i).setUpdateTimeNow();
+
+            // 이제 detailSub도 업데이트 해야함...!!
+
         }
+//        // 영속성을 갖는 객체를 수정하면 데이터 베이스에 반영이 되기 때문에
+//        // .save()는 update에서 사용하지 않는다.
         return "완료";
     }
 
-    private static String updateMemo(WordRepository wordRepository, WordDto.Request dto, Word word){
+    private String updateMemo(WordDto.Request dto, Word word){
         word.setMemo(dto.getMemo());
         wordRepository.save(word);
         return "완료";
     }
 
-    private static String updateMemorization(WordRepository wordRepository, WordDto.Request dto, Word word){
+    private String updateMemorization(WordDto.Request dto, Word word){
         word.setMemorization(dto.getMemorization());
         wordRepository.save(word);
         return "완료";
     }
 
-    private static String updateWordFolder(WordRepository wordRepository, WordDto.Request dto, Word word){
+    private String updateWordFolder(WordDto.Request dto, Word word){
         Folder folder = new Folder();
         folder.setFolderId(dto.getFolder_id());
         word.setFolder(folder);
@@ -199,33 +215,22 @@ public class WordServiceImpl implements WordService {
     }
 
     /**
-    * 메소드: saveWord(WordDto.Request dto)
+    * 단어 저장
     * @param dto {@link WordDto.Request}
     * @return Word {@link Word}
     * @note
     * 작성자: 정현경
     * 작성일: 2022.06.22
     * */
-
     @Override
     @Transactional
     public Word saveWord(WordDto.Request dto, String type){
         Word word = dto.toEntity();
         List<WordDetailMainDto.Request> inputWordDetailMainsMain = dto.getWordDetails();
-//        List<WordDetailMain> newWordDetailMains = inputWordDetailMainsMain.stream()
-//                .map(inputWordDetailMain -> inputWordDetailMain.toEntity(word, new WordDetailTitle(inputWordDetailMain.getTitle_id())))
-//                .collect(Collectors.toList());
-//
-//        newWordDetailMains.forEach(wd -> wd.getWordDetailSub().forEach(wd::addWordDetailSub));
-//
-//        word.addWordDetailMain(newWordDetailMains);
 
         for (WordDetailMainDto.Request inputWordDetailMain : inputWordDetailMainsMain) {
             WordDetailMain wd = inputWordDetailMain.toEntity(word, new WordDetailTitle(inputWordDetailMain.getTitle_id()));
             List<WordDetailSub> ds = wd.getWordDetailSub();
-//            for(int i=0; i<ds.size(); i++){
-//                wd.addWordDetailSub(ds.get(i));
-//            }
             for (WordDetailSub detailSub : ds) {
                 wd.addWordDetailSub(detailSub);
             }
@@ -282,13 +287,10 @@ public class WordServiceImpl implements WordService {
         return fileName;
     }
 
-    /*
-    * 메소드: removeByWord(int id)
-    * 파라미터: word 기본 키 값
-    * 리턴 값: String
-    * 기능: 해당하는 키 값 데이터 삭제
-    * 작성자: 정현경
-    * 작성일: 2022.06.22
+    /**
+     * word 데이터 삭제
+    * @param dto {@link WordDto.Request}
+    * @return 삭제한 완료 메시지
     * */
 
     @Override
@@ -296,29 +298,16 @@ public class WordServiceImpl implements WordService {
     public String removeByWord(WordDto.Request dto){
        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
        wordRepository.delete(word);
-//        word.ifPresent(removeWord->{
-//            wordRepository.delete(removeWord);
-//        });
-
         return "데이터 삭제를 완료하였습니다.";
     }
 
-    /*
-    메소드: getBySearchWord(int word_id)
-    파라미터: word 기본 키 값
-    리턴 값: Word
-    기능: 검색한 단어(Word) 및 유의어(Synonym) 조회
-    주의사항: 양방향 참조이기때문에 DTO를 이용해서 리턴해야함 (무한 참조 발생 가능)
-    작성자: 정현경
-    작성일: 2022.05.25
-    */
-
-    /*@Override
-    public Word getBySearchWord(int word_id){
-        //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, read, memo);
-        //return wordRepository.findById(word_id).get();
-    }*/
-
+    /**
+     * 검색한 단어(Word) 및 유의어(Synonym) 조회
+     * @param user_id 로그인 사용자(토큰) 아이디
+     * @param data 검색 데이터
+     * @return 검색한 Word 데이터
+     * @apiNote 양방향 참조이기때문에 DTO를 이용해서 리턴해야함 (무한 참조 발생 가능)
+     */
     @Override
     public List<Word> getBySearchWord(String user_id, String data){
         //wordRepository.findByWord_idContainingOrWordContainingOrMeanContainingOrWreadContainingOrMemoContaining(word_id, word, mean, read, memo);
