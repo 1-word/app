@@ -7,6 +7,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WordDto{
+    @Builder
+    @Getter
+    public static class Read {
+        private int page;
+        private String user_id;
+        private int folder_id;
+        private int last_word_id;
+        private String search_text;
+        private String memorization;
+        private String language;
+    }
     /**
      * 클라이언트 -> API
      */
@@ -22,7 +33,7 @@ public class WordDto{
         private String memorization;
         private Integer folder_id;
         //private String type;
-        private List<WordDetailMainDto.Request> wordDetails;
+        private List<WordDetailMainDto.Request> details;
         //private SynonymDto.Request synonym;
 
         public Word toEntity(){
@@ -54,7 +65,7 @@ public class WordDto{
         private String read;
         private String memo;
         private String soundPath;
-        private List<WordDetailMainDto.Response> wordDetails;
+        private List<WordDetailMainDto.Response> details;
         private String update_time;
         private String create_time;
         private String memorization;
@@ -72,7 +83,7 @@ public class WordDto{
             this.type = words.getLang().getValue();
             //synonymsDto에 맞게 컬럼 생성
             //stream을 이용하여 List<Synonyms> => List<SynonymDto.Response>로 형 변환
-            this.wordDetails = words.getWordDetailMains().stream().map(WordDetailMainDto.Response::new).collect(Collectors.toList());
+            this.details = words.getWordDetailMains().stream().map(WordDetailMainDto.Response::new).collect(Collectors.toList());
             this.update_time = words.getUpdate_time();
             this.create_time = words.getCreate_time();
 //            this.folder = words.getFolder();

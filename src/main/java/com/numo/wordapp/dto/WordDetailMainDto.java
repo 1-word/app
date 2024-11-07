@@ -2,7 +2,6 @@ package com.numo.wordapp.dto;
 
 import com.numo.wordapp.model.word.Word;
 import com.numo.wordapp.model.word.detail.WordDetailMain;
-import com.numo.wordapp.model.word.detail.WordDetailSub;
 import com.numo.wordapp.model.word.detail.WordDetailTitle;
 import lombok.*;
 
@@ -18,7 +17,7 @@ public class WordDetailMainDto {
         private int title_id;
         private String content="";
         private String memo="";
-        private List<WordDetailSubDto.Request> detailSubs = new ArrayList<>();
+        private List<WordDetailSubDto.Request> subs = new ArrayList<>();
 
         public WordDetailMain toEntity(){
             WordDetailMain detail = WordDetailMain.builder()
@@ -41,14 +40,14 @@ public class WordDetailMainDto {
         }
 
         public WordDetailMain toEntity(Word word, WordDetailTitle wordDetailTitle){
-            System.out.println(detailSubs);
+            System.out.println(subs);
             WordDetailMain detail = WordDetailMain.builder()
                     .detailMainId(detail_id)
 //                    .title(title)
                     .content(content)
                     .memo(memo)
                     .word(word)
-                    .wordDetailSub(detailSubs.stream().map(WordDetailSubDto.Request::toEntity).collect(Collectors.toList()))
+                    .wordDetailSub(subs.stream().map(WordDetailSubDto.Request::toEntity).collect(Collectors.toList()))
                     .wordDetailTitle(wordDetailTitle)
                     .build();
             return detail;
@@ -57,20 +56,22 @@ public class WordDetailMainDto {
     @Getter
     public static class Response {
        private int detail_id;
-       private int title_id;
-        private String title_name;
+       private WordDetailTitleDto.Response title;
+//       private int title_id;
+//        private String title_name;
 //        private String title_type;
         private String content;
         private String memo;
-        private List<WordDetailSubDto.Response> detailSubs = new ArrayList<>();
+        private List<WordDetailSubDto.Response> subs = new ArrayList<>();
 
         public Response(WordDetailMain wordDetailMain){
             this.detail_id = wordDetailMain.getDetailMainId();
-            this.title_id = wordDetailMain.getWordDetailTitle().getTitleId();
-            this.title_name = wordDetailMain.getWordDetailTitle().getTitleName();
+            this.title = new WordDetailTitleDto.Response(wordDetailMain.getWordDetailTitle());
+//            this.title_id = wordDetailMain.getWordDetailTitle().getTitleId();
+//            this.title_name = wordDetailMain.getWordDetailTitle().getTitleName();
             this.content = wordDetailMain.getContent();
             this.memo = wordDetailMain.getMemo();
-            this.detailSubs = wordDetailMain.getWordDetailSub().stream().map(WordDetailSubDto.Response::new).collect(Collectors.toList());
+            this.subs = wordDetailMain.getWordDetailSub().stream().map(WordDetailSubDto.Response::new).collect(Collectors.toList());
         }
     }
 }

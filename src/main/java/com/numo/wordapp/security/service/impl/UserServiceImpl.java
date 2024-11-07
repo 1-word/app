@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public TokenDto.response login(LoginDto loginDto){
-        System.out.println("ee");
         User user = userRepository.findOneWithAuthoritiesByUserId(loginDto.getUser_id())
                 .orElseThrow(() -> new CustomException(ErrorCode.LoginIDFail));
 

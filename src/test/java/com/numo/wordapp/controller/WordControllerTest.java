@@ -1,8 +1,6 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.service.WordService;
-import com.numo.wordapp.test.WordServiceTest;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -10,12 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.persistence.Table;
-
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;

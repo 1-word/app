@@ -10,5 +10,5 @@ public interface FolderService {
     Folder setByFolder(FolderDto.Request fdto);
     List<Folder> getByFolderName(String user_id);
 
-    String removeByFolder(FolderDto.Request fdto);
+    int removeByFolder(FolderDto.Request fdto);
 }

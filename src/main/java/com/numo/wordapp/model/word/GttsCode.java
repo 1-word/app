@@ -1,5 +1,9 @@
 package com.numo.wordapp.model.word;
 
+/**
+ * 단어 언어 코드 설정(EN, JP, KO)
+ * <pre>사용 예시: GttsCode.valueOf(type)</pre>
+ */
 public enum GttsCode {
     EN("EN", "en"), JP("JP", "ja"), KO("KO", "ko");
     private String WORD;

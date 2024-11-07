@@ -7,6 +7,7 @@ build/
 /src/test/**/config/
 /src/main/resources/application-env.properties
 /src/main/resources/logback-spring-env.xml
+/src/main/generated
 
 ### STS ###
 .apt_generated

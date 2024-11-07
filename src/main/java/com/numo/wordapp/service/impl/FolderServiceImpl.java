@@ -7,6 +7,7 @@ import com.numo.wordapp.model.word.Folder;
 import com.numo.wordapp.repository.FolderRepository;
 import com.numo.wordapp.service.FolderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,8 +42,9 @@ public class FolderServiceImpl implements FolderService {
         return folderRepository.save(fdto.toEntity());
     }
 
+    @Transactional
     @Override
-    public String removeByFolder(FolderDto.Request fdto){
+    public int removeByFolder(FolderDto.Request fdto){
         Folder folder = folderRepository.findByFolderIdAndUserId(fdto.getFolder_id(), fdto.getUser_id())
                 .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
         try {
@@ -50,6 +52,6 @@ public class FolderServiceImpl implements FolderService {
         }catch (Exception e){
             throw new CustomException(ErrorCode.AssociatedDataExists);
         }
-        return "데이터 삭제를 완료하였습니다.";
+        return fdto.getFolder_id();
     }
 }

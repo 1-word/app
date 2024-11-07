@@ -1,5 +1,6 @@
 package com.numo.wordapp.test;
 
+import com.numo.wordapp.dto.PageDto;
 import com.numo.wordapp.dto.WordDto;
 import com.numo.wordapp.model.word.GttsCode;
 import com.numo.wordapp.model.word.Word;
@@ -13,9 +14,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +40,23 @@ public class WordServiceTest {
     @DisplayName("단어 페이징 테스트")
     @Test
     public void testPageDefault(){
-        Pageable pageable = PageRequest.of(0, 1);
-        Page<Word> result = wordRepository.getByPageWord(pageable,"admin");
-        //List <Word> result = wordRepository.getByAllWord("admin");
+        Pageable pageable = PageRequest.of(0, 20);
+        WordDto.Read readDto = WordDto.Read.builder()
+                .user_id("admin")
+                .folder_id(1)
+                .last_word_id(-1)
+                .build();
+        Slice<Word> result = wordRepository.findByPageWord(pageable, readDto);
+//        Slice<Word> result = wordRepository.getByFirstPageWord(pageable,"admin");
+//        List <Word> result = wordRepository.getByAllWord("admin");
+//        List<WordDto.Response> res = result.stream().map(WordDto.Response::new).collect(Collectors.toList());
         List<WordDto.Response> res = result.getContent().stream().map(WordDto.Response::new).collect(Collectors.toList());
+        PageDto pageRes = new PageDto(result);
 
         String str = new JsonUtil().makeJson(res);
-        System.out.println(str);
+        System.out.println("JSON:: \n"+str);
+
+        System.out.println("Page::"+new JsonUtil().makeJson(pageRes));
     }
 
     @Test
@@ -94,4 +105,5 @@ public class WordServiceTest {
         String str = new JsonUtil().makeJson(obj);
         System.out.println(str);
     }
+
 }

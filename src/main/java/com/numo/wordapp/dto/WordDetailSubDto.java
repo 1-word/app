@@ -26,14 +26,13 @@ public class WordDetailSubDto {
     @Getter
     public static class Response{
         private int detail_sub_id;
-//        private int word_detail_main_id;
-        private String title_name;
+        private WordDetailTitleDto.Response title;
         private String content;
         private String memo;
 
         public Response(WordDetailSub wordDetailSub){
             this.detail_sub_id = wordDetailSub.getDetailSubId();
-            this.title_name = wordDetailSub.getWordDetailTitle().getTitleName();
+            this.title = new WordDetailTitleDto.Response(wordDetailSub.getWordDetailTitle());
             this.content = wordDetailSub.getContent();
             this.memo = wordDetailSub.getMemo();
         }

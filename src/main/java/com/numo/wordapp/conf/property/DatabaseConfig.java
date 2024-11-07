@@ -1,5 +1,6 @@
 package com.numo.wordapp.conf.property;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +12,9 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class DatabaseConfig {
-    @Autowired
-    GlobalPropertySource globalPropertySource;
+    private final GlobalPropertySource globalPropertySource;
 
     @Bean
     @Primary

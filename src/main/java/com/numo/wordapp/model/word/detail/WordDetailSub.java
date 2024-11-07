@@ -23,6 +23,7 @@ public class WordDetailSub extends Timestamped {
 
     @OneToOne()
     @JoinColumn(name="title_id")
+    @OrderBy("titleId asc")
     private WordDetailTitle wordDetailTitle;
 
     private String content;

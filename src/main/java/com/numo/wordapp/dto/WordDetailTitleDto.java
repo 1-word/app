@@ -2,6 +2,7 @@ package com.numo.wordapp.dto;
 
 import com.numo.wordapp.model.word.detail.WordDetailTitle;
 import com.numo.wordapp.security.model.User;
+import lombok.Getter;
 
 public class WordDetailTitleDto {
     public static class Request{
@@ -21,11 +22,14 @@ public class WordDetailTitleDto {
         }
     }
 
+    @Getter
     public static class Response{
+        private int title_id;
         private String title_name;
         private String memo;
 
         public Response(WordDetailTitle wordDetailTitle){
+            this.title_id = wordDetailTitle.getTitleId();
             this.title_name = wordDetailTitle.getTitleName();
             this.memo = wordDetailTitle.getMemo();
         }

@@ -34,7 +34,7 @@ public abstract class Timestamped {
         return getDateTime(create_time);
     }
 
-    public String getDateTime(LocalDateTime time){
+    private String getDateTime(LocalDateTime time){
         String date;
         try {
             date = time.format(DateTimeFormatter.ISO_DATE);
