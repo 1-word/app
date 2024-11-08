@@ -52,9 +52,10 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize -> {
-            authorize.requestMatchers("/login/**");
-            authorize.requestMatchers("/signup/**");
-            authorize.requestMatchers("/reissue/**");
+            authorize.requestMatchers("/login/**").permitAll();
+            authorize.requestMatchers("/signup/**").permitAll();
+            authorize.requestMatchers("/reissue/**").permitAll();
+            authorize.requestMatchers("/api-spec/**", "/v3/**").permitAll();
             authorize.requestMatchers("word/**").hasRole("ADMIN");
             authorize.anyRequest().authenticated();
         });
