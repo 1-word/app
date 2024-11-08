@@ -1,22 +1,21 @@
 package com.numo.wordapp.model.response;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.context.annotation.ApplicationScope;
 
 @Getter
 @Setter
 public class CommonResult {
 
-    @ApiModelProperty(value = "응답 성공 여부: T/F")
+    @Schema(description = "응답 성공 여부: T/F")
     private boolean success;
 
-    @ApiModelProperty(value = "응답코드: >= 0 정상, <0 비정상")
+    @Schema(description = "응답코드: >= 0 정상, <0 비정상")
     private int code;
 
-    @ApiModelProperty(value = "응답 메시지")
+    @Schema(description = "응답 메시지")
     private String msg;
 
     public CommonResult(){

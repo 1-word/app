@@ -1,6 +1,5 @@
 package com.numo.wordapp.security.service;
 
-import antlr.Token;
 import com.numo.wordapp.security.dto.LoginDto;
 import com.numo.wordapp.security.dto.TokenDto;
 import com.numo.wordapp.security.dto.UserDto;

@@ -4,7 +4,7 @@ import com.numo.wordapp.model.Timestamped;
 import com.numo.wordapp.model.word.detail.WordDetailMain;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

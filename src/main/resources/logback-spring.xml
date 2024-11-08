@@ -23,7 +23,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>./was-logs/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>180</maxHistory>
@@ -43,7 +43,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>./was-logs/warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>180</maxHistory>

@@ -2,7 +2,7 @@ package com.numo.wordapp.security.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Getter
 @Setter

@@ -2,7 +2,7 @@ package com.numo.wordapp.security.model;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Setter

@@ -4,7 +4,7 @@ import com.numo.wordapp.model.Timestamped;
 import com.numo.wordapp.security.model.User;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter

@@ -1,9 +1,8 @@
 package com.numo.wordapp.controller;
 
 import com.numo.wordapp.service.WordService;
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -13,8 +12,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@RunWith(SpringRunner.class)    //JUnit에 내장된 실행자 외에 다른 실행자 실행 (SpringRunner실행자 사용 연결자 역할)
 @WebMvcTest(controllers = WordControllerTest.class) //스프링 테스트 어노테이션 (web에 집중 가능)
 public class WordControllerTest {
     @Autowired  //빈 주입..

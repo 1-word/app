@@ -5,7 +5,7 @@ import com.numo.wordapp.model.response.CommonResult;
 import com.numo.wordapp.model.response.ListResult;
 import com.numo.wordapp.model.response.SingleResult;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

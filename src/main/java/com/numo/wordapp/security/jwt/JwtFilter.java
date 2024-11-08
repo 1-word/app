@@ -1,36 +1,28 @@
 package com.numo.wordapp.security.jwt;
 
-import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Slf4j
-public class JwtFilter extends GenericFilterBean {
+@RequiredArgsConstructor
+public class JwtFilter extends OncePerRequestFilter {
     public static final String AUTHORIZTION_HEADER = "Authorization";
+    private final TokenProvider tokenProvider;
 
-    private TokenProvider tokenProvider;
-
-    public JwtFilter(TokenProvider tokenProvider){
-        this.tokenProvider = tokenProvider;
-    }
-
-    //토큰의 인증정보를 SecurityContext에 저장하는 역할 수행
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //request에서 토큰을 받아옴
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletRequest httpServletRequest = request;
         String jwt = resolveToken(httpServletRequest);
         String requestURI = httpServletRequest.getRequestURI();
 
@@ -51,7 +43,7 @@ public class JwtFilter extends GenericFilterBean {
 
         log.info("jwtFilter 실행");
 
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 
     // Request 헤더에서 토큰 정보를 꺼내옴

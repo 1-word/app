@@ -3,9 +3,7 @@ package com.numo.wordapp.model.word.detail;
 import com.numo.wordapp.model.Timestamped;
 import com.numo.wordapp.model.word.Word;
 import lombok.*;
-import org.junit.jupiter.api.Order;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

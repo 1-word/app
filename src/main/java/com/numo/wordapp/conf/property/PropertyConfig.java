@@ -11,6 +11,4 @@ public class PropertyConfig {
     private String program;
     @Value("${cstm.processbuilder.path}")
     private String path;
-    @Value("${spring.profiles.active}")
-    private String profile;
 }

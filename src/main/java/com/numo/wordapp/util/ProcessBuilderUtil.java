@@ -58,12 +58,6 @@ public class ProcessBuilderUtil {
         PropertyConfig propertyConfig = ApplicationContextProvider.getBean("propertyConfig", PropertyConfig.class);
         this.program = propertyConfig.getProgram();
         this.path = propertyConfig.getPath();
-        if (propertyConfig.getProfile().equals("dev")){
-            this.command[1] = "/c";
-        }
-
-        if (propertyConfig.getProfile().equals("env")){
-            this.command[1] = "-c";
-        }
+        this.command[1] = "-c";
     }
 }

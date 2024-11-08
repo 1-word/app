@@ -3,7 +3,7 @@ package com.numo.wordapp.model.word;
 import com.numo.wordapp.model.Timestamped;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter

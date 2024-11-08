@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,27 +45,27 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto.response createTokenDto(String user_id, List<String> roles){
-        // Claims에 user 구분을 위한 user_id 및 authorities 목록 삽입.
-        Claims claims = Jwts.claims().setSubject(user_id);
-        claims.put(AUTHORITIES_KEY, roles);
-        // 생성날짜, 만료날짜를 위한 Date
+    public TokenDto.response createTokenDto(String userId, List<String> roles){
         Date now = new Date();
-
+        
         String accessToken = Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidityInMilliseconds))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .id(userId)
+                .claims()
+                .id(userId)
+                .add(AUTHORITIES_KEY, roles)
+                .and()
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + tokenValidityInMilliseconds))
+                .signWith(key)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setExpiration(new Date(now.getTime() + refreshTokenValidMillisecond))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .id(userId)
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + refreshTokenValidMillisecond))
+                .signWith(key)
                 .compact();
-
+        
         return TokenDto.response.builder()
                 .grantType("bearer")
                 .accessToken(accessToken)
@@ -73,31 +74,8 @@ public class TokenProvider implements InitializingBean {
                 .build();
     }
 
-    public String createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        // 생성날짜, 만료날짜를 위한 시간
-        long now = (new Date()).getTime();
-        //
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
-
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
-                .compact();
-    }
-
     public Authentication getAuthentication(String token) {
-        Claims claims = Jwts
-                .parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = getPayload(token);
 
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
@@ -109,10 +87,17 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+    private Claims getPayload(String token) {
+        return Jwts.parser()
+                .decryptWith((SecretKey) key)
+                .build()
+                .parseSignedClaims(token).getPayload();
+    }
+
     public Claims parseClaims(String token){
         try {
             //jwt 토큰 복호화
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return getPayload(token);
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
@@ -120,7 +105,7 @@ public class TokenProvider implements InitializingBean {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            getPayload(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");

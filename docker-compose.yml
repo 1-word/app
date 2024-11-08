@@ -1,0 +1,13 @@
+services:
+  db:
+    restart: always
+    image: mariadb
+    ports:
+      - 13306:3306
+    env_file: ~/Projects/wordApp/app/.env
+    environment:
+      TZ: Asia/Seoul
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_DATABASE}
