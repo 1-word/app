@@ -9,25 +9,20 @@ import com.numo.wordapp.model.word.detail.WordDetailSub;
 import com.numo.wordapp.model.word.detail.WordDetailTitle;
 import com.numo.wordapp.repository.WordRepository;
 import com.numo.wordapp.util.JsonUtil;
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// jUnit 버전 문제로 실행 클래스 지정...
-//지정 안하면 의존성 주입이 안됨
-@RunWith(SpringRunner.class)
 // 설정 파일 주입
 @TestPropertySource(locations = "classpath:application-test.properties")
 // 구동 환경 설정
