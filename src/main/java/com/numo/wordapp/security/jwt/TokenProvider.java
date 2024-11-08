@@ -1,6 +1,6 @@
 package com.numo.wordapp.security.jwt;
 
-import com.numo.wordapp.security.dto.TokenDto;
+import com.numo.wordapp.dto.user.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -45,7 +44,7 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto.response createTokenDto(String userId, List<String> roles){
+    public TokenDto createTokenDto(String userId, List<String> roles){
         Date now = new Date();
         
         String accessToken = Jwts.builder()
@@ -66,11 +65,9 @@ public class TokenProvider implements InitializingBean {
                 .signWith(key)
                 .compact();
         
-        return TokenDto.response.builder()
-                .grantType("bearer")
+        return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .accessTokenExpireDate(tokenValidityInMilliseconds)
                 .build();
     }
 

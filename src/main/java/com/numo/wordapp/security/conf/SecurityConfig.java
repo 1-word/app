@@ -1,7 +1,7 @@
 package com.numo.wordapp.security.conf;
 
-import com.numo.wordapp.security.jwt.JwtAccessDeniedHandler;
-import com.numo.wordapp.security.jwt.JwtAuthenticationEntryPoint;
+import com.numo.wordapp.security.handle.JwtAccessDeniedHandler;
+import com.numo.wordapp.security.handle.JwtAuthenticationEntryPoint;
 import com.numo.wordapp.security.jwt.JwtFilter;
 import com.numo.wordapp.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +52,8 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize -> {
-            authorize.requestMatchers("/login/**").permitAll();
+            authorize.requestMatchers("/auth/**").permitAll();
             authorize.requestMatchers("/signup/**").permitAll();
-            authorize.requestMatchers("/reissue/**").permitAll();
             authorize.requestMatchers("/api-spec/**", "/v3/**").permitAll();
             authorize.requestMatchers("word/**").hasRole("ADMIN");
             authorize.anyRequest().authenticated();

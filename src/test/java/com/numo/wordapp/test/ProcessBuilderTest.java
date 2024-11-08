@@ -1,16 +1,10 @@
 package com.numo.wordapp.test;
 
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@TestPropertySource(locations = "classpath:application-dev.properties")
-//@RunWith(SpringRunner.class)    //JUnit에 내장된 실행자 외에 다른 실행자 실행 (SpringRunner실행자 사용 연결자 역할)
 @SpringBootTest
 public class ProcessBuilderTest {
     @Autowired

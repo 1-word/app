@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository;
 
-import com.numo.wordapp.model.word.Folder;
+import com.numo.wordapp.entity.word.Folder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

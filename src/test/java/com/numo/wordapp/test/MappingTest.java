@@ -1,6 +1,6 @@
 //package com.numo.wordapp.test;
 //
-//import com.numo.wordapp.dto.WordDto;
+//import com.numo.wordapp.dto.word.WordDto;
 //import com.numo.wordapp.model.word.Word;
 //
 //import java.util.List;

@@ -22,9 +22,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //request에서 토큰을 받아옴
-        HttpServletRequest httpServletRequest = request;
-        String jwt = resolveToken(httpServletRequest);
-        String requestURI = httpServletRequest.getRequestURI();
+        String jwt = resolveToken(request);
+        String requestURI = request.getRequestURI();
 
         log.info("requestURI: {}", requestURI);
 
@@ -37,8 +36,6 @@ public class JwtFilter extends OncePerRequestFilter {
             log.debug("Security Context에 '{}'인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
             String id = tokenProvider.parseClaims(jwt).getSubject();
             log.info("login: "+id);
-        }else{
-            log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
 
         log.info("jwtFilter 실행");
