@@ -1,16 +1,17 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.FolderDto;
-import com.numo.wordapp.dto.PageDto;
-import com.numo.wordapp.dto.WordDto;
-import com.numo.wordapp.model.word.Folder;
-import com.numo.wordapp.model.response.ListResult;
-import com.numo.wordapp.model.response.SingleResult;
-import com.numo.wordapp.model.word.Word;
-import com.numo.wordapp.service.FolderService;
-import com.numo.wordapp.service.ResponseService;
-import com.numo.wordapp.service.WordService;
+import com.numo.wordapp.aop.WordAspect;
+import com.numo.wordapp.dto.word.FolderDto;
+import com.numo.wordapp.dto.word.PageDto;
+import com.numo.wordapp.dto.word.WordDto;
+import com.numo.wordapp.entity.word.Word;
+import com.numo.wordapp.security.service.UserDetailsImpl;
+import com.numo.wordapp.service.word.FolderService;
+import com.numo.wordapp.service.word.WordService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,31 +21,26 @@ import java.util.stream.Collectors;
 
 /**
  * {web}/word에서 요청하는 CRUD 기능
- * @apiNote userId는 {@link com.numo.wordapp.comm.advice.WordAdvice} before()메서드에서 토큰의 id를 확인하여 파라미터의 가장 앞에 추가됨
+ * @apiNote userId는 {@link WordAspect} before()메서드에서 토큰의 id를 확인하여 파라미터의 가장 앞에 추가됨
  */
+
 @RestController
 @RequestMapping("/word")
+@RequiredArgsConstructor
 public class WordController{
     private final WordService wordService;
-    private final ResponseService responseService;
     private final FolderService folderService;
 
-    public WordController(WordService wordService,
-                          ResponseService responseService,
-                          FolderService folderService){
-        this.wordService = wordService;
-        this.responseService = responseService;
-        this.folderService = folderService;
-    }
-
+    // TODO 파라미터 정리 (RequestParam을 DTO로 정리)
     @RequestMapping(value = {"/search/{text}","/search/{folder_id}/{text}"}, method = RequestMethod.GET)
-    public ListResult<Object> getSearchWord(String userId,
-                                            @PathVariable(required = false, name = "folder_id")Optional<Integer> folder_id,
-                                            @PathVariable("text") String searchText,
-                                            @RequestParam(required = false, name = "page") Optional<Integer> page,
-                                            @RequestParam(required = false, name = "last_wid") Optional<Integer> last_wid,
-                                            @RequestParam(required = false, name = "memorization") Optional<String> memorization,
-                                            @RequestParam(required = false, name = "language") Optional<String> language){
+    public ResponseEntity<Object> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                @PathVariable(required = false, name = "folder_id")Optional<Integer> folder_id,
+                                                @PathVariable("text") String searchText,
+                                                @RequestParam(required = false, name = "page") Optional<Integer> page,
+                                                @RequestParam(required = false, name = "last_wid") Optional<Integer> last_wid,
+                                                @RequestParam(required = false, name = "memorization") Optional<String> memorization,
+                                                @RequestParam(required = false, name = "language") Optional<String> language){
+        String userId = user.getUsername();
         int folderId = folder_id.orElse(-1);
         int lastWid = last_wid.orElse(-1);
         int curPage = page.orElse(0);
@@ -61,21 +57,24 @@ public class WordController{
                 .search_text(searchText).build();
 
         Slice<Word> pageWord = wordService.getBySearchWord(readDto);
+
+        // TODO DTO로 처리하도록 수정
         List<WordDto.Response> dto = pageWord.getContent().stream().map(WordDto.Response::new).collect(Collectors.toList());
 
         HashMap<String, Object> datas = new HashMap<>();
         datas.put("word", dto);
         datas.put("page", PageDto.getPageInstance(pageWord, dto));
-        return responseService.getListResult(datas);
+        return ResponseEntity.ok(datas);
     }
 
     @GetMapping(value = {"/read", "/read/{folder_id}" })
-    public ListResult<Object> getPagingWord(String userId,
+    public ResponseEntity<Object> getPagingWord(@AuthenticationPrincipal UserDetailsImpl user,
                                             @PathVariable(required = false) Optional<Integer> folder_id,
                                             @RequestParam(required = false, name = "page") Optional<Integer> page,
                                             @RequestParam(required = false, name = "last_wid") Optional<Integer> last_wid,
                                             @RequestParam(required = false, name = "memorization") Optional<String> memorization,
                                             @RequestParam(required = false, name = "language") Optional<String> language){
+        String userId = user.getUsername();
         int folderId = folder_id.orElse(-1);
         int lastWid = last_wid.orElse(-1);
         int curPage = page.orElse(0);
@@ -106,13 +105,14 @@ public class WordController{
                     .collect(Collectors.toList());
             datas.put("folder", fdto);
         }
-        return responseService.getListResult(datas);
+        return ResponseEntity.ok(datas);
     }
 
     @RequestMapping(value = "/{gttsType}", method = RequestMethod.POST)
-    public SingleResult<WordDto.Response> setSaveWord(String userId, @PathVariable("gttsType") String gttsType, @RequestBody WordDto.Request dto){
+    public ResponseEntity<WordDto.Response> setSaveWord(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("gttsType") String gttsType, @RequestBody WordDto.Request dto){
+        String userId = user.getUsername();
         dto.setUser_id(userId);
-        return responseService.getSingleResult(new WordDto.Response(wordService.saveWord(dto, gttsType)));
+        return ResponseEntity.ok(new WordDto.Response(wordService.saveWord(dto, gttsType)));
     }
 
     /**
@@ -122,42 +122,47 @@ public class WordController{
      * <pre>memo: 단어 메모 업데이트</pre>
      * <pre>wordFoler: 단어 폴더 변경</pre>
      * @param userId 로그인한 유저 아이디
-     * @param type {@link com.numo.wordapp.service.impl.WordServiceImpl.UpdateType} all, memorization, memo, wordFoler
+     * @param type {@link com.numo.wordapp.service.word.impl.WordServiceImpl.UpdateType} all, memorization, memo, wordFoler
      * @param id 업데이트할 단어 아이디
      * @param dto 업데이트할 데이터
      * @return 업데이트한 단어 전체 데이터
      */
     @PutMapping(value = "/{type}/{id}")
-    public SingleResult<WordDto.Response> setUpdateWord(String userId, @PathVariable("type") String type, @PathVariable("id")  int id, @RequestBody WordDto.Request dto){
+    public ResponseEntity<WordDto.Response> setUpdateWord(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("type") String type, @PathVariable("id")  int id, @RequestBody WordDto.Request dto){
+        String userId = user.getUsername();
         dto.setWord_id(id);
         dto.setUser_id(userId);
         WordDto.Response data = new WordDto.Response(wordService.updateByWord(dto, type));
-        return responseService.getSingleResult(data);
+        return ResponseEntity.ok(data);
     }
 
     @DeleteMapping(value = "/{id}")
-    public SingleResult<Integer> setRemoveWord(String userId, @PathVariable("id") int id) {
+    public ResponseEntity<Integer> setRemoveWord(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("id") int id) {
+        String userId = user.getUsername();
         WordDto.Request dto = new WordDto.Request();
         dto.setWord_id(id);
         dto.setUser_id(userId);
         int data = wordService.removeByWord(dto);
-        return responseService.getSingleResult(data);
+        return ResponseEntity.ok(data);
     }
 
+    // TODO FolderController 따로 생성
     /** 폴더 관련 **/
     @GetMapping(value = "/folder")
-    public ListResult<FolderDto.Response> getFolderName(String userId){
+    public ResponseEntity<List<FolderDto.Response>> getFolderName(@AuthenticationPrincipal UserDetailsImpl user){
+        String userId = user.getUsername();
         List<FolderDto.Response> fdto =  folderService.getByFolderName(userId).stream()
                 .map(FolderDto.Response::new)
                 .collect(Collectors.toList());
-        return responseService.getListResult(fdto);
+        return ResponseEntity.ok(fdto);
     }
 
     @PostMapping (value = "/folder")
-    public SingleResult<FolderDto.Response> setFolder(String userId, @RequestBody FolderDto.Request fdto){
+    public ResponseEntity<FolderDto.Response> setFolder(@AuthenticationPrincipal UserDetailsImpl user, @RequestBody FolderDto.Request fdto){
+        String userId = user.getUsername();
         fdto.setUser_id(userId);
         FolderDto.Response data = new FolderDto.Response(folderService.setByFolder(fdto));
-        return responseService.getSingleResult(data);
+        return ResponseEntity.ok(data);
     }
 
     /**
@@ -168,20 +173,22 @@ public class WordController{
      * @return 업데이트한 폴더 정보
      */
     @PutMapping (value = "/folder/{id}")
-    public SingleResult<FolderDto.Response> updateFolder(String userId, @PathVariable("id") int id, @RequestBody FolderDto.Request fdto){
+    public ResponseEntity<FolderDto.Response> updateFolder(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("id") int id, @RequestBody FolderDto.Request fdto){
+        String userId = user.getUsername();
         fdto.setFolder_id(id);
         fdto.setUser_id(userId);
         FolderDto.Response data = new FolderDto.Response(folderService.updateByFolder(fdto));
-        return responseService.getSingleResult(data);
+        return ResponseEntity.ok(data);
     }
 
     @DeleteMapping(value="/folder/{id}")
-    public SingleResult<Integer> removeFolder(String userId, @PathVariable("id") int id){
+    public ResponseEntity<Integer> removeFolder(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("id") int id){
+        String userId = user.getUsername();
         FolderDto.Request fdto = new FolderDto.Request();
         fdto.setFolder_id(id);
         fdto.setUser_id(userId);
         int data = folderService.removeByFolder(fdto);
-        return responseService.getSingleResult(data);
+        return ResponseEntity.ok(data);
     }
 
 }

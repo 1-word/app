@@ -1,20 +1,21 @@
-package com.numo.wordapp.comm.advice;
+package com.numo.wordapp.aop;
 
-import com.numo.wordapp.model.word.Word;
-import com.numo.wordapp.service.impl.WordServiceImpl;
-import com.numo.wordapp.util.JsonUtil;
-import com.numo.wordapp.util.ProcessBuilderUtil;
+import com.numo.wordapp.comm.util.JsonUtil;
+import com.numo.wordapp.comm.util.ProcessBuilderUtil;
+import com.numo.wordapp.entity.word.Word;
+import com.numo.wordapp.service.word.impl.WordServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect //AOP로 정의하는 클래스 지정
 @Component  //빈 등록
-public class WordAdvice {
+public class WordAspect {
     JsonUtil jsonUtil = new JsonUtil();
     // @Slf4j가 있으면 해당 역할을 대신 한다.
     // private final Logger log = LoggerFactory.getLogger(getClass());
@@ -43,9 +44,8 @@ public class WordAdvice {
      * @param joinPoint
      * @return Object ({@link com.numo.wordapp.controller.WordController}의 각 메서드의 파라미터 값)
      * */
-    @Around("wordControllerCut() || securityControllerCut()")
+    @Around("wordControllerCut()")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
-
         String cls = joinPoint.getSignature().getDeclaringTypeName();
         //실행되는 함수 이름 읽어옴
         String method = joinPoint.getSignature().getName();
@@ -53,12 +53,6 @@ public class WordAdvice {
         //메서드 매개변수 배열 읽어옴
         Object[] args = joinPoint.getArgs();
 
-        //jwt ID 확인
-        String id = SecurityContextHolder.getContext().getAuthentication().getName();
-        //ID 추가
-        args[0] = id;
-        //System.out.println("[before method] method: " + method);
-        //log.info("[before method] method: " + method + "()");
         log.info("[WordAdvice before]: {} {}()", cls, method);
         if (args.length != 0) {
             log.info("[before method] args: " + jsonUtil.getJson(args));
@@ -69,10 +63,10 @@ public class WordAdvice {
 
     /**
      * {@link WordServiceImpl} setByWord()의 실행이 종료되면 pk값과 name을 가져와 gtts모듈을 이용하여 text를 mp3로 변환
-     * @param joinPoint, word}
+     * @param joinPoint, word
      *
      * */
-    //@AfterReturning(value = "execution(* com.numo.wordapp.service.impl.WordServiceImpl.setByWord(..))", returning = "word")
+    //@AfterReturning(value = "execution(* com.numo.wordapp.service.word.impl.WordServiceImpl.setByWord(..))", returning = "word")
     public void textToAudio(JoinPoint joinPoint, Word word){
         log.info("[WordAdvice.textToAudio()]: fileName: {}, word: {}", word.getSoundPath(), word.getWord());
         int code = new ProcessBuilderUtil(word.getSoundPath(), word.getWord()).run();
