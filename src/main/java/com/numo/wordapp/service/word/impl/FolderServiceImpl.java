@@ -28,7 +28,7 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public Folder updateByFolder(FolderDto.Request fdto){
         Folder folder = folderRepository.findByFolderIdAndUserId(fdto.getFolder_id(), fdto.getUser_id())
-                .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
+                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
         //folder.setUserId(fdto.getUser_id());
         folder.setFolderName(fdto.getFolder_name());
         folder.setMemo(fdto.getMemo());
@@ -46,11 +46,11 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public int removeByFolder(FolderDto.Request fdto){
         Folder folder = folderRepository.findByFolderIdAndUserId(fdto.getFolder_id(), fdto.getUser_id())
-                .orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
+                .orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
         try {
             folderRepository.delete(folder);
         }catch (Exception e){
-            throw new CustomException(ErrorCode.AssociatedDataExists);
+            throw new CustomException(ErrorCode.ASSOCIATED_DATA_EXISTS);
         }
         return fdto.getFolder_id();
     }

@@ -1,5 +1,7 @@
 package com.numo.wordapp.security.service;
 
+import com.numo.wordapp.comm.exception.CustomException;
+import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +18,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        return userRepository.findOneWithAuthoritiesByUserId(userId)//db에서 유저정보와 권한정보 가져옴
-                .map(user -> createUser(userId, user))// 해당 정보로 userdetails.User 객체 생성
-                .orElseThrow(() -> new UsernameNotFoundException(userId + " -> 데이터베이스에서 찾을 수 없습니다."));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)//db에서 유저정보와 권한정보 가져옴
+                .map(this::createUser)// 해당 정보로 userdetails.User 객체 생성
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private UserDetails createUser(String userId, User user){
-        if(!user.isActivated()){    //계정이 활성화 된 것만 가져옴
-            throw new RuntimeException(userId + " -> 활성화되어 있지 않습니다.");
-        }
-
-        //userdetails.User 객체 생성 후 리턴
+    private UserDetails createUser(User user){
+        user.checkUser();
         return new UserDetailsImpl(user);
     }
 }

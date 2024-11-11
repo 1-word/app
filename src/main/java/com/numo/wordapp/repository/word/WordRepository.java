@@ -21,12 +21,12 @@ public interface WordRepository extends JpaRepository<Word, Integer>, WordReposi
 //    @Query(value = "SELECT distinct w FROM Word w " +
 //            "left join fetch w.folder f " +
 //            "left join w.wordDetailMains dm " +
-//            "where w.userId = ?1 " +
+//            "where w.email = ?1 " +
 //            "and w.update_time < (select w.update_time from Word w where w.wordId = ?2)" +
 //            "order by w.update_time desc")
 //    Slice<Word> getByPageWord(Pageable pageable, String user_id, int word_id);
 
-//    @Query("SELECT distinct w FROM Word w left join fetch w.folder f where w.userId = ?1 order by w.update_time desc")
+//    @Query("SELECT distinct w FROM Word w left join fetch w.folder f where w.email = ?1 order by w.update_time desc")
     @Query("SELECT distinct w FROM Word w left join fetch w.folder f where w.userId = ?1 order by w.update_time desc")
     List<Word> getByAllWord(String user_id);
 

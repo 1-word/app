@@ -54,8 +54,10 @@ public class WordAspect {
         Object[] args = joinPoint.getArgs();
 
         log.info("[WordAdvice before]: {} {}()", cls, method);
-        if (args.length != 0) {
-            log.info("[before method] args: " + jsonUtil.getJson(args));
+        if (log.isDebugEnabled()) {
+            if (args.length != 0) {
+                log.debug("[before method] args: " + jsonUtil.getJson(args));
+            }
         }
 
         return joinPoint.proceed(args);

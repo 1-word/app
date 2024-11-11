@@ -1,14 +1,18 @@
 package com.numo.wordapp.entity.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.numo.wordapp.comm.exception.CustomException;
+import com.numo.wordapp.comm.exception.ErrorCode;
+import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.entity.Timestamped;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,38 +23,58 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name="user")
 public class User extends Timestamped {
-//    @JsonIgnore
-//    @Id
-//    @Column(name = "user_id")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long userId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private String userId;
-
-    private String username;
+    private Long userId;
+    @Column(unique = true)
+    private String email;
+    private String nickname;
     private String password;
 
-    @JsonIgnore
-    private boolean activated;
+    @Column(name = "withdraw_date", nullable = true)
+    private LocalDateTime withdrawDate;
 
-   @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="user_authority",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_name", referencedColumnName = "authority_name"))
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "userId", updatable = false)
     private Set<Authority> authorities;
 
-    public void setPassword(String password){
-        this.password = password;
+    public void updatePassword(String newPassword){
+        this.password = newPassword;
     }
 
     public List<String> getAuthNameList(){
-        Set<Authority> authoritys = this.getAuthorities();
         List<String> list = new ArrayList<>();
-        for (Authority authority : authoritys){
-            list.add(authority.getAuthorityName());
+        if (authorities.isEmpty()) {
+            return list;
+        }
+        Set<Authority> authorities = this.getAuthorities();
+        for (Authority authority : authorities){
+            list.add(authority.getName().name());
         }
         return list;
+    }
+
+    public void checkUser() {
+        if (this.withdrawDate != null) {
+            throw new CustomException(ErrorCode.WITHDRAWN_ACCOUNT);
+        }
+    }
+
+    public void update(UpdateUserDto userDto) {
+        this.nickname = userDto.nickname();
+    }
+
+    public void withdraw() {
+        this.withdrawDate = LocalDateTime.now();
+    }
+
+    public void addAuthorities(Authority authority) {
+        if (this.authorities == null) {
+            authorities = new HashSet<>();
+        }
+        this.authorities.add(authority);
+        authority.setUserId(userId);
     }
 }

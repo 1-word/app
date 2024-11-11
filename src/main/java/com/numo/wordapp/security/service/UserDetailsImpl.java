@@ -16,7 +16,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getAuthorities().stream()
-                .map(authority -> new SimpleGrantedAuthority((authority.getAuthorityName())))
+                .map(authority -> new SimpleGrantedAuthority(authority.getName().name()))
                 .collect(Collectors.toList());
     }
 
@@ -27,7 +27,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserId();
+        return user.getEmail();
     }
 
     @Override
@@ -48,5 +48,9 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

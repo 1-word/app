@@ -5,61 +5,51 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class TokenProvider implements InitializingBean {
+public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
-    private final String secret;
     private final long tokenValidityInMilliseconds;
     private final long refreshTokenValidMillisecond = 14 * 24 * 60 * 60 * 1000L; // 14 day
     private Key key;
+    private final UserDetailsService userDetailsService;
 
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
-        this.secret = secret;
+            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
+            UserDetailsService userDetailsService) {
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
+        this.userDetailsService = userDetailsService;
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto createTokenDto(String userId, List<String> roles){
+    public TokenDto createTokenDto(String email, List<String> roles){
         Date now = new Date();
-        
         String accessToken = Jwts.builder()
-                .id(userId)
+                .id(email)
                 .claims()
-                .id(userId)
-                .add(AUTHORITIES_KEY, roles)
-                .and()
+                    .add(AUTHORITIES_KEY, roles)
+                    .and()
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + tokenValidityInMilliseconds))
                 .signWith(key)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .id(userId)
+                .id(email)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + refreshTokenValidMillisecond))
                 .signWith(key)
@@ -73,20 +63,16 @@ public class TokenProvider implements InitializingBean {
 
     public Authentication getAuthentication(String token) {
         Claims claims = getPayload(token);
+        String email = claims.getId();
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        User principal = new User(claims.getSubject(), "", authorities);
-
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
     private Claims getPayload(String token) {
         return Jwts.parser()
-                .decryptWith((SecretKey) key)
+                .verifyWith((SecretKey) key)
                 .build()
                 .parseSignedClaims(token).getPayload();
     }

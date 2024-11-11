@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,19 +33,6 @@ public class ExceptionAdvice {
                         .code(e.errorCode.getCode())
                         .success(false)
                         .msg(e.errorCode.getDescription())
-                        .build()
-        );
-    }
-
-    //로그인 실패 시 예외 처리
-    @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.OK)
-    protected ResponseEntity<CommonResult> loginException(HttpServletRequest request, Exception e){
-        return ResponseEntity.status(HttpStatus.OK).body(
-                CommonResult.builder()
-                        .code(HttpStatus.OK.value())
-                        .success(false)
-                        .msg(ErrorCode.BadCredentials.getDescription())
                         .build()
         );
     }

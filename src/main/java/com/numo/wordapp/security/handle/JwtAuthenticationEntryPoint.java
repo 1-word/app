@@ -35,7 +35,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                         CommonResult.builder()
                                 .code(status.value())
                                 .success(false)
-                                .msg(ErrorCode.OperationNotAuthorized.getDescription())
+                                .msg(ErrorCode.NOT_AUTHORIZED.getDescription())
                                 .build()
                 )
         );

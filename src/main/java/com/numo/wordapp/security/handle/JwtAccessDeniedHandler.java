@@ -35,7 +35,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                         CommonResult.builder()
                                 .code(status.value())
                                 .success(false)
-                                .msg(ErrorCode.UnrecognizedRole.getDescription())
+                                .msg(ErrorCode.UNRECOGNIZED_ROLE.getDescription())
                                 .build()
                 )
         );

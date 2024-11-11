@@ -1,16 +1,25 @@
 package com.numo.wordapp.repository.user;
 
+import com.numo.wordapp.comm.exception.CustomException;
+import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.entity.user.User;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-    @EntityGraph(attributePaths = "authorities")
-    Optional<User> findOneWithAuthoritiesByUserId(String user_id);
-    /*Optional<User> findByUser_id(String user_id);
-    boolean existsByUser_id(String user_id);*/
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+
+    default User findUserByUserId(Long userId) {
+        return findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    default User findUserByEmail(String email) {
+        return findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+    }
+
 }

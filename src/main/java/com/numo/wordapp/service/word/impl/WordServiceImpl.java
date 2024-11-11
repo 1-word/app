@@ -110,7 +110,7 @@ public class WordServiceImpl implements WordService {
     public Word updateByWord(WordDto.Request dto, String type){
         Word result = null;
         // 1. 해당 단어 유효한지 검색
-        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));  //db에서 조회를 하면 영속성 유지..
+        Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));  //db에서 조회를 하면 영속성 유지..
         try{
             // 2. 업데이트 타입 확인
             UpdateType updateType = UpdateType.valueOf(type);
@@ -125,7 +125,7 @@ public class WordServiceImpl implements WordService {
             m.setAccessible(true);  // private 메서드 접근
             result = (Word) m.invoke(this, dto, word);
         } catch (Exception e){
-            throw new CustomException(ErrorCode.TypeNotFound);
+            throw new CustomException(ErrorCode.TYPE_NOT_FOUND);
         }
 
         return result;
@@ -319,7 +319,7 @@ public class WordServiceImpl implements WordService {
     @Override
     @Transactional
     public int removeByWord(WordDto.Request dto){
-       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DataNotFound));
+       Word word = wordRepository.findByUserIdAndWordId(dto.getUser_id(), dto.getWord_id()).orElseThrow(() -> new CustomException(ErrorCode.DATA_NOT_FOUND));
        wordRepository.delete(word);
         return dto.getWord_id();
     }
