@@ -51,7 +51,8 @@ public class UserService {
         if (!checkPassword(changePasswordDto.oldPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
         }
-        user.updatePassword(changePasswordDto.newPassword());
+        String newPassword = passwordEncoder.encode(changePasswordDto.newPassword());
+        user.updatePassword(newPassword);
     }
 
     @Transactional
@@ -74,8 +75,9 @@ public class UserService {
     public UserDto findUserAndCheckPassword(String email, String inputPassword) {
         User user = findUserByEmail(email);
         if (!checkPassword(inputPassword, user.getPassword())) {
-            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
+            throw new CustomException(ErrorCode.LOGIN_PW_FAILED);
         }
+        user.checkUser();
         return UserDto.of(user);
     }
 

@@ -8,3 +8,41 @@ Content-Type: application/json
   "nickname": "test"
 }
 
+### 비밀번호 변경
+PUT localhost:8088/user/pw
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "oldPassword": "asdfghjkl1!",
+  "newPassword": "asdfghjkl2!"
+}
+
+### 비밀번호 변경
+PUT localhost:8088/user/pw
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "oldPassword": "asdfghjkl2!",
+  "newPassword": "asdfghjkl1!"
+}
+
+### 회원정보 출력
+GET localhost:8088/user
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 회원정보 수정
+PUT localhost:8088/user
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "nickname": "abc"
+}
+
+### 회원 탈퇴
+DELETE localhost:8088/user
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
