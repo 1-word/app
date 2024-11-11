@@ -1,0 +1,26 @@
+### 로그인
+POST localhost:8088/auth/login
+Content-Type: application/json
+
+{
+  "email": "test1@test.com",
+  "password": "asdfghjkl1!"
+}
+
+> {%
+    client.global.set("accessToken", response.body.accessToken);
+    client.global.set("refreshToken", response.body.refreshToken);
+%}
+
+### 토큰 재발급
+POST localhost:8088/auth/reissue
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### 로그아웃
+DELETE localhost:8088/auth
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
