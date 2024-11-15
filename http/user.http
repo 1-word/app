@@ -39,7 +39,8 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "nickname": "abc"
+  "nickname": "abc",
+  "thumbnailId": "f349d273-13cd-462e-9ae4-fa7f18130a97"
 }
 
 ### 회원 탈퇴

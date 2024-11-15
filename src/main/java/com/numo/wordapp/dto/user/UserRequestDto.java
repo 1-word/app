@@ -5,17 +5,18 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UserRequestDto(
-        @NotNull
-        @Size(min = 3, max = 50)
+        @NotNull @Size(min = 3, max = 50)
         @Schema(description = "유저 아이디")
         String email,
-        @NotNull
-        @Size(min = 3, max = 100)
-        @Schema(description = "비밀번호")String password,
-        @NotNull
-        @Size(min = 3, max = 50)
+        @NotNull @Size(min = 3, max = 100)
+        @Schema(description = "비밀번호")
+        String password,
+        @NotNull @Size(min = 3, max = 50)
         @Schema(description = "닉네임")
-        String nickname
+        String nickname,
+        @NotNull
+        @Schema(description = "썸네일 이미지 파일 아이디")
+        String thumbnailId
 ) {
 
 }

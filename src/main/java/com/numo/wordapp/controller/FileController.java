@@ -1,7 +1,7 @@
 package com.numo.wordapp.controller;
 
 import com.numo.wordapp.security.service.UserDetailsImpl;
-import com.numo.wordapp.service.FileService;
+import com.numo.wordapp.service.file.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
