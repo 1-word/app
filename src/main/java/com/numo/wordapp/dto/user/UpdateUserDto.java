@@ -7,6 +7,8 @@ import lombok.Builder;
 @Builder
 public record UpdateUserDto(
         @Null @Schema(description = "닉네임")
-        String nickname
+        String nickname,
+        @Null @Schema(description = "썸네일 이미지 파일 아이디")
+        String thumbnailId
 ) {
 }

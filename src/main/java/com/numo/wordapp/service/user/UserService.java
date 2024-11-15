@@ -6,6 +6,7 @@ import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;
 import com.numo.wordapp.dto.user.UserRequestDto;
+import com.numo.wordapp.entity.file.File;
 import com.numo.wordapp.entity.user.Authority;
 import com.numo.wordapp.entity.user.Role;
 import com.numo.wordapp.entity.user.User;
@@ -31,6 +32,10 @@ public class UserService {
                 .password(passwordEncoder.encode(userDto.password()))
                 .email(userDto.email())
                 .nickname(userDto.nickname())
+                // 썸네일 추가
+                .thumbnail(File.builder()
+                        .fileId(userDto.thumbnailId())
+                        .build())
                 .build();
 
         user = userRepository.save(user);
@@ -55,11 +60,10 @@ public class UserService {
         user.updatePassword(newPassword);
     }
 
-    @Transactional
     public UserDto updateUser(Long userId, UpdateUserDto userDto) {
        User user = findUserById(userId);
        user.update(userDto);
-       return UserDto.of(user);
+       return UserDto.of(userRepository.save(user));
     }
 
     @Transactional

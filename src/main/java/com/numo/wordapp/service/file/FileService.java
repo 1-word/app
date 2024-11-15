@@ -1,4 +1,4 @@
-package com.numo.wordapp.service;
+package com.numo.wordapp.service.file;
 
 import com.numo.wordapp.comm.util.FileUtil;
 import com.numo.wordapp.entity.file.File;
