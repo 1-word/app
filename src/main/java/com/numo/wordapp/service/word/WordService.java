@@ -130,7 +130,7 @@ public class WordService {
     * */
     @Transactional
     public WordResponseDto saveWord(Long userId, String gttsType, WordRequestDto requestDto){
-        Long fileId = createSoundFile(requestDto.word(), gttsType);
+        Long fileId = null;
 
         if (!soundRepository.existsByWord(requestDto.word())) {
             fileId = createSoundFile(requestDto.word(), gttsType);
@@ -169,7 +169,7 @@ public class WordService {
 
         // 파일생성 실패 시
         if(code != 0) {
-            return Long.parseLong(null);
+            return null;
         }
 
         return sound.getSoundId();

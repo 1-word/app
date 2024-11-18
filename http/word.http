@@ -1,0 +1,23 @@
+### 단어 저장
+POST localhost:8088/word/EN
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "word": "word123",
+  "mean": "mean",
+  "read": "read",
+  "memo": "memo",
+  "memorization": "N",
+  "details": [{
+    "wordGroupId": 2,
+    "title": "title1",
+    "content": "content1"
+  }, {
+    "wordGroupId": 2,
+    "title": "title2",
+    "content": "content2"
+  }]
+}
+
+### 단어 조회

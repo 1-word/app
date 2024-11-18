@@ -41,8 +41,14 @@ public record WordRequestDto(
 
     public Word toEntity(Long userId, String gttsType, Long soundId) {
         User user = User.builder().userId(userId).build();
-        Folder folder = Folder.builder().folderId(folderId).build();
-        Sound sound = Sound.builder().soundId(soundId).build();
+        Folder folder = null;
+        if (folderId != null) {
+            folder = Folder.builder().folderId(folderId).build();
+        }
+        Sound sound = null;
+        if (soundId != null) {
+            Sound.builder().soundId(soundId).build();
+        }
         List<WordDetail> wordDetails = details.stream().map(WordDetailRequestDto::toEntity).toList();
         return Word.builder()
                 .user(user)

@@ -59,7 +59,7 @@ public class Word extends Timestamped {
     }
 
     private void addWordDetail(WordDetail wordDetail) {
-        wordDetails.add(wordDetail);
+//        wordDetails.add(wordDetail);
         if (wordDetail.getWord() != this) {
             wordDetail.addWord(this);
         }
@@ -110,5 +110,12 @@ public class Word extends Timestamped {
 
     public Long getFolderId(){
         return folder.getFolderId();
+    }
+
+    public Sound getSound() {
+        if (sound == null) {
+            return Sound.builder().build();
+        }
+        return sound;
     }
 }

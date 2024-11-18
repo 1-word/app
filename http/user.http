@@ -5,7 +5,8 @@ Content-Type: application/json
 {
   "email": "test1@test.com",
   "password": "asdfghjkl1!",
-  "nickname": "test"
+  "nickname": "test",
+  "thumbnailId": "1"
 }
 
 ### 비밀번호 변경
