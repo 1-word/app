@@ -32,7 +32,7 @@
 //    }
 //
 //    public static void main(String[] args) {
-//        WordDto.Request wrdto = new WordDto.Request();
+//        WordRequestDto wrdto = new WordRequestDto();
 //        SynonymDto.Request sydto = new SynonymDto.Request();
 //        sydto.setSynonym_id(1);
 //        sydto.setSynonym("synonym");

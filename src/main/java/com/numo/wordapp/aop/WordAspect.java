@@ -1,11 +1,7 @@
 package com.numo.wordapp.aop;
 
 import com.numo.wordapp.comm.util.JsonUtil;
-import com.numo.wordapp.comm.util.ProcessBuilderUtil;
-import com.numo.wordapp.entity.word.Word;
-import com.numo.wordapp.service.word.impl.WordServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -63,16 +59,4 @@ public class WordAspect {
         return joinPoint.proceed(args);
     }
 
-    /**
-     * {@link WordServiceImpl} setByWord()의 실행이 종료되면 pk값과 name을 가져와 gtts모듈을 이용하여 text를 mp3로 변환
-     * @param joinPoint, word
-     *
-     * */
-    //@AfterReturning(value = "execution(* com.numo.wordapp.service.word.impl.WordServiceImpl.setByWord(..))", returning = "word")
-    public void textToAudio(JoinPoint joinPoint, Word word){
-        log.info("[WordAdvice.textToAudio()]: fileName: {}, word: {}", word.getSoundPath(), word.getWord());
-        int code = new ProcessBuilderUtil(word.getSoundPath(), word.getWord()).run();
-        log.info("[textToAudio() Return]: {}", code);
-        //System.out.println("processBuilder Util run");
-    }
 }

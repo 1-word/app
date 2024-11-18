@@ -1,25 +1,22 @@
 package com.numo.wordapp.entity.word;
 
 import com.numo.wordapp.entity.Timestamped;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-
+import com.numo.wordapp.entity.user.User;
 import jakarta.persistence.*;
+import lombok.*;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Table(name = "folder")
 public class Folder extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "folder_id")
-    private int folderId;
+    private Long folderId;
 
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "folder_name")
     private String folderName;
 
     //230923 폴더 컬러 추가
@@ -29,56 +26,17 @@ public class Folder extends Timestamped {
     private String memo;
 
     @Builder
-    public Folder(int folderId, String userId, String folderName, String memo, String color, String background) {
+    public Folder(Long folderId, User user, String folderName, String memo, String color, String background) {
         this.folderId = folderId;
-        this.userId = userId;
+        this.user = user;
         this.folderName = folderName;
         this.memo = memo;
         this.color = color;
         this.background = background;
     }
 
-    public void setFolderId(int folderId){ this.folderId = folderId; }
+//    public void update() {
+//        this.folderName =
+//    }
 
-    public int getFolderId() {
-        return folderId;
-    }
-
-    public String getFolderName() {
-        return folderName;
-    }
-
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getColor(){ return color;}
-
-    public void setBackground(String background) {
-        this.background = background;
-    }
-
-    public String getBackground() {
-        return background;
-    }
 }

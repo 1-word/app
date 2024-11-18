@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface SoundRepository extends JpaRepository<Sound, String> {
     Optional<Sound> findByWord(String word);
+    boolean existsByWord(String word);
+
 }

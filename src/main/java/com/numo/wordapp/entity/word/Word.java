@@ -1,92 +1,114 @@
 package com.numo.wordapp.entity.word;
 
+import com.numo.wordapp.dto.word.UpdateWordDto;
+import com.numo.wordapp.dto.word.detail.WordDetailRequestDto;
 import com.numo.wordapp.entity.Timestamped;
-import com.numo.wordapp.entity.word.detail.WordDetailMain;
-import lombok.*;
-
+import com.numo.wordapp.entity.user.User;
+import com.numo.wordapp.entity.word.detail.WordDetail;
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+
 import java.util.ArrayList;
 import java.util.List;
 
-//@Data //롬복의 Data 애노테이션 사용시, toString이 포함되어있어 무한참조가 발생하게 된다. 오버라이딩하거나 사용하지 않음으로 처리
-@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
-@Setter
-@NoArgsConstructor
-//@DynamicUpdate //변경한 필드만 업데이트
-@Table(name = "word_master")
-//@MappedSuperclass
-//@EntityListeners(AuditingEntityListener.class)
+@Builder
+@Entity
 public class Word extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment로 값 지정.
-    @Column(name = "word_id")
-    private int wordId;    //기본키
+    private Long wordId;    //기본키
 
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String word;    //단어
     private String mean;    //뜻
     @Column(name = "`read`")
     private String read;   //읽는법
     private String memo;    //메모
-    private String soundPath;   //230423추가 발음 파일 경로
+
+    @OneToOne
+    private Sound sound;
+
+    @ColumnDefault("'N'")
     private String memorization;    //230724추가 암기여부 Y/N
 
     @Enumerated(EnumType.STRING)
     private GttsCode lang;   //20230930추가 단어 타입 (영어, 일본어 등)
 
-//    @Column(name = "folder_id")
-//    private Integer folderId;
-
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name="folder_id")
     private Folder folder;
 
-    //양방향 관계, 단어가 삭제되면 유의어도 삭제되도록 CascadeType.REMOVE속성 사용.
-    //@OneToMany(mappedBy = "word", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @OneToMany(mappedBy = "word", // fk인스턴스
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private List<WordDetailMain> wordDetailMains = new ArrayList<>(); //초기화 선언
+    @OneToMany(mappedBy = "word", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WordDetail> wordDetails = new ArrayList<>();
 
-    @Builder
-    public Word(String userId, String word, String mean, String read, String memo, String memorization, Integer folderId, GttsCode lang){
-        this.userId = userId;
-        this.word = word;
-        this.mean = mean;
-        this.read = read;
-        this.memo = memo;
-        this.memorization = memorization;
-//        this.folderId = folderId;
-        this.lang = lang;
+    public void setWordDetails() {
+        addWordDetails(wordDetails);
     }
 
-    // 연관관계 설정
-    // word는 연관관계의 주인이 아님, 메소드를 통해 데이터 삽입해준다.
-    public void addWordDetailMain(WordDetailMain wordDetailMain){
-        this.wordDetailMains.add(wordDetailMain);
-        if(wordDetailMain.getWord() != this){
-            wordDetailMain.setWord(this);
+    public void addWordDetails(List<WordDetail> wordDetails) {
+        for (WordDetail wordDetail : wordDetails) {
+            addWordDetail(wordDetail);
         }
     }
 
-//    public void addWordDetailMain(List<WordDetailMain> wordDetailMains){
-//        this.wordDetailMains = wordDetailMains;
-//        for (WordDetailMain wordDetailMain : wordDetailMains) {
-//            if (wordDetailMain.getWord() != this) {
-//                wordDetailMain.setWord(this);
-//            }
-//        }
-//    }
-
-    public void setFolderId(Integer id){
-        folder.setFolderId(id);
+    private void addWordDetail(WordDetail wordDetail) {
+        wordDetails.add(wordDetail);
+        if (wordDetail.getWord() != this) {
+            wordDetail.addWord(this);
+        }
     }
 
-    public int getFolderId(){
+    public void updateWord(UpdateWordDto dto) {
+        mean = dto.mean();
+        read = dto.read();
+        updateWordDetails(dto.details());
+    }
+
+    private void updateWordDetails(List<WordDetailRequestDto> detailsDto) {
+        int detailsSize = wordDetails.size();
+        int requestSize = detailsDto.size();
+        int index = 0;
+
+        for (WordDetailRequestDto detailDto : detailsDto) {
+            if (detailsSize == requestSize) {
+                WordDetail wordDetail = wordDetails.get(index);
+                wordDetail.update(detailDto);
+            // 원래 있던 데이터보다 많으면 새로운 객체를 만들어야한다.
+            } else if (detailsSize < requestSize) {
+                wordDetails.add(detailDto.toEntity());
+            //원래 있던 데이터보다 적으면 객체를 삭제해주어야 한다. -> 그냥 제일 마지막 객체를 삭제하는걸로....
+            } else {
+                int diffCount = detailsSize - requestSize;
+                for (int i = 1; i <= diffCount; i++) {
+                    wordDetails.remove(detailsSize - i);
+                }
+            }
+            index++;
+        }
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public void updateMemorization(String memorization) {
+        this.memorization = memorization;
+    }
+
+    public void setFolder(Long folderId) {
+        folder = Folder.builder()
+                .folderId(folderId)
+                .build();
+    }
+
+    public Long getFolderId(){
         return folder.getFolderId();
     }
 }
