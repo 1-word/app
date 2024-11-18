@@ -17,10 +17,6 @@ public class Sound extends Timestamped {
 
     @Column(unique = true)
     private String word;
-    private String soundPath; //유의어
     private String memo;    //메모
 
-    public boolean hasSound() {
-        return soundPath != null && !soundPath.isEmpty();
-    }
 }

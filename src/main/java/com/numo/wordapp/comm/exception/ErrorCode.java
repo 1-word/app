@@ -26,8 +26,9 @@ public enum ErrorCode {
     FILE_WRITE_FAILED(3000, "파일을 생성하던 중 오류가 발생했습니다.", "파일 생성 실패"),
     FILE_READ_FAILED(3001, "파일을 읽던 중 오류가 발생했습니다.", "파일 읽기 실패"),
     FILE_NOT_FOUND(3002, "해당하는 파일을 찾을 수 없습니다.", "해당하는 파일 아이디가 없습니다."),
-    FILE_ACCESS_DENIED(3003, "파일에 접근권한이 없습니다.", "파일에 접근권한이 없습니다.")
+    FILE_ACCESS_DENIED(3003, "파일에 접근권한이 없습니다.", "파일에 접근권한이 없습니다."),
 
+    SOUND_CANNOT_CREATED(4000, "사운드 파일 생성 중 오류가 발생했습니다.", "사운드 파일 생성 중 오류가 발생했습니다."),
     ;
 
     private final int code;

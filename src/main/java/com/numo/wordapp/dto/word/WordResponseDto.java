@@ -34,7 +34,6 @@ public record WordResponseDto(
                         .mean(word.getMean())
                         .read(word.getRead())
                         .memo(word.getMemo())
-                        .soundPath(sound.getSoundPath())
                         .memorization(word.getMemorization())
                         .type(word.getLang().name())
                         .createTime(word.getCreateTime())

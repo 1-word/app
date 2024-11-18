@@ -3,6 +3,7 @@ package com.numo.wordapp.service.word;
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.util.ProcessBuilderUtil;
+import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.page.PageDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.entity.user.User;
@@ -26,6 +27,7 @@ public class WordService {
 
     private final WordRepository wordRepository;
     private final SoundRepository soundRepository;
+    private final PropertyConfig propertyConfig;
 
     public enum UpdateType{
         all{
@@ -148,28 +150,20 @@ public class WordService {
      * */
     @Transactional
     public Long createSoundFile(String wordName, String gttsType){
-        //String fileName = wordName + "_" + System.currentTimeMillis();
-        String fileName = "p_"+ wordName.replaceAll("\\s", "");
-        int code = 0;
+        wordName = wordName.replaceAll("\\s", "");
 
         // 1. sound 테이블에 데이터 insert
         Sound sound = Sound.builder()
-                .soundPath(fileName)
-                .memo("")
+                .word(wordName)
                 .build();
 
         sound = soundRepository.save(sound);
 
-        // 2. 발음 파일 생성
-        if (gttsType == null || gttsType.isEmpty()) {
-            code = new ProcessBuilderUtil(wordName, fileName).run();
-        } else {
-            code = new ProcessBuilderUtil(wordName, fileName, GttsCode.valueOf(gttsType).getTTS()).run();
-        }
+        int code = new ProcessBuilderUtil(propertyConfig.getPath(), wordName, GttsCode.valueOf(gttsType).getTTS()).run();
 
         // 파일생성 실패 시
-        if(code != 0) {
-            return null;
+        if (code == 0) {
+           throw new CustomException(ErrorCode.SOUND_CANNOT_CREATED);
         }
 
         return sound.getSoundId();

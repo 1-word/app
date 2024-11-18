@@ -11,4 +11,11 @@ public class PropertyConfig {
     private String program;
     @Value("${cstm.processbuilder.path}")
     private String path;
+
+    public String getPath() {
+        if (path.endsWith("/")) {
+            return path.substring(0, path.length() - 2);
+        }
+        return path;
+    }
 }

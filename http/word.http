@@ -10,11 +10,11 @@ Authorization: Bearer {{accessToken}}
   "memo": "memo",
   "memorization": "N",
   "details": [{
-    "wordGroupId": 2,
+    "wordGroupId": 1,
     "title": "title1",
     "content": "content1"
   }, {
-    "wordGroupId": 2,
+    "wordGroupId": 1,
     "title": "title2",
     "content": "content2"
   }]
