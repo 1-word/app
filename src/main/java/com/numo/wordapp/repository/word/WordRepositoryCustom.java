@@ -12,5 +12,5 @@ public interface WordRepositoryCustom {
      * @param readDto <br>
      *
      * */
-    Slice<Word> findWordBy(Pageable pageable, Long userId, ReadWordRequestDto readDto);
+    Slice<Word> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto);
 }

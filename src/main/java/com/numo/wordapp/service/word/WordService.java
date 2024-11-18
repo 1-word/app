@@ -14,11 +14,13 @@ import com.numo.wordapp.repository.SoundRepository;
 import com.numo.wordapp.repository.word.WordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -189,21 +191,23 @@ public class WordService {
      * @param readDto {@link ReadWordResponseDto}<br>
      * @return 단어 데이터
      */
-    public ReadWordResponseDto getWord(Long userId, ReadWordRequestDto readDto){
-        Slice<Word> wordsWithPage = wordRepository.findWordBy(PageRequest.of(readDto.page().getCurrent(), 20), readDto);
+    public ReadWordResponseDto getWord(Long userId, PageDto pageDto, ReadWordRequestDto readDto){
+        Pageable pageable = PageRequest.of(pageDto.getCurrent(), 20);
+        Slice<Word> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.getLastWordId(),readDto);
         List<Word> words = wordsWithPage.getContent();
 
         int pageNumber = wordsWithPage.getNumber();
         boolean hasNext = wordsWithPage.hasNext();
 
         List<WordResponseDto> dto = words.stream().map(WordResponseDto::of).toList();
-        PageDto page = new PageDto(pageNumber, hasNext, getLastWordId(words));
+        pageDto = new PageDto(pageNumber, hasNext, getLastWordId(words));
 
-        return new ReadWordResponseDto(dto, page);
+        return new ReadWordResponseDto(dto, pageDto);
     }
 
     private Long getLastWordId(List<Word> words) {
-        return (long) (!words.isEmpty() ? words.size() - 1 : -1);
+        words = words.stream().sorted(Comparator.comparing(Word::getWordId)).toList();
+        return (long) (!words.isEmpty() ? words.get(words.size() - 1).getWordId() : -1);
     }
 
 }

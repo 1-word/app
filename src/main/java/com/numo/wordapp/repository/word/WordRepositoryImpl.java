@@ -31,7 +31,7 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
      * @return 페이징한 유저 데이터
      */
     @Override
-    public Slice<Word> findWordBy(Pageable pageable, Long userId, ReadWordRequestDto readDto) {
+    public Slice<Word> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto) {
         List<Word> results = queryFactory.selectDistinct(qWord)
                 .from(qWord)
                 .leftJoin(qWord.folder)
@@ -40,8 +40,8 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
                         qWord.user.userId.eq(userId),
                         eqFolderId(readDto.folderId()),
                         eqMemorization(readDto.memorization()),
-                        eqLanguage(readDto.language()),
-                        ltUpdateTime(readDto.page().getLastWordId()),
+                        eqLanguage(readDto.lang()),
+                        ltUpdateTime(lastWordId),
                         likeSearchText(readDto.searchText())
                 )
                 .orderBy(qWord.updateTime.desc())
@@ -122,7 +122,7 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
      * @return 폴더 아이디가 있는 경우에만 폴더 검색하는 쿼리 리턴
      */
     private BooleanExpression eqFolderId(Long folderId){
-        if (folderId == -1L) {
+        if (folderId == null) {
             return null;
         }
         return qWord.folder.folderId.eq(folderId);
@@ -134,7 +134,7 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
      * @return 처음 조회 시 null, 업데이트 시간 비교하는 쿼리 리턴
      */
     private BooleanExpression ltUpdateTime(Long lastWordId){
-        if (lastWordId == -1L) {
+        if (lastWordId == null) {
             return null;
         }
         return qWord.updateTime.lt(

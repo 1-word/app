@@ -21,3 +21,21 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어 조회
+GET localhost:8088/word?current=1&next=1&lastWordId=1&folderId=1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 검색
+GET localhost:8088/word?current=1&next=1&lastWordId=1&searchText=word
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 조회 - 암기 여부
+GET localhost:8088/word?current=1&next=1&lastWordId=1&memorization=Y
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 조회 - 언어
+GET localhost:8088/word?current=1&next=1&lastWordId=1&lang=EN
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

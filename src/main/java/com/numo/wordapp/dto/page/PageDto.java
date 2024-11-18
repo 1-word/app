@@ -1,7 +1,9 @@
 package com.numo.wordapp.dto.page;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class PageDto {
     int current;
