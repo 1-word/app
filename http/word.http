@@ -39,3 +39,10 @@ Authorization: Bearer {{accessToken}}
 GET localhost:8088/word?current=1&next=1&lastWordId=1&lang=EN
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 단어 수정
+
+### 단어 삭제
+DELETE localhost:8088/word/4
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
