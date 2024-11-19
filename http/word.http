@@ -4,6 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
+  "folderId": 2,
   "word": "word123",
   "mean": "mean",
   "read": "read",
@@ -50,6 +51,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
+  "folderId": 4,
   "mean": "meanUpdate",
   "read": "readUpdate",
   "memo": "memoUpdate",

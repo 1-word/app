@@ -35,9 +35,13 @@ public class FolderService {
      * @return 조회한 폴더 데이터
      */
     public List<FolderResponseDto> getFolders(Long userId, Long folderId){
-        List<Folder> folders = folderRepository.findFoldersByUserId(userId, null);
+        List<Folder> folders = folderRepository.findFoldersByUserId(userId, folderId);
         List<FolderResponseDto> res = folders.stream().map(FolderResponseDto::of).toList();
         return res;
+    }
+
+    public boolean existsFolder(Long folderId, Long userId) {
+        return folderRepository.existsByFolderIdAndUser_UserId(folderId, userId);
     }
 
     /**

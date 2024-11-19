@@ -26,29 +26,48 @@ public class WordService {
 
     private final WordRepository wordRepository;
     private final SoundRepository soundRepository;
+    private final FolderService folderService;
     private final String path;
 
-    public WordService(WordRepository wordRepository, SoundRepository soundRepository, PropertyConfig propertyConfig) {
+    public WordService(WordRepository wordRepository,
+                       SoundRepository soundRepository,
+                       FolderService folderService,
+                       PropertyConfig propertyConfig) {
         this.wordRepository = wordRepository;
         this.soundRepository = soundRepository;
+        this.folderService = folderService;
         this.path = propertyConfig.getPath();
     }
 
     /**
-    * 단어 저장
-    * @param requestDto {@link UpdateWordDto}
-    * @return Word {@link Word}
-    * 작성일: 2022.06.22
-    * */
+     * 단어 저장
+      * @param userId 유저 아이디
+     * @param gttsType 발음 타입
+     * @param requestDto 저장할 단어 데이터
+     * @return 저장한 단어 데이터
+     */
     @Transactional
     public WordResponseDto saveWord(Long userId, String gttsType, WordRequestDto requestDto){
-        Long fileId = null;
+        Long soundId = null;
+        String wordName = requestDto.word().replaceAll("\\s", "");
 
-        if (!soundRepository.existsByWord(requestDto.word())) {
-            fileId = createSoundFile(requestDto.word(), gttsType);
+        // 폴더 확인
+        if (requestDto.folderId() != null && !folderService.existsFolder(requestDto.folderId(), userId)) {
+            throw new CustomException(ErrorCode.FOLDER_NOT_FOUND);
         }
 
-        Word word = requestDto.toEntity(userId, gttsType, fileId);
+        // 단어 그룹 확인
+
+        // 발음 파일 생성
+        Sound sound = soundRepository.findByWord(requestDto.word());
+
+        if (sound == null) {
+            soundId = createSoundFile(wordName, gttsType);
+        } else {
+            soundId = sound.getSoundId();
+        }
+
+        Word word = requestDto.toEntity(userId, gttsType, soundId);
         word.setWordDetails();
 
         return WordResponseDto.of(wordRepository.save(word));
@@ -98,21 +117,19 @@ public class WordService {
      * */
     @Transactional
     public Long createSoundFile(String wordName, String gttsType){
-        wordName = wordName.replaceAll("\\s", "");
+        int code = new ProcessBuilderUtil(path, wordName, GttsCode.valueOf(gttsType).getTTS()).run();
 
-        // 1. sound 테이블에 데이터 insert
+        // 파일생성 실패 시
+        if (code < 0) {
+            throw new CustomException(ErrorCode.SOUND_CANNOT_CREATED);
+        }
+
+        // sound 테이블에 데이터 insert
         Sound sound = Sound.builder()
                 .word(wordName)
                 .build();
 
         sound = soundRepository.save(sound);
-
-        int code = new ProcessBuilderUtil(path, wordName, GttsCode.valueOf(gttsType).getTTS()).run();
-
-        // 파일생성 실패 시
-        if (code == 0) {
-           throw new CustomException(ErrorCode.SOUND_CANNOT_CREATED);
-        }
 
         return sound.getSoundId();
     }

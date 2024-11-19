@@ -32,7 +32,8 @@ public class Word extends Timestamped {
     private String read;   //읽는법
     private String memo;    //메모
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "sound_id")
     private Sound sound;
 
     @ColumnDefault("'N'")
@@ -41,8 +42,8 @@ public class Word extends Timestamped {
     @Enumerated(EnumType.STRING)
     private GttsCode lang;   //20230930추가 단어 타입 (영어, 일본어 등)
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name="folder_id")
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "folder_id")
     private Folder folder;
 
     @OneToMany(mappedBy = "word", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -59,7 +60,6 @@ public class Word extends Timestamped {
     }
 
     private void addWordDetail(WordDetail wordDetail) {
-//        wordDetails.add(wordDetail);
         if (wordDetail.getWord() != this) {
             wordDetail.addWord(this);
         }
@@ -68,6 +68,7 @@ public class Word extends Timestamped {
     public void updateWord(UpdateWordDto dto) {
         mean = dto.mean();
         read = dto.read();
+        setFolder(dto.folderId());
         updateWordDetails(dto.details());
     }
 
@@ -120,5 +121,12 @@ public class Word extends Timestamped {
             return Sound.builder().build();
         }
         return sound;
+    }
+
+    public Folder getFolder() {
+        if (folder == null) {
+            return Folder.builder().build();
+        }
+        return folder;
     }
 }

@@ -37,21 +37,21 @@ public class ProcessBuilderUtil {
 
     /**
      * gtts 모듈로 발음 파일 생성
-     * @return 0: 비정상 종료  1: 정상 종료
+     * @return 0: 정상 종료  -1: 비정상 종료
      * */
     public int run() {
-        int exitCode = 0;
         try {
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("sh", "-c", gttsCommand);
             Process p = pb.start();
             log(p);
-            exitCode = p.waitFor();
+            int exitCode = p.waitFor();
             p.destroy();
+            return exitCode;
         } catch (Exception e){
             log.info(e.toString());
+            return -1;
         }
-        return exitCode;
     }
 
     /**
@@ -64,7 +64,7 @@ public class ProcessBuilderUtil {
             try {
                 String s = "";
                 StringBuilder sb = new StringBuilder();
-                BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 while ((s = stdError.readLine()) != null) {
                     sb.append(s);
                 }

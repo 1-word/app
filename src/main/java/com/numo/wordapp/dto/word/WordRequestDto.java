@@ -47,7 +47,7 @@ public record WordRequestDto(
         }
         Sound sound = null;
         if (soundId != null) {
-            Sound.builder().soundId(soundId).build();
+            sound = Sound.builder().soundId(soundId).build();
         }
         List<WordDetail> wordDetails = details.stream().map(WordDetailRequestDto::toEntity).toList();
         return Word.builder()

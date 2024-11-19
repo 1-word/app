@@ -1,6 +1,7 @@
 package com.numo.wordapp.dto.word;
 
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
+import com.numo.wordapp.entity.word.Folder;
 import com.numo.wordapp.entity.word.Sound;
 import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.detail.WordDetail;
@@ -17,7 +18,7 @@ public record WordResponseDto(
         String mean,
         String read,
         String memo,
-        String soundPath,
+        Long soundId,
         String memorization,
         String type,
         LocalDateTime updateTime,
@@ -27,9 +28,11 @@ public record WordResponseDto(
         public static WordResponseDto of(Word word) {
                 List<WordDetail> wordDetails = word.getWordDetails();
                 Sound sound = word.getSound();
+                Folder folder = word.getFolder();
                 return WordResponseDto.builder()
                         .wordId(word.getWordId())
-                        .folderId(word.getWordId())
+                        .folderId(folder.getFolderId())
+                        .soundId(sound.getSoundId())
                         .word(word.getWord())
                         .mean(word.getMean())
                         .read(word.getRead())
