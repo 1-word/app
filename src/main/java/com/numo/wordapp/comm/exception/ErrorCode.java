@@ -29,6 +29,7 @@ public enum ErrorCode {
     FILE_ACCESS_DENIED(3003, "파일에 접근권한이 없습니다.", "파일에 접근권한이 없습니다."),
 
     SOUND_CANNOT_CREATED(4000, "사운드 파일 생성 중 오류가 발생했습니다.", "사운드 파일 생성 중 오류가 발생했습니다."),
+
     ;
 
     private final int code;

@@ -3,6 +3,7 @@ package com.numo.wordapp.controller;
 import com.numo.wordapp.aop.WordAspect;
 import com.numo.wordapp.dto.page.PageDto;
 import com.numo.wordapp.dto.word.*;
+import com.numo.wordapp.entity.word.UpdateType;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.word.WordService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,25 +55,13 @@ public class WordController {
         return ResponseEntity.ok(wordService.saveWord(userId, gttsType, dto));
     }
 
-    /**
-     * 타입별 단어 데이터 업데이트
-     * <pre>all: 모든 단어 데이터 업데이트</pre>
-     * <pre>memorization: 암기 여부 업데이트</pre>
-     * <pre>memo: 단어 메모 업데이트</pre>
-     * <pre>wordFoler: 단어 폴더 변경</pre>
-     *
-     * @param userId 로그인한 유저 아이디
-     * @param type   {@link WordService.UpdateType} all, memorization, memo, wordFoler
-     * @param id     업데이트할 단어 아이디
-     * @param dto    업데이트할 데이터
-     * @return 업데이트한 단어 전체 데이터
-     */
+    @Operation(description = "단어를 수정한다.")
     @PutMapping(value = "/{type}/{wordId}")
     public ResponseEntity<WordResponseDto> updateWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                      @PathVariable("type") String type,
+                                                      @PathVariable("type") UpdateType type,
                                                       @PathVariable("wordId") Long wordId,
                                                       @RequestBody UpdateWordDto dto) {
-        return ResponseEntity.ok(wordService.updateByWord(user.getUserId(), wordId, dto, type));
+        return ResponseEntity.ok(wordService.updateWord(user.getUserId(), wordId, dto, type));
     }
 
     @PutMapping("/{wordId}/folder/{folderId}")

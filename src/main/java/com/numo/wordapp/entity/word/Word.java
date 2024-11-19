@@ -1,7 +1,7 @@
 package com.numo.wordapp.entity.word;
 
 import com.numo.wordapp.dto.word.UpdateWordDto;
-import com.numo.wordapp.dto.word.detail.WordDetailRequestDto;
+import com.numo.wordapp.dto.word.detail.UpdateWordDetailRequestDto;
 import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.entity.word.detail.WordDetail;
@@ -71,26 +71,29 @@ public class Word extends Timestamped {
         updateWordDetails(dto.details());
     }
 
-    private void updateWordDetails(List<WordDetailRequestDto> detailsDto) {
+    private void updateWordDetails(List<UpdateWordDetailRequestDto> detailsDto) {
         int detailsSize = wordDetails.size();
         int requestSize = detailsDto.size();
         int index = 0;
 
-        for (WordDetailRequestDto detailDto : detailsDto) {
-            if (detailsSize == requestSize) {
+        for (UpdateWordDetailRequestDto detailDto : detailsDto) {
+            if (index < detailsSize) {
                 WordDetail wordDetail = wordDetails.get(index);
                 wordDetail.update(detailDto);
-            // 원래 있던 데이터보다 많으면 새로운 객체를 만들어야한다.
-            } else if (detailsSize < requestSize) {
-                wordDetails.add(detailDto.toEntity());
-            //원래 있던 데이터보다 적으면 객체를 삭제해주어야 한다. -> 그냥 제일 마지막 객체를 삭제하는걸로....
             } else {
-                int diffCount = detailsSize - requestSize;
-                for (int i = 1; i <= diffCount; i++) {
-                    wordDetails.remove(detailsSize - i);
-                }
+                // 원래 있던 데이터보다 많으면 새로운 객체를 만들어야한다.
+                Word word = Word.builder().wordId(wordId).build();
+                wordDetails.add(detailDto.toEntity(word));
             }
             index++;
+        }
+
+        // 원래 있는 데이터보다 수정한 데이터 수가 적으면 삭제
+        if (requestSize < detailsSize) {
+            int diff = detailsSize - requestSize;
+            for (int i = 1; i <= diff; i++) {
+                wordDetails.remove(detailsSize - i);
+            }
         }
     }
 

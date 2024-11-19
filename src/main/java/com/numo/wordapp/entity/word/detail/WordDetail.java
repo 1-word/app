@@ -1,6 +1,6 @@
 package com.numo.wordapp.entity.word.detail;
 
-import com.numo.wordapp.dto.word.detail.WordDetailRequestDto;
+import com.numo.wordapp.dto.word.detail.UpdateWordDetailRequestDto;
 import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.word.Word;
 import jakarta.persistence.*;
@@ -32,7 +32,7 @@ public class WordDetail extends Timestamped {
         this.word = word;
     }
 
-    public void update(WordDetailRequestDto detailDto) {
+    public void update(UpdateWordDetailRequestDto detailDto) {
         this.title = detailDto.title();
         this.content = detailDto.content();
         this.wordGroup = WordGroup.builder()

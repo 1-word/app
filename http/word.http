@@ -45,6 +45,50 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 수정
+PUT localhost:8088/word/all/{{wordId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "mean": "meanUpdate",
+  "read": "readUpdate",
+  "memo": "memoUpdate",
+  "memorization": "N",
+  "details": [{
+    "wordDetailId": 18,
+    "wordGroupId": 1,
+    "title": "title1Update",
+    "content": "content1Update"
+  }, {
+    "wordDetailId": 23,
+    "wordGroupId": 1,
+    "title": "title2Update",
+    "content": "content2Update"
+  }, {
+    "wordDetailId": 24,
+    "wordGroupId": 1,
+    "title": "title3Update",
+    "content": "content3Update"
+  }]
+}
+
+### 단어 수정 - 메모
+PUT localhost:8088/word/memo/{{wordId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "memo": "memoUpdate1"
+}
+
+### 단어 수정 - 암기 여부
+PUT localhost:8088/word/memorization/{{wordId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "memorization": "N"
+}
 
 ### 단어 삭제
 DELETE localhost:8088/word/{{wordId}}
