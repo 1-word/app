@@ -1,63 +1,78 @@
 package com.numo.wordapp.comm.util;
 
-import com.numo.wordapp.conf.ApplicationContextProvider;
-import com.numo.wordapp.conf.PropertyConfig;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+/**
+ * cli 커맨드 입력을 위한 유틸 클래스
+ */
 @Slf4j
 public class ProcessBuilderUtil {
-    /**
-     * type 기본값: ja(일본어)
-     * ja: 일본어
-     * en: 영어
-     */
-    private String program;
-    private String type;
-    private String gttsCommand = "gtts-cli \"0_gttsText\" -l 0_gttsType --output 0_gttsFileName.mp3";
-    private String fileName;
-    private String path;
-    String[] command = new String[3];
 
-    public ProcessBuilderUtil(String text, String fileName){
-        this.setEnvironment();
-        this.fileName = fileName;
-        // gtts 초기 텍스트 대체
-        this.command[0] = this.program;
-        this.command[2] = this.gttsCommand.replace("0_gttsText", text);    // 단어
-        log.info(this.path + fileName);
-        this.command[2] = this.command[2].replace("0_gttsFileName", path + fileName); // 파일이름
-        this.type = "ja";
+    private String gttsCommand;
+
+    public ProcessBuilderUtil(String path, String text){
+        this(path, text, "ja");
     }
 
-    public ProcessBuilderUtil(String text, String fileName, String type){
-        this(text, fileName);
-        this.type = type;
-        this.command[2] = this.command[2].replace("0_gttsType", type);
+    /**
+     * 쉘스크립트를 실행시키기 위해 정보를 초기화한다.
+     * @param path 환경 변수에 설정한 path
+     * @param text 저장하길 원하는 text
+     * @param type 발음 타입 (ja, en...)
+     */
+    public ProcessBuilderUtil(String path, String text, String type){
+        if (type == null || type.isEmpty()) {
+            type = "ja";
+        }
+        gttsCommand = """
+                $_path/gtts_start.sh $_text $_type
+                """
+                .replace("$_text", text)
+                .replace("$_type", type)
+                .replace("$_path", path);
     }
 
     /**
      * gtts 모듈로 발음 파일 생성
-     * @return 0: 비정상 종료  1: 정상 종료
+     * @return 0: 정상 종료  -1: 비정상 종료
      * */
-    public int run(){
-        this.command[2] = this.command[2].replace("0_gttsType", this.type);
-        log.info("file_path: {}", this.command[2]);
-        int exitCode = 0;
+    public int run() {
         try {
-            ProcessBuilder pb = new ProcessBuilder(this.command);
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("sh", "-c", gttsCommand);
             Process p = pb.start();
-            exitCode = p.waitFor();
+            log(p);
+            int exitCode = p.waitFor();
             p.destroy();
-        }catch (Exception e){
+            return exitCode;
+        } catch (Exception e){
             log.info(e.toString());
+            return -1;
         }
-        return exitCode;
     }
 
-    private void setEnvironment(){
-        PropertyConfig propertyConfig = ApplicationContextProvider.getBean("propertyConfig", PropertyConfig.class);
-        this.program = propertyConfig.getProgram();
-        this.path = propertyConfig.getPath();
-        this.command[1] = "-c";
+    /**
+     * debug일 때만 로그 출력
+     * @param p 프로세스 객체
+     */
+    private void log(Process p) {
+        if (log.isDebugEnabled()) {
+            log.debug("cli command = {}", gttsCommand);
+            try {
+                String s = "";
+                StringBuilder sb = new StringBuilder();
+                BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                while ((s = stdError.readLine()) != null) {
+                    sb.append(s);
+                }
+                log.debug("sb = {}", sb);
+            } catch (Exception e) {
+                log.error("로그를 출력하던 중 오류가 발생했습니다.");
+            }
+        }
     }
+
 }

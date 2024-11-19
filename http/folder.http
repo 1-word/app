@@ -1,0 +1,37 @@
+### 폴더 생성
+POST localhost:8088/folders
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "folderName": "folderName",
+  "memo": "memo",
+  "color": "#fff",
+  "background": "#000"
+}
+
+> {%
+    client.global.set("folderId", response.body.folderId)
+%}
+
+### 폴더 조회
+GET localhost:8088/folders
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 폴더 수정
+PUT localhost:8088/folders/{{folderId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "folderName": "folderNameUpdate",
+  "memo": "memoUpdate",
+  "color": "#ffff",
+  "background": "#0000"
+}
+
+### 폴더 삭제
+DELETE localhost:8088/folders/{{folderId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

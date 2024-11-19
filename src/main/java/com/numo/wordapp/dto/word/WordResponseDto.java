@@ -1,0 +1,47 @@
+package com.numo.wordapp.dto.word;
+
+import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
+import com.numo.wordapp.entity.word.Folder;
+import com.numo.wordapp.entity.word.Sound;
+import com.numo.wordapp.entity.word.Word;
+import com.numo.wordapp.entity.word.detail.WordDetail;
+import lombok.Builder;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Builder
+public record WordResponseDto(
+        Long wordId,
+        Long folderId,
+        String word,
+        String mean,
+        String read,
+        String memo,
+        Long soundId,
+        String memorization,
+        String type,
+        LocalDateTime updateTime,
+        LocalDateTime createTime,
+        List<WordDetailResponseDto> details
+        ) {
+        public static WordResponseDto of(Word word) {
+                List<WordDetail> wordDetails = word.getWordDetails();
+                Sound sound = word.getSound();
+                Folder folder = word.getFolder();
+                return WordResponseDto.builder()
+                        .wordId(word.getWordId())
+                        .folderId(folder.getFolderId())
+                        .soundId(sound.getSoundId())
+                        .word(word.getWord())
+                        .mean(word.getMean())
+                        .read(word.getRead())
+                        .memo(word.getMemo())
+                        .memorization(word.getMemorization())
+                        .type(word.getLang().name())
+                        .createTime(word.getCreateTime())
+                        .updateTime(word.getUpdateTime())
+                        .details(wordDetails.stream().map(WordDetailResponseDto::of).toList())
+                        .build();
+        }
+}

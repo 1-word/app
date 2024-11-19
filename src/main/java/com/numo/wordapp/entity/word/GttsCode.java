@@ -1,36 +1,17 @@
 package com.numo.wordapp.entity.word;
 
+import lombok.Getter;
+
 /**
  * 단어 언어 코드 설정(EN, JP, KO)
  * <pre>사용 예시: GttsCode.valueOf(type)</pre>
  */
+@Getter
 public enum GttsCode {
-    EN("EN", "en"), JP("JP", "ja"), KO("KO", "ko");
-    private String WORD;
-    private String TTS;
+    EN( "en"), JP("ja"), KO( "ko");
+    private final String TTS;
 
-    GttsCode(String WORD, String TTS) {
-        this.WORD = WORD;
+    GttsCode(String TTS) {
         this.TTS = TTS;
-    }
-
-    public String getValue() {
-        return this.WORD;
-    }
-
-    public void setValue(String wordType){
-        this.WORD = wordType;
-    }
-
-    public String getTTS(){
-        return this.TTS;
-    }
-
-    public void setTTS(String TTS) {
-        this.TTS = TTS;
-    }
-
-    public String getKey(){
-        return name();
     }
 }
