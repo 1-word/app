@@ -80,6 +80,10 @@ public class User extends Timestamped {
 
     public User update(OAuth2UserInfo userInfo) {
         this.profileImagePath = userInfo.thumbnail();
+        if (!Objects.equals(this.serviceType, userInfo.clientName())) {
+            throw new CustomException(ErrorCode.OAUTH2_EMAIL_EXISTS);
+        }
+//        this.thumbnail = userInfo.thumbnail();
         this.nickname = userInfo.nickname();
         return this;
     }

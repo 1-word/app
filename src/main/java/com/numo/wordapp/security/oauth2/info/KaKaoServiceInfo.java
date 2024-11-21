@@ -16,6 +16,7 @@ public class KaKaoServiceInfo implements OAuth2ServiceInfo {
                 .socialId(socialId)
                 .email(email)
                 .nickname(nickname)
+                .clientName("kakao")
                 .build();
     }
 

@@ -92,11 +92,28 @@ public class UserService {
         return UserDto.of(user);
     }
 
+    @Transactional
     public UserDto saveOrUpdate(OAuth2UserInfo userInfo) {
+        if (userInfo.email() == null) {
+            throw new CustomException(ErrorCode.OAUTH2_EMAIL_NULL);
+        }
+
         User user = userRepository.findByEmail(userInfo.email())
                 .map(u -> u.update(userInfo))
                 .orElse(userInfo.toEntity());
-        return UserDto.of(userRepository.save(user));
+
+        user = userRepository.save(user);
+
+        if (user.getAuthorities() == null) {
+            Authority authority = Authority.builder()
+                    .userId(user.getUserId())
+                    .name(Role.ROLE_USER)
+                    .build();
+
+            user.addAuthorities(authority);
+        }
+
+        return UserDto.of(user);
     }
 
     public UserDto findByEmail(String email) {
