@@ -52,7 +52,7 @@ public class WordGroupService {
         if (wordGroupRepository.existsByUser_UserIdAndName(userId, requestDto.name())) {
             throw new CustomException(ErrorCode.WORD_GROUP_EXISTS);
         }
-        WordGroup wordGroup = requestDto.toEntity();
+        WordGroup wordGroup = requestDto.toEntity(userId);
         return WordGroupResponseDto.of(wordGroupRepository.save(wordGroup));
     }
 

@@ -29,7 +29,7 @@ public class WordGroupController {
     @Operation(description = "품사를 조회한다.")
     @GetMapping("/{wordGroupId}")
     public ResponseEntity<WordGroupReadResponseDto> getWordGroup(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                 @PathVariable Long wordGroupId) {
+                                                                 @PathVariable("wordGroupId") Long wordGroupId) {
         Long userId = user.getUserId();
         return ResponseEntity.ok(wordGroupService.getWordGroup(userId, wordGroupId));
     }
@@ -52,10 +52,11 @@ public class WordGroupController {
     }
 
     @Operation(description = "품사를 삭제한다.")
-    @DeleteMapping
-    public ResponseEntity<WordGroupResponseDto> removeWordGroup(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                @RequestBody WordGroupRequestDto requestDto) {
+    @DeleteMapping("/{wordGroupId}")
+    public ResponseEntity<Void> removeWordGroup(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                @PathVariable("wordGroupId") Long wordGroupId) {
         Long userId = user.getUserId();
-        return ResponseEntity.ok(wordGroupService.saveWordGroup(userId, requestDto));
+        wordGroupService.removeWordGroup(userId, wordGroupId);
+        return ResponseEntity.noContent().build();
     }
 }

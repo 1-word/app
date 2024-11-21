@@ -35,8 +35,8 @@ public class WordGroup extends Timestamped {
     }
 
     public void remove() {
-        for (WordDetail detail : details) {
-            details.remove(detail);
+        for (int i=0; i<details.size(); i++) {
+            details.remove(i);
         }
     }
 }
