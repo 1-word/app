@@ -1,0 +1,39 @@
+### 품사 저장
+POST localhost:8088/wordGroup
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "동사",
+  "description": "동사입니다."
+}
+
+> {%
+    client.global.set("wordGroupId", response.body.wordGroupId)
+%}
+
+
+### 품사 리스트 조회
+GET localhost:8088/wordGroup
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 품사 조회
+GET localhost:8088/wordGroup/{{wordGroupId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 품사 수정
+PUT localhost:8088/wordGroup/{{wordGroupId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "형용사",
+  "description": "형용사로 수정합니다."
+}
+
+### 품사 삭제
+DELETE localhost:8088/wordGroup/{{wordGroupId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
