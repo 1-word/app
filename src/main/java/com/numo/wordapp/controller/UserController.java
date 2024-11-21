@@ -30,27 +30,27 @@ public class UserController {
     @PutMapping(value = "/pw")
     public ResponseEntity<Void> changePassword(@AuthenticationPrincipal UserDetailsImpl user,
                                                @RequestBody ChangePasswordDto passwordDto) {
-        userService.updatePassword(user.getUser().getUserId(), passwordDto);
+        userService.updatePassword(user.getUserId(), passwordDto);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(description = "회원정보를 가져온다")
     @GetMapping
     public ResponseEntity<UserDto> getUserInfo(@AuthenticationPrincipal UserDetailsImpl user) {
-        return ResponseEntity.ok(userService.getUserInfo(user.getUser().getUserId()));
+        return ResponseEntity.ok(userService.getUserInfo(user.getUserId()));
     }
 
     @Operation(description = "회원정보를 수정한다")
     @PutMapping
     public ResponseEntity<UserDto> updateUser(@AuthenticationPrincipal UserDetailsImpl user,
                                               @RequestBody UpdateUserDto userDto) {
-        return ResponseEntity.ok(userService.updateUser(user.getUser().getUserId(), userDto));
+        return ResponseEntity.ok(userService.updateUser(user.getUserId(), userDto));
     }
 
     @Operation(description = "회원을 탈퇴한다")
     @DeleteMapping
     public ResponseEntity<Void> withdraw(@AuthenticationPrincipal UserDetailsImpl user) {
-        userService.withdraw(user.getUser().getUserId());
+        userService.withdraw(user.getUserId());
         return ResponseEntity.noContent().build();
     }
 

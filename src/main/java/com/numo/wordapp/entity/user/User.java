@@ -4,6 +4,8 @@ import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.entity.Timestamped;
+import com.numo.wordapp.entity.file.File;
+import com.numo.wordapp.security.oauth2.info.OAuth2UserInfo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -37,7 +36,9 @@ public class User extends Timestamped {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userId", updatable = false)
     private Set<Authority> authorities;
-    
+
+    private String serviceType;
+
     public void updatePassword(String newPassword){
         this.password = newPassword;
     }
@@ -75,6 +76,18 @@ public class User extends Timestamped {
         }
         this.authorities.add(authority);
         authority.setUserId(userId);
+    }
+
+    public User update(OAuth2UserInfo userInfo) {
+        this.profileImagePath = userInfo.thumbnail();
+        this.nickname = userInfo.nickname();
+        return this;
+    }
+
+    private File getThumbnail(String fileId) {
+        return File.builder()
+                .fileId(fileId)
+                .build();
     }
 
 }
