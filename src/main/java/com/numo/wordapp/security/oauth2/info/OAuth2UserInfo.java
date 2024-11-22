@@ -15,6 +15,7 @@ public record OAuth2UserInfo(
         return User.builder()
                 .email(email)
                 .nickname(nickname)
+                .profileImagePath(thumbnail)
                 .serviceType(clientName)
                 .build();
     }

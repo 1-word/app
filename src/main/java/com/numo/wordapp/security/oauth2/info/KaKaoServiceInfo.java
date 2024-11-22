@@ -11,11 +11,13 @@ public class KaKaoServiceInfo implements OAuth2ServiceInfo {
         String socialId = String.valueOf(attributes.get("id"));
         String nickname = String.valueOf(properties.get("nickname"));
         String email = String.valueOf(account.get("email"));
+        String profile = String.valueOf(properties.get("thumbnail_image"));
 
         return OAuth2UserInfo.builder()
                 .socialId(socialId)
                 .email(email)
                 .nickname(nickname)
+                .thumbnail(profile)
                 .clientName("kakao")
                 .build();
     }
