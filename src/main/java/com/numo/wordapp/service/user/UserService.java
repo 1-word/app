@@ -6,11 +6,11 @@ import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;
 import com.numo.wordapp.dto.user.UserRequestDto;
-import com.numo.wordapp.entity.file.File;
 import com.numo.wordapp.entity.user.Authority;
 import com.numo.wordapp.entity.user.Role;
 import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.repository.user.UserRepository;
+import com.numo.wordapp.security.oauth2.info.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,9 +33,7 @@ public class UserService {
                 .email(userDto.email())
                 .nickname(userDto.nickname())
                 // 썸네일 추가
-                .thumbnail(File.builder()
-                        .fileId(userDto.thumbnailId())
-                        .build())
+                .profileImagePath(userDto.profileImagePath())
                 .build();
 
         user = userRepository.save(user);
@@ -91,6 +89,30 @@ public class UserService {
 
     public UserDto findByUserId(Long userId) {
         User user = userRepository.findUserByUserId(userId);
+        return UserDto.of(user);
+    }
+
+    @Transactional
+    public UserDto saveOrUpdate(OAuth2UserInfo userInfo) {
+        if (userInfo.email() == null) {
+            throw new CustomException(ErrorCode.OAUTH2_EMAIL_NULL);
+        }
+
+        User user = userRepository.findByEmail(userInfo.email())
+                .map(u -> u.update(userInfo))
+                .orElse(userInfo.toEntity());
+
+        user = userRepository.save(user);
+
+        if (user.getAuthorities() == null) {
+            Authority authority = Authority.builder()
+                    .userId(user.getUserId())
+                    .name(Role.ROLE_USER)
+                    .build();
+
+            user.addAuthorities(authority);
+        }
+
         return UserDto.of(user);
     }
 

@@ -4,6 +4,8 @@ import com.numo.wordapp.security.handle.JwtAccessDeniedHandler;
 import com.numo.wordapp.security.handle.JwtAuthenticationEntryPoint;
 import com.numo.wordapp.security.jwt.JwtFilter;
 import com.numo.wordapp.security.jwt.TokenProvider;
+import com.numo.wordapp.security.oauth2.CommonLoginSuccessHandler;
+import com.numo.wordapp.service.user.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,15 +36,21 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final RefreshTokenService refreshTokenService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .requestMatchers("/resources/**");
+    }
+
+    public CommonLoginSuccessHandler commonLoginSuccessHandler() {
+        return new CommonLoginSuccessHandler(tokenProvider, refreshTokenService);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuth2UserService<OAuth2UserRequest, OAuth2User> CustomOAuth2UserService) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));
 
@@ -56,9 +67,18 @@ public class SecurityConfig {
             authorize.requestMatchers(HttpMethod.POST,"/auth/**").permitAll();
             authorize.requestMatchers("/user/signup/**").permitAll();
             authorize.requestMatchers("/api-spec/**", "/v3/**").permitAll();
-            authorize.requestMatchers("/files/images/**").permitAll();
+            authorize.requestMatchers("/files/images/**", "/files/upload/thumbnail").permitAll();
+            authorize.requestMatchers("/oauth2/**", "/login/**").permitAll();
             authorize.anyRequest().authenticated();
         });
+
+        http.oauth2Login(httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer
+                .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
+                        .baseUri("/oauth2/callback/*"))
+                .successHandler(commonLoginSuccessHandler())
+                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                        .userService(CustomOAuth2UserService))
+        );
 
         http.addFilterAt(new JwtFilter(tokenProvider), BasicAuthenticationFilter.class);
 

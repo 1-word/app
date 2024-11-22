@@ -1,17 +1,33 @@
 package com.numo.wordapp.security.service;
 
 import com.numo.wordapp.entity.user.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
-public class UserDetailsImpl implements UserDetails {
-    private final User user;
+public class UserDetailsImpl implements UserDetails, OAuth2User {
+    private User user;
+    private Map<String, Object> attributes;
+
+    public UserDetailsImpl(User user) {
+        this.user = user;
+    }
+
+    public UserDetailsImpl(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -50,11 +66,16 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    public User getUser() {
-        return user;
-    }
-
     public Long getUserId() {
         return user.getUserId();
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    public List<String> getAuthorityList() {
+        return user.getAuthNameList();
     }
 }

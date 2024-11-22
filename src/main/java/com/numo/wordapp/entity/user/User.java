@@ -5,6 +5,7 @@ import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.file.File;
+import com.numo.wordapp.security.oauth2.info.OAuth2UserInfo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,14 +30,14 @@ public class User extends Timestamped {
     private String email;
     private String nickname;
     private String password;
+    private String profileImagePath;
     private LocalDateTime withdrawDate;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private File thumbnail;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userId", updatable = false)
     private Set<Authority> authorities;
+
+    private String serviceType;
 
     public void updatePassword(String newPassword){
         this.password = newPassword;
@@ -62,9 +63,7 @@ public class User extends Timestamped {
 
     public void update(UpdateUserDto userDto) {
         this.nickname = userDto.nickname();
-        if (userDto.thumbnailId() != null) {
-            this.thumbnail = getThumbnail(userDto.thumbnailId());
-        }
+        this.profileImagePath = userDto.profileImagePath();
     }
 
     public void withdraw() {
@@ -79,16 +78,20 @@ public class User extends Timestamped {
         authority.setUserId(userId);
     }
 
+    public User update(OAuth2UserInfo userInfo) {
+        this.profileImagePath = userInfo.thumbnail();
+        if (!Objects.equals(this.serviceType, userInfo.clientName())) {
+            throw new CustomException(ErrorCode.OAUTH2_EMAIL_EXISTS);
+        }
+//        this.thumbnail = userInfo.thumbnail();
+        this.nickname = userInfo.nickname();
+        return this;
+    }
+
     private File getThumbnail(String fileId) {
         return File.builder()
                 .fileId(fileId)
                 .build();
     }
 
-    public String getThumbnailId() {
-        if (thumbnail == null) {
-            return null;
-        }
-        return thumbnail.getFileId();
-    }
 }

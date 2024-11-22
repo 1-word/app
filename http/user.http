@@ -3,10 +3,10 @@ POST localhost:8088/user/signup
 Content-Type: application/json
 
 {
-  "email": "test1@test.com",
+  "email": "test2@test.com",
   "password": "asdfghjkl1!",
   "nickname": "test",
-  "thumbnailId": "1"
+  "profileImagePath": "/data/images/asdf.png"
 }
 
 ### 비밀번호 변경
@@ -41,7 +41,7 @@ Authorization: Bearer {{accessToken}}
 
 {
   "nickname": "abc",
-  "thumbnailId": "f349d273-13cd-462e-9ae4-fa7f18130a97"
+  "profileImagePath": "f349d273-13cd-462e-9ae4-fa7f18130a97"
 }
 
 ### 회원 탈퇴

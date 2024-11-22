@@ -15,8 +15,8 @@ public record UserRequestDto(
         @Schema(description = "닉네임")
         String nickname,
         @NotNull
-        @Schema(description = "썸네일 이미지 파일 아이디")
-        String thumbnailId
+        @Schema(description = "썸네일 이미지 파일 경로")
+        String profileImagePath
 ) {
 
 }

@@ -10,12 +10,21 @@ public class PropertyConfig {
     @Value("${cstm.processbuilder.program}")
     private String program;
     @Value("${cstm.processbuilder.path}")
-    private String path;
+    private String processPath;
+    @Value("${cstm.file.path}")
+    private String storagePath;
 
-    public String getPath() {
-        if (path.endsWith("/")) {
-            return path.substring(0, path.length() - 2);
+    public String getProcessPath() {
+        if (processPath.endsWith("/")) {
+            return processPath.substring(0, processPath.length() - 2);
         }
-        return path;
+        return processPath;
+    }
+
+    public String getPathWithEndFileSeparation() {
+        if (!storagePath.endsWith("/")) {
+            storagePath += "/";
+        }
+        return storagePath;
     }
 }

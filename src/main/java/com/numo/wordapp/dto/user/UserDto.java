@@ -11,7 +11,7 @@ public record UserDto(
         Long userId,
         String email,
         String nickname,
-        String thumbnailId,
+        String profileImagePath,
         LocalDateTime withdrawDate,
         List<String> authorities
 ) {
@@ -20,7 +20,7 @@ public record UserDto(
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .thumbnailId(user.getThumbnailId())
+                .profileImagePath(user.getProfileImagePath())
                 .withdrawDate(user.getWithdrawDate())
                 .authorities(user.getAuthNameList())
                 .build();

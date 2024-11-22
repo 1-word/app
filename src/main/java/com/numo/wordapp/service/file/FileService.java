@@ -1,72 +1,74 @@
 package com.numo.wordapp.service.file;
 
-import com.numo.wordapp.comm.util.FileUtil;
+import com.numo.wordapp.conf.PropertyConfig;
+import com.numo.wordapp.dto.file.FileDto;
 import com.numo.wordapp.entity.file.File;
 import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.repository.FileRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FileService {
     private final FileRepository fileRepository;
-    private final String basicPath;
+    private final FileStorageService fileStorageService;
 
     public FileService(FileRepository fileRepository,
-                       @Value("${cstm.file.path}") String basicPath) {
-
+                       FileStorageService fileStorageService,
+                       PropertyConfig propertyConfig) {
         this.fileRepository = fileRepository;
-        if (!basicPath.endsWith("/")) {
-            basicPath += "/";
-        }
-        this.basicPath = basicPath;
+        this.fileStorageService = fileStorageService;
     }
 
-    public List<String> upload(Long userId, ArrayList<MultipartFile> files) {
+    public List<String> uploadAndSave(Long userId, String middlePath, ArrayList<MultipartFile> files) {
         List<String> uploadFiles = new ArrayList<>();
         for (MultipartFile file : files) {
-            uploadFiles.add(upload(userId, file));
+            uploadFiles.add(uploadAndSave(userId, middlePath, file));
         }
         return uploadFiles;
     }
 
-    public String upload(Long userId, MultipartFile file) {
-        String oriName = file.getOriginalFilename();
-        String extension = FileUtil.getFileExtension(oriName);
-        String saveName = UUID.randomUUID().toString().substring(1, 8) + System.currentTimeMillis();
-        String savePath = basicPath + saveName + "." + extension;
-        if (FileUtil.write(savePath, file)) {
-            File saveFile = File.builder()
-                    .user(User.builder().userId(userId).build())
-                    .path(savePath)
-                    .oriName(oriName)
-                    .extension(extension)
-                    .build();
-            return fileRepository.save(saveFile).getFileId();
-        }
-        return null;
+    public String uploadAndSave(Long userId, String middlePath, MultipartFile file) {
+        FileDto fileDto = storeFile(middlePath, file);
+        File saveFile = File.builder()
+                .user(User.builder().userId(userId).build())
+                .path(fileDto.path())
+                .oriName(fileDto.oriName())
+                .extension(fileDto.extension())
+                .build();
+        return fileRepository.save(saveFile).getFileId();
+    }
+
+    public FileDto storeFile(String middlePath, MultipartFile file) {
+        return fileStorageService.save(middlePath, file);
     }
 
     public Resource download(Long userId, String fileId) {
         File file = getFileAndCheckPermission(userId, fileId);
-        return FileUtil.read(file.getPath());
+        return readFile(file.getPath());
     }
 
     public Resource download(String fileId) {
         File file = findFileById(fileId);
-        return FileUtil.read(file.getPath());
+        return readFile(file.getPath());
     }
-    
+
     public void delete(Long userId, String fileId) {
         File file = getFileAndCheckPermission(userId, fileId);
         fileRepository.delete(file);
-        FileUtil.delete(file.getPath());
+        deleteFile(file.getPath());
+    }
+
+    private void deleteFile(String path) {
+        fileStorageService.delete(path);
+    }
+
+    private Resource readFile(String path) {
+        return fileStorageService.read(path);
     }
 
     private File getFileAndCheckPermission(Long userId, String fileId) {

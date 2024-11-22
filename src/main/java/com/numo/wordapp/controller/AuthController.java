@@ -33,7 +33,7 @@ public class AuthController {
     @Operation(description = "로그아웃 / 리프레시 토큰정보를 삭제한다.")
     @DeleteMapping
     public ResponseEntity<Void> logout(@AuthenticationPrincipal UserDetailsImpl user) {
-        authService.logout(user.getUser().getUserId());
+        authService.logout(user.getUserId());
         return ResponseEntity.noContent().build();
     }
 }

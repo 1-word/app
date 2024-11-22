@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    include: oauth2
+  jpa:
+    properties:
+      hibernate:
+        auto_quote_keyword: 'true'
+        format_sql: 'true'
+    hibernate:
+      ddl-auto: update
+  datasource:
+    password: ${DB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: ${DB_USERNAME}
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?characterEncoding=UTF-8&serverTimezone=UTC
+
+server:
+  tomcat:
+    uri-encoding: UTF-8
+  port: '8088'
+jwt:
+  secret: ${JWT_SECRET}
+  token-validity-in-seconds: ${JWT_ACCESS_TOKEN_VALID_TIME}
+
+logging:
+  level:
+    root: info
+cstm:
+  processbuilder:
+    path: ${PROCESS_BUILDER_PATH}
+    program: ${PROCESS_BUILDER_PROGRAM}
+  file:
+    path: ${FILE_PATH}
