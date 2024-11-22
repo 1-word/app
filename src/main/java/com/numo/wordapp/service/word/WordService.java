@@ -36,7 +36,7 @@ public class WordService {
         this.wordRepository = wordRepository;
         this.soundRepository = soundRepository;
         this.folderService = folderService;
-        this.path = propertyConfig.getPath();
+        this.path = propertyConfig.getProcessPath();
     }
 
     /**

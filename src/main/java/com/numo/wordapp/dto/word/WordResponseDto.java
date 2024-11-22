@@ -18,7 +18,7 @@ public record WordResponseDto(
         String mean,
         String read,
         String memo,
-        Long soundId,
+        String soundPath,
         String memorization,
         String type,
         LocalDateTime updateTime,
@@ -32,7 +32,7 @@ public record WordResponseDto(
                 return WordResponseDto.builder()
                         .wordId(word.getWordId())
                         .folderId(folder.getFolderId())
-                        .soundId(sound.getSoundId())
+                        .soundPath(sound.getWord())
                         .word(word.getWord())
                         .mean(word.getMean())
                         .read(word.getRead())

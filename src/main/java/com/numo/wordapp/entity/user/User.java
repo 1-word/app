@@ -4,7 +4,6 @@ import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.entity.Timestamped;
-import com.numo.wordapp.entity.file.File;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -29,15 +31,13 @@ public class User extends Timestamped {
     private String email;
     private String nickname;
     private String password;
+    private String profileImagePath;
     private LocalDateTime withdrawDate;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private File thumbnail;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userId", updatable = false)
     private Set<Authority> authorities;
-
+    
     public void updatePassword(String newPassword){
         this.password = newPassword;
     }
@@ -62,9 +62,7 @@ public class User extends Timestamped {
 
     public void update(UpdateUserDto userDto) {
         this.nickname = userDto.nickname();
-        if (userDto.thumbnailId() != null) {
-            this.thumbnail = getThumbnail(userDto.thumbnailId());
-        }
+        this.profileImagePath = userDto.profileImagePath();
     }
 
     public void withdraw() {
@@ -79,16 +77,4 @@ public class User extends Timestamped {
         authority.setUserId(userId);
     }
 
-    private File getThumbnail(String fileId) {
-        return File.builder()
-                .fileId(fileId)
-                .build();
-    }
-
-    public String getThumbnailId() {
-        if (thumbnail == null) {
-            return null;
-        }
-        return thumbnail.getFileId();
-    }
 }

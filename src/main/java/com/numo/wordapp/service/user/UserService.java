@@ -6,7 +6,6 @@ import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;
 import com.numo.wordapp.dto.user.UserRequestDto;
-import com.numo.wordapp.entity.file.File;
 import com.numo.wordapp.entity.user.Authority;
 import com.numo.wordapp.entity.user.Role;
 import com.numo.wordapp.entity.user.User;
@@ -33,9 +32,7 @@ public class UserService {
                 .email(userDto.email())
                 .nickname(userDto.nickname())
                 // 썸네일 추가
-                .thumbnail(File.builder()
-                        .fileId(userDto.thumbnailId())
-                        .build())
+                .profileImagePath(userDto.profileImagePath())
                 .build();
 
         user = userRepository.save(user);

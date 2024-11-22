@@ -1,5 +1,6 @@
 package com.numo.wordapp.controller;
 
+import com.numo.wordapp.dto.file.FileDto;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.file.FileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,27 +21,35 @@ import java.util.List;
 public class FileController {
     private final FileService fileService;
 
-    @Operation(description = "파일 업로드")
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "파일 업로드")
+    @PostMapping(value = "/upload/{middlePath}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<String>> upload(@AuthenticationPrincipal UserDetailsImpl user,
+                                               @PathVariable("middlePath") String middlePath,
                                                @RequestPart("files") ArrayList<MultipartFile> files) {
-        return ResponseEntity.ok(fileService.upload(user.getUserId(), files));
+        return ResponseEntity.ok(fileService.uploadAndSave(user.getUserId(), middlePath, files));
     }
 
-    @Operation(description = "파일 다운로드")
+    @Operation(summary = "파일 다운로드")
     @GetMapping(value = "/{fileId}")
     public ResponseEntity<Resource> download(@AuthenticationPrincipal UserDetailsImpl user,
                                              @PathVariable("fileId") String fileId) {
         return ResponseEntity.ok(fileService.download(user.getUserId(), fileId));
     }
 
-    @Operation(description = "이미지 파일 다운로드")
+    @Operation(summary = "썸네일 이미지 업로드", description = "로그인 없이 업로드 가능, 파일만 저장(파일 데이터베이스에 저장X)")
+    @PostMapping(value = "/upload/thumbnail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> upload(@RequestPart("files") MultipartFile file) {
+        FileDto res = fileService.storeFile("thumbnail", file);
+        return ResponseEntity.ok(res.path());
+    }
+
+    @Operation(summary = "이미지 파일 다운로드")
     @GetMapping("/images/{fileId}")
     public Resource imageDownload(@PathVariable("fileId") String fileId) {
         return fileService.download(fileId);
     }
 
-    @Operation(description = "파일 삭제")
+    @Operation(summary = "파일 삭제")
     @DeleteMapping("{fileId}")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetailsImpl user,
                                        @PathVariable("fileId") String fileId) {
