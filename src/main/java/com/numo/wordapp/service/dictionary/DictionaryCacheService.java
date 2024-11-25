@@ -17,8 +17,12 @@ public class DictionaryCacheService {
         this.zSetOperations = redisTemplate.opsForZSet();
     }
 
-    public List<String> search(String key, String searchText, int limit) {
-        Range<String> range = Range.closed(searchText, getEnd(searchText));
+    public Double score(String key, String text) {
+        return zSetOperations.score(key, text);
+    }
+
+    public List<String> search(String key, String text, int limit) {
+        Range<String> range = Range.closed(text, getEnd(text));
         Limit count = Limit.limit().count(limit);
 
         LinkedHashSet<String> result = (LinkedHashSet<String>) zSetOperations.rangeByLex(key, range, count);

@@ -1,4 +1,4 @@
-package com.numo.wordapp.dto;
+package com.numo.wordapp.dto.dictionary;
 
 import com.numo.wordapp.entity.dictionary.Dictionary;
 import lombok.Builder;
@@ -16,7 +16,7 @@ public record DictionaryDto(
                 .build();
     }
 
-    public Dictionary toEntity() {
+    public Dictionary toEntity(String definition) {
         return Dictionary.builder()
                 .word(word)
                 .wordType(wordType)

@@ -1,8 +1,12 @@
 package com.numo.wordapp.aop;
 
 import com.numo.wordapp.comm.util.JsonUtil;
+import com.numo.wordapp.dto.dictionary.DictionaryDto;
+import com.numo.wordapp.dto.word.WordResponseDto;
+import com.numo.wordapp.service.dictionary.DictionaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -12,22 +16,13 @@ import org.springframework.stereotype.Component;
 @Aspect //AOP로 정의하는 클래스 지정
 @Component  //빈 등록
 public class WordAspect {
-    JsonUtil jsonUtil = new JsonUtil();
-    // @Slf4j가 있으면 해당 역할을 대신 한다.
-    // private final Logger log = LoggerFactory.getLogger(getClass());
 
-    //조인포인트: 클라이언트가 호출하는 모든 비즈니스 메소드 (포인트컷 대상, 포인트컷 후보)
-    //포인트컷: 필터링된 조인포인트
-        //표현식 => 리턴타입 패키지경로..*클래스명*메소드명*(..)
-        // ex) * com.numo.wordapp.controller..*.*(..)   => 컨트롤러의 모든 메소드 포인트컷..
-    //어드바이스: 공통 기능 코드(로그, 예외처리 등)
-        //Before: 조인포인트 호출 전 실행되는 코드 (코드 실행 자체 관여할 수 X)
-        //After Returning: 모든 실행이 정상적으로 이루어진 후 동작
-        //After Throwing: 예외발생한 뒤 동작
-        //After: 메소드 실행 후 (정상 실행, 예외 발생 구분 없음)
-        //Around: 메소드 실행 제어(직접 대상 메소드 호출)
+    private final DictionaryService dictionaryService;
 
-    //포인트컷 정의   컨트롤러 패키지 하위 클래스 전부 적용
+    public WordAspect(DictionaryService dictionaryService) {
+        this.dictionaryService = dictionaryService;
+    }
+
     @Pointcut("execution(* com.numo.wordapp.controller..*.*(..))")
     private void wordControllerCut(){}
 
@@ -35,10 +30,7 @@ public class WordAspect {
     private void securityControllerCut(){}
 
     /**
-     * 1. /word로 들어오는 URL에 해당하는 파라미터 출력<br>
-     * 2. 토큰의 ID를 파라미터의 가장 앞에 추가
-     * @param joinPoint
-     * @return Object ({@link com.numo.wordapp.controller.WordController}의 각 메서드의 파라미터 값)
+     * request URL에 해당하는 파라미터 출력<br>
      * */
     @Around("wordControllerCut()")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -52,11 +44,26 @@ public class WordAspect {
         log.info("[WordAdvice before]: {} {}()", cls, method);
         if (log.isDebugEnabled()) {
             if (args.length != 0) {
+                JsonUtil jsonUtil = new JsonUtil();
                 log.debug("[before method] args: " + jsonUtil.getJson(args));
             }
         }
 
         return joinPoint.proceed(args);
+    }
+
+    /**
+     * 단어 저장 시 사전 데이터베이스에 저장
+     * 이미 사전 데이터베이스에 있다면 저장하지 않는다.
+     * @param res 저장된 단어 데이터
+     */
+    @AfterReturning(value = "execution(* com.numo.wordapp.service..WordService.saveWord(..))", returning = "res")
+    public void afterWordSave(WordResponseDto res) {
+        DictionaryDto dictionaryDto = DictionaryDto.builder()
+                .word(res.word())
+                .build();
+
+        dictionaryService.save(dictionaryDto);
     }
 
 }

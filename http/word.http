@@ -4,8 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "folderId": 2,
-  "word": "word123",
+  "word": "exceptionally",
   "mean": "mean",
   "read": "read",
   "memo": "memo",

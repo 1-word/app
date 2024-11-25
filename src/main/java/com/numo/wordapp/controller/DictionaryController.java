@@ -1,6 +1,6 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.DictionaryDto;
+import com.numo.wordapp.dto.dictionary.DictionaryDto;
 import com.numo.wordapp.service.dictionary.DictionaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
