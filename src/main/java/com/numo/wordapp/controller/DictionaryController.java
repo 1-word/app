@@ -1,7 +1,7 @@
 package com.numo.wordapp.controller;
 
 import com.numo.wordapp.dto.DictionaryDto;
-import com.numo.wordapp.service.DictionaryService;
+import com.numo.wordapp.service.dictionary.DictionaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,6 @@ public class DictionaryController {
     @Operation(summary = "사전 검색", description = "사전을 검색한다.")
     @GetMapping("/{searchText}")
     public ResponseEntity<List<DictionaryDto>> searchWord(@PathVariable("searchText") String searchText) {
-        return ResponseEntity.ok(dictionaryService.searchWord(searchText));
+        return ResponseEntity.ok(dictionaryService.search(searchText));
     }
 }

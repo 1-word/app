@@ -1,0 +1,6 @@
+FROM redis
+COPY dict/redis/ /home/
+RUN mkdir -p /usr/local/etc/redis && \
+    mv /home/redis.conf /usr/local/etc/redis/redis.conf && \
+    mv /home/dump.rdb /usr/local/etc/redis/dump.rdb
+WORKDIR /usr/local/etc/redis
