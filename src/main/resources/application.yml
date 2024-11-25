@@ -1,6 +1,10 @@
 spring:
   profiles:
     include: oauth2
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   jpa:
     properties:
       hibernate:
