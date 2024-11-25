@@ -3,6 +3,7 @@ package com.numo.wordapp.aop;
 import com.numo.wordapp.comm.util.JsonUtil;
 import com.numo.wordapp.dto.dictionary.DictionaryDto;
 import com.numo.wordapp.dto.word.WordResponseDto;
+import com.numo.wordapp.service.dictionary.DictionaryCacheService;
 import com.numo.wordapp.service.dictionary.DictionaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,9 +19,12 @@ import org.springframework.stereotype.Component;
 public class WordAspect {
 
     private final DictionaryService dictionaryService;
+    private final DictionaryCacheService dictionaryCacheService;
 
-    public WordAspect(DictionaryService dictionaryService) {
+    public WordAspect(DictionaryService dictionaryService,
+                      DictionaryCacheService dictionaryCacheService) {
         this.dictionaryService = dictionaryService;
+        this.dictionaryCacheService = dictionaryCacheService;
     }
 
     @Pointcut("execution(* com.numo.wordapp.controller..*.*(..))")
@@ -53,7 +57,7 @@ public class WordAspect {
     }
 
     /**
-     * 단어 저장 시 사전 데이터베이스에 저장
+     * 단어 저장 시 사전 데이터베이스와 캐시에 저장
      * 이미 사전 데이터베이스에 있다면 저장하지 않는다.
      * @param res 저장된 단어 데이터
      */
@@ -64,6 +68,7 @@ public class WordAspect {
                 .build();
 
         dictionaryService.save(dictionaryDto);
+        dictionaryCacheService.save("dict", res.word());
     }
 
 }
