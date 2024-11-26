@@ -1,0 +1,30 @@
+package com.numo.wordapp.entity.word;
+
+import com.numo.wordapp.entity.sentence.DailySentence;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Entity
+public class WordDailySentence {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "word_id")
+    private Word word;
+
+    @ManyToOne
+    @JoinColumn(name = "daily_sentence_id")
+    private DailySentence dailySentence;
+
+    public WordDailySentence(Word word, DailySentence dailySentence) {
+        this.word = word;
+        this.dailySentence = dailySentence;
+    }
+
+}

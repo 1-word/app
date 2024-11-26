@@ -112,6 +112,17 @@ public class WordService {
     }
 
     /**
+     * 해당하는 단어들을 포함하고 있는 단어 정보를 가져온다.
+     * 단어 상세정보는 가져오지 않는다.
+     * @param userId 유저 아이디
+     * @param words 검색할 단어 리스트
+     * @return 해당하는 단어들의 간단한 단어 정보(뜻, 단어, 단어장 정보 등)
+     */
+    public List<DailyWordDto> findDailyWord(Long userId, List<String> words) {
+        return wordRepository.findDailyWordBy(userId, words);
+    }
+
+    /**
      * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
      * @param wordName 단어명
      * */

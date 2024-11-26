@@ -1,9 +1,12 @@
 package com.numo.wordapp.repository.word;
 
+import com.numo.wordapp.dto.word.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.entity.word.Word;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+
+import java.util.List;
 
 public interface WordRepositoryCustom {
     /**
@@ -13,4 +16,5 @@ public interface WordRepositoryCustom {
      *
      * */
     Slice<Word> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto);
+    List<DailyWordDto> findDailyWordBy(Long userId, List<String> words);
 }

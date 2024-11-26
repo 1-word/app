@@ -1,0 +1,9 @@
+### 오늘의 문장 저장
+POST localhost:8088/daily-sentence
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "sentence": "They try to put a malicious code in your smartphone and send an authorization code for the micropayment to them",
+  "mean": "그들은 당신의 스마트폰에 악성 코드를 주입하고 소액 결제에 필요한 인증 번호를 그들에게 전송시킨다."
+}

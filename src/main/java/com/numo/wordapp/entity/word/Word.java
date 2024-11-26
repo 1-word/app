@@ -46,8 +46,12 @@ public class Word extends Timestamped {
     @JoinColumn(name = "folder_id")
     private Folder folder;
 
-    @OneToMany(mappedBy = "word", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDetail> wordDetails = new ArrayList<>();
+
+    // 오늘의 문장 추가
+    @OneToMany(mappedBy = "word")
+    private List<WordDailySentence> wordDailySentences;
 
     public void setWordDetails() {
         addWordDetails(wordDetails);
@@ -129,4 +133,5 @@ public class Word extends Timestamped {
         }
         return folder;
     }
+
 }
