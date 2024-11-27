@@ -1,5 +1,6 @@
 package com.numo.wordapp.entity.sentence;
 
+import com.numo.wordapp.dto.sentence.DailySentenceRequestDto;
 import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.entity.word.Word;
@@ -14,7 +15,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -48,7 +51,9 @@ public class DailySentence extends Timestamped {
     }
 
     public void setWordDailySentence(List<Word> words) {
-        wordDailySentences = new ArrayList<>();
+        if (wordDailySentences == null) {
+            wordDailySentences = new ArrayList<>();
+        }
         DailySentence dailySentence = this;
         for (Word word : words) {
             WordDailySentence wordDailySentence = new WordDailySentence(word, dailySentence);
@@ -76,5 +81,29 @@ public class DailySentence extends Timestamped {
         }
 
         return weekOfMonth;
+    }
+
+    public void update(DailySentenceRequestDto requestDto, List<Word> words) {
+        // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
+        this.sentence = requestDto.sentence();
+        this.mean = requestDto.mean();
+        removeDailyWords();
+        setWordDailySentence(words);
+    }
+
+    public void update(DailySentenceRequestDto requestDto) {
+        this.mean = requestDto.mean();
+    }
+
+    public boolean isCurrentSentenceEqual(String sentence) {
+        return Objects.equals(sentence, this.sentence);
+    }
+
+    public void removeDailyWords() {
+        Iterator<WordDailySentence> iterator = wordDailySentences.iterator();
+        while(iterator.hasNext()) {
+            iterator.next();
+            iterator.remove();
+        }
     }
 }

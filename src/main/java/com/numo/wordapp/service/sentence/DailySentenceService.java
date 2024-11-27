@@ -7,6 +7,7 @@ import com.numo.wordapp.repository.sentence.DailySentenceRepository;
 import com.numo.wordapp.service.word.WordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,13 +26,7 @@ public class DailySentenceService {
      */
     public DailySentenceDto saveSentence(Long userId, DailySentenceRequestDto requestDto) {
         DailySentence sentence = requestDto.toEntity(userId);
-        // 단어를 쪼갠다
-        List<String> words = splitSentence(requestDto.sentence());
-
-        List<DailyWordDto> dailyWordsDto = wordService.findDailyWord(userId, words);
-        List<Word> dailyWords = dailyWordsDto.stream().map(
-                dailyWordDto -> Word.builder().wordId(dailyWordDto.wordId()).build())
-                .toList();
+        List<Word> dailyWords = findDailyWords(userId, requestDto.sentence());
         sentence.setWordDailySentence(dailyWords);
         return DailySentenceDto.of(dailySentenceRepository.save(sentence));
     }
@@ -53,6 +48,49 @@ public class DailySentenceService {
                 ).toList();
 
         return res;
+    }
+
+    /**
+     * 문장을 업데이트한다.
+     * 문장이 변경되지 않으면 뜻만 수정
+     * 문장이 변경되면 연관된 단어 모두 삭제 후 다시 등록
+     *
+     * @param userId 유저 아이디
+     * @param dailySentenceId 수정할 문장 고유번호
+     * @param requestDto 수정할 내용
+     * @return 수정한 문장 데이터
+     */
+    @Transactional
+    public DailySentenceDto updateSentence(Long userId, Long dailySentenceId, DailySentenceRequestDto requestDto) {
+        DailySentence dailySentence = dailySentenceRepository.findDailySentenceBy(dailySentenceId, userId);
+
+        if (requestDto.sentence() == null ||
+                dailySentence.isCurrentSentenceEqual(requestDto.sentence())) {
+            dailySentence.update(requestDto);
+            return DailySentenceDto.of(dailySentence);
+        }
+
+        List<Word> dailyWords = findDailyWords(userId, requestDto.sentence());
+        // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
+        dailySentence.update(requestDto, dailyWords);
+        return DailySentenceDto.of(dailySentence);
+    }
+
+    /**
+     * 문장에 해당하는 단어를 찾아 내 단어장에 등록된 단어 데이터가 있는지 확인
+     * @param userId 유저 아이디
+     * @param sentence 문장
+     * @return 단어장에 등록된 문장과 연관된 단어 데이터
+     */
+    private List<Word> findDailyWords(Long userId, String sentence){
+        // 단어를 쪼갠다
+        List<String> words = splitSentence(sentence);
+
+        List<DailyWordDto> dailyWordsDto = wordService.findDailyWord(userId, words);
+        List<Word> dailyWords = dailyWordsDto.stream().map(
+                        dailyWordDto -> Word.builder().wordId(dailyWordDto.wordId()).build())
+                .toList();
+        return dailyWords;
     }
 
     /**

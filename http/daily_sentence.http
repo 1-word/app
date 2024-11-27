@@ -34,3 +34,22 @@ GET localhost:8088/daily-sentence?year=2024&month=11&week=4
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+### 오늘의 문장 수정 - 뜻
+PUT localhost:8088/daily-sentence/9
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "mean": "오늘의 문장 뜻 수정"
+}
+
+### 오늘의 문장 수정 - 문장과 뜻
+PUT localhost:8088/daily-sentence/9
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "sentence": "Without a smartphone, a person would be unable to show this code which would make it difficult for them to enter",
+  "mean": "스마트폰이 없으면 사람이 이 코드를 보여줄 수 없어 입장하기가 어렵습니다1."
+}
+

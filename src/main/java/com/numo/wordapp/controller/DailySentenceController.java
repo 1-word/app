@@ -27,11 +27,18 @@ public class DailySentenceController {
         return ResponseEntity.ok(dailySentenceService.saveSentence(user.getUserId(), requestDto));
     }
 
-    @Operation(summary = "오늘의 문장 연도 별 조회", description = "오늘의 문장을 조회한다")
+    @Operation(summary = "오늘의 문장 조회", description = "오늘의 문장을 조회한다")
     @GetMapping
     public ResponseEntity<List<ReadDailySentenceDto>> getSentence(@AuthenticationPrincipal UserDetailsImpl user,
                                                                   DailySentenceParameterDto parameterDto) {
         return ResponseEntity.ok(dailySentenceService.getSentenceBy(user.getUserId(), parameterDto));
     }
 
+    @Operation(summary = "오늘의 문장 수정", description = "오늘의 문장을 수정한다")
+    @PutMapping("/{dailySentenceId}")
+    public ResponseEntity<DailySentenceDto> updateSentence(@AuthenticationPrincipal UserDetailsImpl user,
+                                                           @PathVariable("dailySentenceId") Long dailySentenceId,
+                                                           @RequestBody DailySentenceRequestDto requestDto) {
+        return ResponseEntity.ok(dailySentenceService.updateSentence(user.getUserId(), dailySentenceId, requestDto));
+    }
 }
