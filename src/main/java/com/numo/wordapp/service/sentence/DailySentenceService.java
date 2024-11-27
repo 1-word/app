@@ -56,7 +56,7 @@ public class DailySentenceService {
      * 문장이 변경되면 연관된 단어 모두 삭제 후 다시 등록
      *
      * @param userId 유저 아이디
-     * @param dailySentenceId 수정할 문장 고유번호
+     * @param dailySentenceId 문장 고유번호
      * @param requestDto 수정할 내용
      * @return 수정한 문장 데이터
      */
@@ -74,6 +74,17 @@ public class DailySentenceService {
         // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
         dailySentence.update(requestDto, dailyWords);
         return DailySentenceDto.of(dailySentence);
+    }
+
+    /**
+     * 연관된 오늘의 단어 데이터와 함께 문장을 삭제한다
+     * @param userId 유저 아이디
+     * @param dailySentenceId 문장 고유번호
+     */
+    public void deleteSentence(Long userId, Long dailySentenceId) {
+        DailySentence dailySentence = dailySentenceRepository.findDailySentenceBy(dailySentenceId, userId);
+        dailySentence.removeDailyWords();
+        dailySentenceRepository.delete(dailySentence);
     }
 
     /**

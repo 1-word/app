@@ -8,6 +8,10 @@ Authorization: Bearer {{accessToken}}
   "mean": "특히 오늘날, 우리가 코로나19와 함께 생활하고 있기 때문에, 많은 식당, 카페, 그리고 기업체들은 입장하기 전에 고객에게 QR 코드를 보여주도록 요구합니다."
 }
 
+> {%
+    client.global.set("dailySentenceId", response.body.dailySentenceId)
+%}
+
 ### 오늘의 문장 전체 조회
 GET localhost:8088/daily-sentence
 Content-Type: application/json
@@ -35,7 +39,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 수정 - 뜻
-PUT localhost:8088/daily-sentence/9
+PUT localhost:8088/daily-sentence/{{dailySentenceId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -44,7 +48,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 오늘의 문장 수정 - 문장과 뜻
-PUT localhost:8088/daily-sentence/9
+PUT localhost:8088/daily-sentence/{{dailySentenceId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -53,3 +57,7 @@ Authorization: Bearer {{accessToken}}
   "mean": "스마트폰이 없으면 사람이 이 코드를 보여줄 수 없어 입장하기가 어렵습니다1."
 }
 
+### 오늘의 문장 삭제
+DELETE localhost:8088/daily-sentence/{{dailySentenceId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

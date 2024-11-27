@@ -41,4 +41,12 @@ public class DailySentenceController {
                                                            @RequestBody DailySentenceRequestDto requestDto) {
         return ResponseEntity.ok(dailySentenceService.updateSentence(user.getUserId(), dailySentenceId, requestDto));
     }
+
+    @Operation(summary = "오늘의 문장 삭제", description = "오늘의 문장을 삭제한다")
+    @DeleteMapping("/{dailySentenceId}")
+    public ResponseEntity<Void> deleteSentence(@AuthenticationPrincipal UserDetailsImpl user,
+                                               @PathVariable("dailySentenceId") Long dailySentenceId) {
+        dailySentenceService.deleteSentence(user.getUserId(), dailySentenceId);
+        return ResponseEntity.noContent().build();
+    }
 }
