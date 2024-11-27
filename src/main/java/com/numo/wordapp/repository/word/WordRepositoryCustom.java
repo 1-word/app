@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository.word;
 
-import com.numo.wordapp.dto.word.DailyWordDto;
+import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.entity.word.Word;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository.word;
 
-import com.numo.wordapp.dto.word.DailyWordDto;
+import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.QWord;
@@ -63,6 +63,7 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
     public List<DailyWordDto> findDailyWordBy(Long userId, List<String> words) {
         List<DailyWordDto> results = queryFactory.select(Projections.constructor(
                         DailyWordDto.class,
+                        qWord.wordId,
                         qWord.wordId,
                         qWord.word,
                         qWord.mean,

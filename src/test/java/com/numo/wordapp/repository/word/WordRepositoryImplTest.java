@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository.word;
 
-import com.numo.wordapp.dto.word.DailyWordDto;
+import com.numo.wordapp.dto.sentence.DailyWordDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

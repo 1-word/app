@@ -1,8 +1,6 @@
 package com.numo.wordapp.service.sentence;
 
-import com.numo.wordapp.dto.sentence.DailySentenceDto;
-import com.numo.wordapp.dto.sentence.DailySentenceRequestDto;
-import com.numo.wordapp.dto.word.DailyWordDto;
+import com.numo.wordapp.dto.sentence.*;
 import com.numo.wordapp.entity.sentence.DailySentence;
 import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.repository.sentence.DailySentenceRepository;
@@ -10,8 +8,7 @@ import com.numo.wordapp.service.word.WordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +33,54 @@ public class DailySentenceService {
                 dailyWordDto -> Word.builder().wordId(dailyWordDto.wordId()).build())
                 .toList();
         sentence.setWordDailySentence(dailyWords);
-        return DailySentenceDto.of(dailySentenceRepository.save(sentence), dailyWordsDto);
+        return DailySentenceDto.of(dailySentenceRepository.save(sentence));
     }
 
+    /**
+     * 연도, 월, 주, 일별 문장 데이터를 가져온다.
+     * @param userId 유저 아이디
+     * @param parameterDto 년도, 달, 월, 주
+     * @return 연도, 월, 주, 일별 문장 데이터
+     */
+    public List<ReadDailySentenceDto> getSentenceBy(Long userId, DailySentenceParameterDto parameterDto) {
+        List<DailySentenceDto> dailySentences = dailySentenceRepository.findDailySentencesBy(userId, parameterDto);
+        List<Long> sentenceIds = dailySentences.stream().map(DailySentenceDto::dailySentenceId).toList();
+        List<DailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
+
+        List<ReadDailySentenceDto> res = dailySentences.stream()
+                .map(dailySentenceDto -> ReadDailySentenceDto.of(dailySentenceDto,
+                        findDailySentenceWords(dailySentenceDto.dailySentenceId(), dailyWords))
+                ).toList();
+
+        return res;
+    }
+
+    /**
+     * 가져온 단어 데이터에서 해당 문장과 연관된 단어를 찾는다.
+     * @param sentenceId 문장
+     * @param dailyWordDtos 검색한 단어 데이터
+     * @return 해당 문장과 연관된 단어 데이터
+     */
+    private List<DailyWordDto> findDailySentenceWords(Long sentenceId, List<DailyWordDto> dailyWordDtos) {
+        List<DailyWordDto> result = new ArrayList<>();
+        Iterator<DailyWordDto> iterator = dailyWordDtos.iterator();
+        while (iterator.hasNext()) {
+            DailyWordDto dailyWordDto = iterator.next();
+            if (Objects.equals(sentenceId, dailyWordDto.wordDailyWordId())) {
+                result.add(dailyWordDto);
+                iterator.remove();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 공백을 기준으로 문장을 분리한다.
+     * @param sentence 문장
+     * @return 공백을 기준으로 분리된 단어들
+     */
     private List<String> splitSentence(String sentence) {
         String[] words = sentence.split(" ");
         return Arrays.stream(words).toList();
     }
-
 }

@@ -5,6 +5,7 @@ import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.util.ProcessBuilderUtil;
 import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.page.PageDto;
+import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.Sound;

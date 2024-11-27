@@ -1,11 +1,9 @@
 package com.numo.wordapp.dto.sentence;
 
-import com.numo.wordapp.dto.word.DailyWordDto;
 import com.numo.wordapp.entity.sentence.DailySentence;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 public record DailySentenceDto(
@@ -16,11 +14,10 @@ public record DailySentenceDto(
    int month,
    int week,
    int day,
-   List<DailyWordDto> words,
    LocalDateTime createTime,
    LocalDateTime updateTime
 ) {
-    public static DailySentenceDto of(DailySentence dailySentence, List<DailyWordDto> words) {
+    public static DailySentenceDto of(DailySentence dailySentence) {
         return DailySentenceDto.builder()
                 .dailySentenceId(dailySentence.getDailySentenceId())
                 .sentence(dailySentence.getSentence())
@@ -29,7 +26,6 @@ public record DailySentenceDto(
                 .month(dailySentence.getMonth())
                 .week(dailySentence.getWeek())
                 .day(dailySentence.getDay())
-                .words(words)
                 .createTime(dailySentence.getCreateTime())
                 .updateTime(dailySentence.getUpdateTime())
                 .build();

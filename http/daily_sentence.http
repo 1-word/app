@@ -4,6 +4,33 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "sentence": "They try to put a malicious code in your smartphone and send an authorization code for the micropayment to them",
-  "mean": "그들은 당신의 스마트폰에 악성 코드를 주입하고 소액 결제에 필요한 인증 번호를 그들에게 전송시킨다."
+  "sentence": "Especially today, as we live with COVID-19, many restaurants, cafes, and businesses require customers to show a QR code before entering.",
+  "mean": "특히 오늘날, 우리가 코로나19와 함께 생활하고 있기 때문에, 많은 식당, 카페, 그리고 기업체들은 입장하기 전에 고객에게 QR 코드를 보여주도록 요구합니다."
 }
+
+### 오늘의 문장 전체 조회
+GET localhost:8088/daily-sentence
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 연도 별 조회
+GET localhost:8088/daily-sentence?year=2024
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 월별 조회
+GET localhost:8088/daily-sentence?year=2024&month=11
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 오늘의 문장 일별 조회
+GET localhost:8088/daily-sentence?year=2024&month=11&day=26
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 주별 조회
+GET localhost:8088/daily-sentence?year=2024&month=11&week=4
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
