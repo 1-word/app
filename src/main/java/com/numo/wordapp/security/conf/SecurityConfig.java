@@ -1,9 +1,11 @@
 package com.numo.wordapp.security.conf;
 
+import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.security.handle.JwtAccessDeniedHandler;
 import com.numo.wordapp.security.handle.JwtAuthenticationEntryPoint;
 import com.numo.wordapp.security.jwt.JwtFilter;
 import com.numo.wordapp.security.jwt.TokenProvider;
+import com.numo.wordapp.security.oauth2.CommonLoginFailureHandler;
 import com.numo.wordapp.security.oauth2.CommonLoginSuccessHandler;
 import com.numo.wordapp.service.user.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final RefreshTokenService refreshTokenService;
+    private final PropertyConfig propertyConfig;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -46,7 +49,11 @@ public class SecurityConfig {
     }
 
     public CommonLoginSuccessHandler commonLoginSuccessHandler() {
-        return new CommonLoginSuccessHandler(tokenProvider, refreshTokenService);
+        return new CommonLoginSuccessHandler(tokenProvider, refreshTokenService, propertyConfig);
+    }
+
+    public CommonLoginFailureHandler commonLoginFailureHandler() {
+        return new CommonLoginFailureHandler();
     }
 
     @Bean
@@ -76,6 +83,7 @@ public class SecurityConfig {
                 .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
                         .baseUri("/oauth2/callback/*"))
                 .successHandler(commonLoginSuccessHandler())
+                .failureHandler(commonLoginFailureHandler())
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                         .userService(CustomOAuth2UserService))
         );
