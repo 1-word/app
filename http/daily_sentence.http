@@ -1,0 +1,63 @@
+### 오늘의 문장 저장
+POST localhost:8088/daily-sentence
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "sentence": "Especially today, as we live with COVID-19, many restaurants, cafes, and businesses require customers to show a QR code before entering.",
+  "mean": "특히 오늘날, 우리가 코로나19와 함께 생활하고 있기 때문에, 많은 식당, 카페, 그리고 기업체들은 입장하기 전에 고객에게 QR 코드를 보여주도록 요구합니다."
+}
+
+> {%
+    client.global.set("dailySentenceId", response.body.dailySentenceId)
+%}
+
+### 오늘의 문장 전체 조회
+GET localhost:8088/daily-sentence
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 연도 별 조회
+GET localhost:8088/daily-sentence?year=2024
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 월별 조회
+GET localhost:8088/daily-sentence?year=2024&month=11
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 오늘의 문장 일별 조회
+GET localhost:8088/daily-sentence?year=2024&month=11&day=26
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 주별 조회
+GET localhost:8088/daily-sentence?year=2024&month=11&week=4
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 오늘의 문장 수정 - 뜻
+PUT localhost:8088/daily-sentence/{{dailySentenceId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "mean": "오늘의 문장 뜻 수정"
+}
+
+### 오늘의 문장 수정 - 문장과 뜻
+PUT localhost:8088/daily-sentence/{{dailySentenceId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "sentence": "Without a smartphone, a person would be unable to show this code which would make it difficult for them to enter",
+  "mean": "스마트폰이 없으면 사람이 이 코드를 보여줄 수 없어 입장하기가 어렵습니다1."
+}
+
+### 오늘의 문장 삭제
+DELETE localhost:8088/daily-sentence/{{dailySentenceId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

@@ -1,10 +1,12 @@
 package com.numo.wordapp.repository.word;
 
+import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.QWord;
 import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.detail.QWordDetail;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,50 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
                 .limit(pageable.getPageSize()+1)
                 .fetch();
         return checkLastPage(pageable, results);
+    }
+
+    /**
+     * word 리스트에 해당하는 단어를 모두 찾는다.
+     * @param userId 유저 아이디
+     * @param words 찾을 단어 리스트
+     * @return 단어와 단어장 데이터 리스트(detail 포함x)
+     */
+    @Override
+    public List<DailyWordDto> findDailyWordBy(Long userId, List<String> words) {
+        List<DailyWordDto> results = queryFactory.select(Projections.constructor(
+                        DailyWordDto.class,
+                        qWord.wordId,
+                        qWord.wordId,
+                        qWord.word,
+                        qWord.mean,
+                        qWord.folder.folderId,
+                        qWord.folder.folderName
+                ))
+                .from(qWord)
+                .leftJoin(qWord.folder)
+                .where(
+                        qWord.user.userId.eq(userId),
+                        eqWords(words)
+                )
+                .fetch();
+        return results;
+    }
+
+    /**
+     * 단어들이 있는지 확인하기 위해 or 조건문을 만든다.
+     * @param words 단어 리스트
+     * @return 단어들을 확인하는 or 조건문
+     */
+    private BooleanExpression eqWords(List<String> words) {
+        BooleanExpression result = null;
+        for (String s : words) {
+            if (result == null) {
+                result = qWord.word.eq(s);
+                continue;
+            }
+            result = result.or(qWord.word.eq(s));
+        }
+        return result;
     }
 
     /**

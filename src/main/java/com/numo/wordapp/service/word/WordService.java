@@ -5,6 +5,7 @@ import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.util.ProcessBuilderUtil;
 import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.page.PageDto;
+import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.Sound;
@@ -109,6 +110,17 @@ public class WordService {
         pageDto = new PageDto(pageNumber, hasNext, getLastWordId(words));
 
         return new ReadWordResponseDto(dto, pageDto);
+    }
+
+    /**
+     * 해당하는 단어들을 포함하고 있는 단어 정보를 가져온다.
+     * 단어 상세정보는 가져오지 않는다.
+     * @param userId 유저 아이디
+     * @param words 검색할 단어 리스트
+     * @return 해당하는 단어들의 간단한 단어 정보(뜻, 단어, 단어장 정보 등)
+     */
+    public List<DailyWordDto> findDailyWord(Long userId, List<String> words) {
+        return wordRepository.findDailyWordBy(userId, words);
     }
 
     /**
