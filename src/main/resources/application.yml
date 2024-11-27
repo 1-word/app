@@ -8,6 +8,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        default_batch_fetch_size: 10
         auto_quote_keyword: 'true'
         format_sql: 'true'
     hibernate:

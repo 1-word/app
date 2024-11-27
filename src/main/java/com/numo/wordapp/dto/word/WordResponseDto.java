@@ -7,7 +7,7 @@ import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.detail.WordDetail;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Builder
@@ -21,8 +21,8 @@ public record WordResponseDto(
         String soundPath,
         String memorization,
         String type,
-        LocalDateTime updateTime,
-        LocalDateTime createTime,
+        String updateTime,
+        String createTime,
         List<WordDetailResponseDto> details
         ) {
         public static WordResponseDto of(Word word) {
@@ -39,8 +39,8 @@ public record WordResponseDto(
                         .memo(word.getMemo())
                         .memorization(word.getMemorization())
                         .type(word.getLang().name())
-                        .createTime(word.getCreateTime())
-                        .updateTime(word.getUpdateTime())
+                        .createTime(word.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .updateTime(word.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .details(wordDetails.stream().map(WordDetailResponseDto::of).toList())
                         .build();
         }

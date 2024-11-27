@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public record WordDetailResponseDto(
         Long wordDetailId,
         Long wordGroupId,
+        String groupName,
         String title,
         String content,
         LocalDateTime createTime,
@@ -20,6 +21,7 @@ public record WordDetailResponseDto(
         return WordDetailResponseDto.builder()
                 .wordDetailId(wordDetail.getWordDetailId())
                 .wordGroupId(wordGroup.getWordGroupId())
+                .groupName(wordGroup.getName())
                 .title(wordDetail.getTitle())
                 .content(wordDetail.getContent())
                 .createTime(wordDetail.getCreateTime())

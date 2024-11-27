@@ -17,6 +17,10 @@ Authorization: Bearer {{accessToken}}
     "wordGroupId": 1,
     "title": "title2",
     "content": "content2"
+  }, {
+    "wordGroupId": 3,
+    "title": "title3",
+    "content": "content3"
   }]
 }
 
@@ -25,7 +29,7 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 단어 조회
-GET localhost:8088/word?current=1&next=1&lastWordId=1&folderId=1
+GET localhost:8088/word?current=0&next=0&lastWordId=1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
