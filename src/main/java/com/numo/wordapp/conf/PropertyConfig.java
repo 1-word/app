@@ -13,6 +13,8 @@ public class PropertyConfig {
     private String processPath;
     @Value("${cstm.file.path}")
     private String storagePath;
+    @Value("${CLIENT_HOST}")
+    private String clientHost;
 
     public String getProcessPath() {
         if (processPath.endsWith("/")) {
