@@ -1,13 +1,12 @@
 package com.numo.wordapp.dto.word.detail;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 public record ReadWordDetailResponseDto(
-        Long wordGroupId,
-        String groupName,
-        List<ReadWordDetailGroupingDto> groups
+        Long wordDetailId,
+        String title,
+        String content,
+        LocalDateTime createTime,
+        LocalDateTime updateTime
 ) {
-    public ReadWordDetailResponseDto(ReadWordDetailGroupKey keys, List<ReadWordDetailGroupingDto> groups) {
-        this(keys.wordGroupId(), keys.groupName(), groups);
-    }
 }

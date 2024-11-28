@@ -1,8 +1,8 @@
 package com.numo.wordapp.test;
 
 import com.numo.wordapp.dto.word.detail.ReadWordDetailGroupKey;
-import com.numo.wordapp.dto.word.detail.ReadWordDetailGroupingDto;
 import com.numo.wordapp.dto.word.detail.ReadWordDetailResponseDto;
+import com.numo.wordapp.dto.word.detail.ReadWordDetailListResponseDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,11 +71,11 @@ public class CollectionTest {
 
     @Test
     void collection2() {
-        Map<Long, List<ReadWordDetailGroupingDto>> collect = dtoList.stream()
+        Map<Long, List<ReadWordDetailResponseDto>> collect = dtoList.stream()
                 .collect(Collectors.groupingBy(
                         WordDetailResponseDto::wordGroupId,
                         Collectors.mapping(entry ->
-                                new ReadWordDetailGroupingDto(
+                                new ReadWordDetailResponseDto(
                                         entry.wordDetailId(),
                                         entry.title(),
                                         entry.content(),
@@ -100,11 +100,11 @@ public class CollectionTest {
 
     @Test
     void collection4() {
-        List<ReadWordDetailResponseDto> collect = dtoList.stream()
+        List<ReadWordDetailListResponseDto> collect = dtoList.stream()
                 .collect(Collectors.groupingBy(
                         entry -> new ReadWordDetailGroupKey(entry.wordGroupId(), entry.groupName()),
                         Collectors.mapping(entry ->
-                                new ReadWordDetailGroupingDto(
+                                new ReadWordDetailResponseDto(
                                         entry.wordDetailId(),
                                         entry.title(),
                                         entry.content(),
@@ -114,7 +114,7 @@ public class CollectionTest {
                         )
                 ))
                 .entrySet().stream()
-                .map(entry -> new ReadWordDetailResponseDto(
+                .map(entry -> new ReadWordDetailListResponseDto(
                         entry.getKey(),
                         entry.getValue()
                 ))
@@ -126,11 +126,11 @@ public class CollectionTest {
 
     @Test
     void collection5() {
-        Map<String, List<ReadWordDetailGroupingDto>> collect = dtoList.stream()
+        Map<String, List<ReadWordDetailResponseDto>> collect = dtoList.stream()
                 .collect(Collectors.groupingBy(
                         entry -> entry.wordGroupId() + "_" + entry.groupName(),
                         Collectors.mapping(entry ->
-                                new ReadWordDetailGroupingDto(
+                                new ReadWordDetailResponseDto(
                                         entry.wordDetailId(),
                                         entry.title(),
                                         entry.content(),

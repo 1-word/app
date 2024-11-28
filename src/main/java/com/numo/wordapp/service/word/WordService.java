@@ -95,10 +95,10 @@ public class WordService {
      *
      * 검색, 조회 모두 해당함
      * @param userId 로그인한 유저 아이디<br>
-     * @param readDto {@link ReadWordResponseDto}<br>
+     * @param readDto {@link ReadWordListResponseDto}<br>
      * @return 단어 데이터
      */
-    public ReadWordResponseDto getWord(Long userId, PageDto pageDto, ReadWordRequestDto readDto){
+    public ReadWordListResponseDto getWord(Long userId, PageDto pageDto, ReadWordRequestDto readDto){
         Pageable pageable = PageRequest.of(pageDto.getCurrent(), 20);
         Slice<Word> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.getLastWordId(),readDto);
         List<Word> words = wordsWithPage.getContent();
@@ -106,10 +106,10 @@ public class WordService {
         int pageNumber = wordsWithPage.getNumber();
         boolean hasNext = wordsWithPage.hasNext();
 
-        List<WordResponseDto> dto = words.stream().map(WordResponseDto::of).toList();
+        List<ReadWordResponseDto> dto = words.stream().map(ReadWordResponseDto::of).toList();
         pageDto = new PageDto(pageNumber, hasNext, getLastWordId(words));
 
-        return new ReadWordResponseDto(dto, pageDto);
+        return new ReadWordListResponseDto(dto, pageDto);
     }
 
     /**
