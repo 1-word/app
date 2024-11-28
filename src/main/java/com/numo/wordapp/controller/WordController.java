@@ -28,10 +28,10 @@ public class WordController {
 
     @Operation(description = "단어를 검색한다.")
     @GetMapping(value = "/{text}")
-    public ResponseEntity<ReadWordResponseDto> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                             @PathVariable("text") String searchText,
-                                                             PageDto page,
-                                                             SearchWordRequestDto requestDto) {
+    public ResponseEntity<ReadWordListResponseDto> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                 @PathVariable("text") String searchText,
+                                                                 PageDto page,
+                                                                 SearchWordRequestDto requestDto) {
         Long userId = user.getUserId();
         ReadWordRequestDto readDto = ReadWordRequestDto.of(searchText, requestDto);
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
@@ -39,9 +39,9 @@ public class WordController {
 
     @Operation(description = "단어를 조회한다.")
     @GetMapping
-    public ResponseEntity<ReadWordResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                       PageDto page,
-                                                       ReadWordRequestDto readDto) {
+    public ResponseEntity<ReadWordListResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                           PageDto page,
+                                                           ReadWordRequestDto readDto) {
         Long userId = user.getUserId();
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
     }

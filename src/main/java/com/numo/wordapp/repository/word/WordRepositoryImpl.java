@@ -37,7 +37,13 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
         List<Word> results = queryFactory.selectDistinct(qWord)
                 .from(qWord)
                 .leftJoin(qWord.folder)
+                .fetchJoin()
                 .leftJoin(qWord.wordDetails)
+                .fetchJoin()
+                .leftJoin(qWord.sound)
+                .fetchJoin()
+                .leftJoin(qWord.user)
+                .fetchJoin()
                 .where(
                         qWord.user.userId.eq(userId),
                         eqFolderId(readDto.folderId()),
