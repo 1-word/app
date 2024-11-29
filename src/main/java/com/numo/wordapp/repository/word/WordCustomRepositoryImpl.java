@@ -2,9 +2,10 @@ package com.numo.wordapp.repository.word;
 
 import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
+import com.numo.wordapp.dto.word.WordDto;
+import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.QWord;
-import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.detail.QWordDetail;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,7 +18,7 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class WordRepositoryImpl implements WordRepositoryCustom {
+public class WordCustomRepositoryImpl implements WordCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     private QWord qWord = QWord.word1;
@@ -25,25 +26,34 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
 
     /**
      * 해당하는 유저의 단어 데이터 조회, 폴더 아이디와 마지막 단어 아이디가 없는지 확인 후 동적으로 쿼리 생성
+     *
      * @param pageable 페이징 값, default 20
-     * @param readDto <br>
-     * * user_id 로그인 유저(토큰) 아이디 <br>
-     * * folder_id 폴더 아이디 <br>
-     * * last_word_id 마지막으로 출력된 단어 아이디 <br>
+     * @param readDto  <br>
+     *                 * user_id 로그인 유저(토큰) 아이디 <br>
+     *                 * folder_id 폴더 아이디 <br>
+     *                 * last_word_id 마지막으로 출력된 단어 아이디 <br>
      * @return 페이징한 유저 데이터
      */
     @Override
-    public Slice<Word> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto) {
-        List<Word> results = queryFactory.selectDistinct(qWord)
+    public Slice<WordDto> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto) {
+        List<WordDto> results = queryFactory.select(Projections.constructor(
+                        WordDto.class,
+                        qWord.wordId,
+                        qWord.folder.folderId,
+                        qWord.word,
+                        qWord.mean,
+                        qWord.read,
+                        qWord.memo,
+                        qWord.sound.word,
+                        qWord.memorization,
+                        qWord.lang,
+                        qWord.updateTime,
+                        qWord.createTime
+                ))
                 .from(qWord)
                 .leftJoin(qWord.folder)
-                .fetchJoin()
-                .leftJoin(qWord.wordDetails)
-                .fetchJoin()
                 .leftJoin(qWord.sound)
-                .fetchJoin()
                 .leftJoin(qWord.user)
-                .fetchJoin()
                 .where(
                         qWord.user.userId.eq(userId),
                         eqFolderId(readDto.folderId()),
@@ -54,9 +64,32 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
                 )
                 .orderBy(qWord.updateTime.desc())
                 .orderBy(qWord.wordId.desc())
-                .limit(pageable.getPageSize()+1)
+                // 다음 페이지가 있는지 확인하기 위해 다음 데이터도 함께 조회
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
         return checkLastPage(pageable, results);
+    }
+
+    @Override
+    public List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds) {
+        List<WordDetailResponseDto> results = queryFactory.select(Projections.constructor(
+                WordDetailResponseDto.class,
+                qWordDetail.word.wordId,
+                qWordDetail.wordDetailId,
+                qWordDetail.wordGroup.wordGroupId,
+                qWordDetail.wordGroup.name,
+                qWordDetail.title,
+                qWordDetail.content,
+                qWordDetail.createTime,
+                qWordDetail.updateTime
+                ))
+                .from(qWordDetail)
+                .leftJoin(qWordDetail.wordGroup)
+                .where(
+                        qWordDetail.word.wordId.in(wordIds)
+                )
+                .fetch();
+        return results;
     }
 
     /**
@@ -148,7 +181,6 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
                         qWordDetail.content.like(searchText)
 //                                .or(qWordDetail.memo.like(searchText))
                                 .or(qWordDetail.content.like(searchText))
-//                                .or(qWordDetail.memo.like(searchText))
                 )
                 .fetch();
     }
@@ -159,11 +191,13 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
      * @param results DB에서 return한 데이터
      * @return page 데이터를 포함한 데이터
      */
-    private Slice<Word> checkLastPage(Pageable pageable, List<Word> results){
+    private Slice<WordDto> checkLastPage(Pageable pageable, List<WordDto> results){
         boolean hasNext = false;
+        // page의 크기보다 데이터의 크기가 크다면, 다음 페이지가 존재한다.
         if (results.size() > pageable.getPageSize()){
-            hasNext = true;
+            // 추가로 조회된 데이터는 삭제한다.
             results.remove(pageable.getPageSize());
+            hasNext = true;
         }
         return new SliceImpl<>(results, pageable, hasNext);
     }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface WordRepository extends JpaRepository<Word, Integer>, WordRepositoryCustom {
+public interface WordRepository extends JpaRepository<Word, Integer>, WordCustomRepository {
     Optional<Word> findByUser_UserIdAndWordId(Long userId, Long wordId);
 
     default Word findByUserIdAndWordId(Long userId, Long wordId) {

@@ -2,6 +2,7 @@ package com.numo.wordapp.controller;
 
 import com.numo.wordapp.aop.WordAspect;
 import com.numo.wordapp.dto.page.PageDto;
+import com.numo.wordapp.dto.page.PageRequestDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.entity.word.UpdateType;
 import com.numo.wordapp.security.service.UserDetailsImpl;
@@ -30,7 +31,7 @@ public class WordController {
     @GetMapping(value = "/{text}")
     public ResponseEntity<ReadWordListResponseDto> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                                  @PathVariable("text") String searchText,
-                                                                 PageDto page,
+                                                                 PageRequestDto page,
                                                                  SearchWordRequestDto requestDto) {
         Long userId = user.getUserId();
         ReadWordRequestDto readDto = ReadWordRequestDto.of(searchText, requestDto);
@@ -40,7 +41,7 @@ public class WordController {
     @Operation(description = "단어를 조회한다.")
     @GetMapping
     public ResponseEntity<ReadWordListResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                           PageDto page,
+                                                           PageRequestDto page,
                                                            ReadWordRequestDto readDto) {
         Long userId = user.getUserId();
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
