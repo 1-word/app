@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @MappedSuperclass
@@ -19,21 +20,23 @@ public abstract class Timestamped {
     @LastModifiedDate
     private LocalDateTime updateTime;     //업데이트 날짜
 
-//    public String getUpdateTime() {
-//        return getDateTime(updateTime);
-//    }
-//
-//    public String getCreateTime(){
-//        return getDateTime(createTime);
-//    }
-//
-//    private String getDateTime(LocalDateTime time){
-//        String date;
-//        try {
-//            date = time.format(DateTimeFormatter.ISO_DATE);
-//        }catch (Exception e){
-//            date = "";
-//        }
-//        return date;
-//    }
+    public String getCreateTimeString() {
+       return getTimeString(createTime);
+    }
+
+    public String getUpdateTimeString() {
+       return getTimeString(updateTime);
+    }
+
+    public static String getTimeString(LocalDateTime time) {
+        if (time == null) {
+            return "";
+        }
+        return getFormatTime(time, "yyyy-MM-dd");
+    }
+
+    private static String getFormatTime(LocalDateTime time, String format) {
+        return time.format(DateTimeFormatter.ofPattern(format));
+    }
+
 }

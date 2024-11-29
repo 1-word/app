@@ -42,7 +42,7 @@ public class Word extends Timestamped {
     @Enumerated(EnumType.STRING)
     private GttsCode lang;   //20230930추가 단어 타입 (영어, 일본어 등)
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder folder;
 
@@ -111,6 +111,9 @@ public class Word extends Timestamped {
     }
 
     public void setFolder(Long folderId) {
+        if (folderId == null) {
+            return;
+        }
         folder = Folder.builder()
                 .folderId(folderId)
                 .build();

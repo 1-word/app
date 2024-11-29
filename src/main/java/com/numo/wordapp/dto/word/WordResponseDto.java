@@ -1,13 +1,13 @@
 package com.numo.wordapp.dto.word;
 
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
+import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.word.Folder;
 import com.numo.wordapp.entity.word.Sound;
 import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.detail.WordDetail;
 import lombok.Builder;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Builder
@@ -39,8 +39,8 @@ public record WordResponseDto(
                         .memo(word.getMemo())
                         .memorization(word.getMemorization())
                         .type(word.getLang().name())
-                        .createTime(word.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                        .updateTime(word.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .createTime(Timestamped.getTimeString(word.getCreateTime()))
+                        .updateTime(Timestamped.getTimeString(word.getUpdateTime()))
                         .details(wordDetails.stream().map(WordDetailResponseDto::of).toList())
                         .build();
         }

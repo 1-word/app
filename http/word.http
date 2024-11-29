@@ -29,22 +29,22 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 단어 조회
-GET localhost:8088/word?current=0&next=0&lastWordId=1
+GET localhost:8088/word?current=2&lastWordId=7
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 검색
-GET localhost:8088/word?current=1&next=1&lastWordId=1&searchText=word
+GET localhost:8088/word?current=0&searchText=word
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회 - 암기 여부
-GET localhost:8088/word?current=1&next=1&lastWordId=1&memorization=Y
+GET localhost:8088/word?current=1&memorization=N
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회 - 언어
-GET localhost:8088/word?current=1&next=1&lastWordId=1&lang=EN
+GET localhost:8088/word?current=1&lang=EN
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -54,7 +54,6 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "folderId": 4,
   "mean": "meanUpdate",
   "read": "readUpdate",
   "memo": "memoUpdate",
@@ -92,7 +91,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "memorization": "N"
+  "memorization": "Y"
 }
 
 ### 단어 삭제

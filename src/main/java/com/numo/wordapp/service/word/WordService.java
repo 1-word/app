@@ -5,8 +5,11 @@ import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.util.ProcessBuilderUtil;
 import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.page.PageDto;
+import com.numo.wordapp.dto.page.PageRequestDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.*;
+import com.numo.wordapp.dto.word.detail.ReadWordDetailListResponseDto;
+import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.Sound;
 import com.numo.wordapp.entity.word.UpdateType;
@@ -19,8 +22,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class WordService {
@@ -98,18 +103,44 @@ public class WordService {
      * @param readDto {@link ReadWordListResponseDto}<br>
      * @return 단어 데이터
      */
-    public ReadWordListResponseDto getWord(Long userId, PageDto pageDto, ReadWordRequestDto readDto){
-        Pageable pageable = PageRequest.of(pageDto.getCurrent(), 20);
-        Slice<Word> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.getLastWordId(),readDto);
-        List<Word> words = wordsWithPage.getContent();
+    public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
+        Pageable pageable = PageRequest.of(pageDto.current(), 10);
+
+        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastWordId(),readDto);
+        List<WordDto> words = wordsWithPage.getContent();
+
+        List<Long> wordIds = words.stream().map(WordDto::wordId).toList();
+        List<WordDetailResponseDto> wordDetails = wordRepository.findWordDetailByIds(wordIds);
+        List<ReadWordDetailListResponseDto> detailGroups = WordDetailResponseDto.grouping(wordDetails);
 
         int pageNumber = wordsWithPage.getNumber();
         boolean hasNext = wordsWithPage.hasNext();
 
-        List<ReadWordResponseDto> dto = words.stream().map(ReadWordResponseDto::of).toList();
-        pageDto = new PageDto(pageNumber, hasNext, getLastWordId(words));
+        List<ReadWordResponseDto> dto = words.stream().map(
+                word -> ReadWordResponseDto.of(word, findDetailWords(word.wordId(), detailGroups))).toList();
 
-        return new ReadWordListResponseDto(dto, pageDto);
+        PageDto pageResponse = new PageDto(pageNumber, hasNext, getLastWordId(wordIds));
+
+        return new ReadWordListResponseDto(dto, pageResponse);
+    }
+
+    /**
+     * 단어 상세 데이터 리스트에서 단어와 연관된 단어 상세 데이터를 찾는다.
+     * @param wordId 단어 고유번호
+     * @param detailGroups 검색한 단어 상세 데이터
+     * @return 해당 문장과 연관된 단어 데이터
+     */
+    private List<ReadWordDetailListResponseDto> findDetailWords(Long wordId, List<ReadWordDetailListResponseDto> detailGroups) {
+        List<ReadWordDetailListResponseDto> result = new ArrayList<>();
+        Iterator<ReadWordDetailListResponseDto> iterator = detailGroups.iterator();
+        while (iterator.hasNext()) {
+            ReadWordDetailListResponseDto detailGroup = iterator.next();
+            if (Objects.equals(wordId, detailGroup.wordId())) {
+                result.add(detailGroup);
+                iterator.remove();
+            }
+        }
+        return result;
     }
 
     /**
@@ -154,9 +185,8 @@ public class WordService {
         wordRepository.delete(word);
     }
 
-    private Long getLastWordId(List<Word> words) {
-        words = words.stream().sorted(Comparator.comparing(Word::getWordId)).toList();
-        return (long) (!words.isEmpty() ? words.get(words.size() - 1).getWordId() : -1);
+    private Long getLastWordId(List<Long> wordIds) {
+        return !wordIds.isEmpty()? wordIds.get(wordIds.size() - 1) : null;
     }
 
 }
