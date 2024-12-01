@@ -1,7 +1,6 @@
 package com.numo.wordapp.controller;
 
 import com.numo.wordapp.aop.WordAspect;
-import com.numo.wordapp.dto.page.PageDto;
 import com.numo.wordapp.dto.page.PageRequestDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.entity.word.UpdateType;
@@ -25,9 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class WordController {
 
     private final WordService wordService;
-//    private final FolderService folderService;
 
-    @Operation(description = "단어를 검색한다.")
+    @Operation(summary = "단어 검색", description = "단어를 검색한다.")
     @GetMapping(value = "/{text}")
     public ResponseEntity<ReadWordListResponseDto> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                                  @PathVariable("text") String searchText,
@@ -38,7 +36,7 @@ public class WordController {
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
     }
 
-    @Operation(description = "단어를 조회한다.")
+    @Operation(summary = "단어 조회", description = "단어를 조회한다.")
     @GetMapping
     public ResponseEntity<ReadWordListResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                            PageRequestDto page,
@@ -47,7 +45,7 @@ public class WordController {
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
     }
 
-    @Operation(description = "단어를 저장한다.")
+    @Operation(summary = "단어 저장", description = "단어를 저장한다.")
     @PostMapping(value = "/{gttsType}")
     public ResponseEntity<WordResponseDto> saveWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                     @PathVariable("gttsType") String gttsType,
@@ -56,7 +54,7 @@ public class WordController {
         return ResponseEntity.ok(wordService.saveWord(userId, gttsType, dto));
     }
 
-    @Operation(description = "단어를 수정한다.")
+    @Operation(summary = "단어 수정", description = "타입에 맞는 단어를 수정한다.")
     @PutMapping(value = "/{type}/{wordId}")
     public ResponseEntity<WordResponseDto> updateWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                       @PathVariable("type") UpdateType type,
@@ -65,11 +63,16 @@ public class WordController {
         return ResponseEntity.ok(wordService.updateWord(user.getUserId(), wordId, dto, type));
     }
 
+    @Operation(summary = "단어장 이동", description = "해당하는 단어의 단어장(폴더)을 이동한다.")
     @PutMapping("/{wordId}/folder/{folderId}")
-    public ResponseEntity<String> updateFolderToWord(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable Long folderId) {
-        return null;
+    public ResponseEntity<Void> moveFolder(@AuthenticationPrincipal UserDetailsImpl user,
+                                                     @PathVariable("wordId") Long wordId,
+                                                     @PathVariable("folderId") Long folderId) {
+        wordService.moveFolder(user.getUserId(), wordId, folderId);
+        return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "단어 삭제", description = "단어를 삭제한다.")
     @DeleteMapping(value = "/{wordId}")
     public ResponseEntity<Void> removeWord(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("wordId") Long wordId) {
         Long userId = user.getUserId();

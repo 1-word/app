@@ -76,6 +76,7 @@ public class SecurityConfig {
             authorize.requestMatchers("/api-spec/**", "/v3/**").permitAll();
             authorize.requestMatchers("/files/images/**", "/files/upload/thumbnail").permitAll();
             authorize.requestMatchers("/oauth2/**", "/login/**").permitAll();
+            authorize.requestMatchers("/resources/**").permitAll();
             authorize.anyRequest().authenticated();
         });
 
