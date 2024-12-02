@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -25,6 +26,7 @@ public class MailService {
      * 보내는 사람 메일이 없으면 자동으로 지정
      * @param mail 메일 데이터
      */
+    @Async("asyncExecutor1")
     public void send(Mail mail) {
         if (mail.getFrom() == null) {
             mail.setFrom(mailConfig.getUsername());
