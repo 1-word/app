@@ -49,9 +49,7 @@ public class WordGroupService {
      */
     public WordGroupResponseDto saveWordGroup(Long userId, WordGroupRequestDto requestDto) {
         // 동일한 품사명은 저장 불가
-        if (wordGroupRepository.existsByUser_UserIdAndName(userId, requestDto.name())) {
-            throw new CustomException(ErrorCode.WORD_GROUP_EXISTS);
-        }
+        checkGroup(userId, requestDto);
         WordGroup wordGroup = requestDto.toEntity(userId);
         return WordGroupResponseDto.of(wordGroupRepository.save(wordGroup));
     }
@@ -65,7 +63,9 @@ public class WordGroupService {
      */
     @Transactional
     public WordGroupResponseDto updateWordGroup(Long userId, Long wordGroupId, WordGroupRequestDto requestDto) {
+        // 동일한 품사명은 저장 불가
         WordGroup wordGroup = wordGroupRepository.findWordGroupByIdAndUser(wordGroupId, userId);
+        checkGroup(userId, requestDto);
         wordGroup.update(requestDto);
         return WordGroupResponseDto.of(wordGroup);
     }
@@ -79,5 +79,11 @@ public class WordGroupService {
         WordGroup wordGroup = wordGroupRepository.findWordGroupByIdAndUser(wordGroupId, userId);
         wordGroup.remove();
         wordGroupRepository.delete(wordGroup);
+    }
+
+    private void checkGroup(Long userId, WordGroupRequestDto requestDto) {
+        if (wordGroupRepository.existsGroup(userId, requestDto.name())) {
+            throw new CustomException(ErrorCode.WORD_GROUP_EXISTS);
+        }
     }
 }

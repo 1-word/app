@@ -29,7 +29,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "형용사",
+  "name": "형용사a",
   "description": "형용사로 수정합니다."
 }
 

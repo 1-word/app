@@ -5,7 +5,9 @@ import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.util.Iterator;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,14 +31,19 @@ public class WordGroup extends Timestamped {
     private String name;
     private String description;
 
+    @ColumnDefault("'N'")
+    private String defaultGroup;
+
     public void update(WordGroupRequestDto requestDto) {
         this.name = requestDto.name();
         this.description = requestDto.description();
     }
 
     public void remove() {
-        for (int i=0; i<details.size(); i++) {
-            details.remove(i);
+        Iterator<WordDetail> iterator = details.iterator();
+        while(iterator.hasNext()) {
+            iterator.next();
+            iterator.remove();
         }
     }
 }

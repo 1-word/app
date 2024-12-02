@@ -17,7 +17,7 @@ public class WordGroupCustomRepositoryImpl implements WordGroupCustomRepository 
     QWordDetail qWordDetail = QWordDetail.wordDetail;
 
     /**
-     * 유저 아이디에 맞는 품사 리스트를 조회한다.
+     * 기본 품사 데이터와 유저 아이디에 맞는 품사 리스트를 조회한다.
      * @param userId 유저 아이디
      * @return 조회한 품사 리스트
      */
@@ -26,7 +26,10 @@ public class WordGroupCustomRepositoryImpl implements WordGroupCustomRepository 
         List<WordGroup> result = queryFactory
                 .selectFrom(qWordGroup)
                 .leftJoin(qWordGroup.details)
-                .where(qWordGroup.user.userId.eq(userId))
+                .where(
+                        qWordGroup.user.userId.eq(userId)
+                                .or(qWordGroup.defaultGroup.eq("Y"))
+                )
                 .fetch();
         return result;
     }
@@ -49,5 +52,18 @@ public class WordGroupCustomRepositoryImpl implements WordGroupCustomRepository 
                 )
                 .fetchOne();
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public boolean existsGroup(Long userId, String groupName) {
+        Integer fetchOne = queryFactory.selectOne()
+                .from(qWordGroup)
+                .where(
+                        qWordGroup.name.eq(groupName),
+                        qWordGroup.user.userId.eq(userId)
+                                .or(qWordGroup.defaultGroup.eq("Y"))
+                )
+                .fetchFirst();
+        return fetchOne != null;
     }
 }
