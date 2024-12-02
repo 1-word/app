@@ -1,11 +1,15 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.user.LoginDto;
+import com.numo.wordapp.dto.auth.EmailRequestDto;
+import com.numo.wordapp.dto.auth.LoginDto;
 import com.numo.wordapp.dto.user.TokenDto;
+import com.numo.wordapp.dto.user.VerificationRequestDto;
+import com.numo.wordapp.entity.auth.VerificationType;
 import com.numo.wordapp.security.service.UserDetailsImpl;
-import com.numo.wordapp.service.user.AuthService;
+import com.numo.wordapp.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +21,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+
+    @Operation(summary = "코드 발송", description = "회원가입 및 비밀번호 변경을 위해 인증 코드 발송")
+    @PostMapping(value = "/code/{type}")
+    public ResponseEntity<String> sendEmailVerificationCode(@Valid @RequestBody EmailRequestDto userDto,
+                                                            @PathVariable("type") VerificationType type) {
+        return ResponseEntity.ok(authService.sendEmailVerificationCode(type, userDto));
+    }
+
+    @Operation(summary = "인증 코드 인증", description = "해당하는 이메일의 인증 코드를 인증(비밀번호 변경 또는 회원가입에 사용)")
+    @PostMapping(value = "/code/verify")
+    public ResponseEntity<String> verificationCode(@RequestBody VerificationRequestDto requestDto) {
+        return ResponseEntity.ok(authService.verificationCode(requestDto));
+    }
 
     @Operation(description = "로그인")
     @PostMapping("/login")
