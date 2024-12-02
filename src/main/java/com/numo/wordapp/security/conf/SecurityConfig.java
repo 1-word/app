@@ -73,9 +73,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> {
             authorize.requestMatchers(HttpMethod.POST,"/auth/**").permitAll();
             authorize.requestMatchers("/user/signup/**").permitAll();
+            authorize.requestMatchers(HttpMethod.PUT, "user/pw/reset").permitAll();
             authorize.requestMatchers("/api-spec/**", "/v3/**").permitAll();
             authorize.requestMatchers("/files/images/**", "/files/upload/thumbnail").permitAll();
             authorize.requestMatchers("/oauth2/**", "/login/**").permitAll();
+            authorize.requestMatchers("/resources/**").permitAll();
             authorize.anyRequest().authenticated();
         });
 

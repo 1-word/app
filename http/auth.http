@@ -3,7 +3,7 @@ POST localhost:8088/auth/login
 Content-Type: application/json
 
 {
-  "email": "test1@test.com",
+  "email": "0157942@gmail.com",
   "password": "asdfghjkl1!"
 }
 

@@ -31,9 +31,20 @@ public class JsonUtil {
         return json;
     }
 
-    public void makeObject(Class c){
-        Class<?> c1 = c;
+    public static String toJson(Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static <T> T makeObject(String data, Class<T> classType){
+        try {
+            return new ObjectMapper().readValue(data, classType);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getJson(Object obj) {

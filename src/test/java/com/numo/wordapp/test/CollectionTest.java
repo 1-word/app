@@ -92,7 +92,7 @@ public class CollectionTest {
     void collection3() {
         Map<ReadWordDetailGroupKey, List<WordDetailResponseDto>> collect = dtoList.stream()
                 .collect(Collectors.groupingBy(
-                        entry -> new ReadWordDetailGroupKey(entry.wordGroupId(), entry.groupName()),
+                        entry -> new ReadWordDetailGroupKey(entry.wordGroupId(), entry.wordId(), entry.groupName()),
                         Collectors.toList()));
 
         System.out.println(collect);
@@ -102,7 +102,7 @@ public class CollectionTest {
     void collection4() {
         List<ReadWordDetailListResponseDto> collect = dtoList.stream()
                 .collect(Collectors.groupingBy(
-                        entry -> new ReadWordDetailGroupKey(entry.wordGroupId(), entry.groupName()),
+                        entry -> new ReadWordDetailGroupKey(entry.wordGroupId(), entry.wordId(), entry.groupName()),
                         Collectors.mapping(entry ->
                                 new ReadWordDetailResponseDto(
                                         entry.wordDetailId(),

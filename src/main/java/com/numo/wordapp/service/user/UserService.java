@@ -2,10 +2,12 @@ package com.numo.wordapp.service.user;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
+import com.numo.wordapp.comm.redis.RedisService;
+import com.numo.wordapp.dto.auth.UserRequestDto;
 import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;
-import com.numo.wordapp.dto.user.UserRequestDto;
+import com.numo.wordapp.entity.auth.VerificationCode;
 import com.numo.wordapp.entity.user.Authority;
 import com.numo.wordapp.entity.user.Role;
 import com.numo.wordapp.entity.user.User;
@@ -21,12 +23,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RedisService redisService;
 
+    /**
+     * 검증된 메일만 회원가입
+     * @param userDto 회원가입할 유저 데이터
+     * @return 회원가입된 유저 데이터
+     */
     @Transactional
     public UserDto signup(UserRequestDto userDto){
-        if (userRepository.findByEmail(userDto.email()).isPresent()) {
-            throw new CustomException(ErrorCode.DUPLICATED_ID);
+        VerificationCode verificationCode = redisService.get(userDto.email(), VerificationCode.class).orElseThrow(
+                () -> new CustomException(ErrorCode.SIGNUP_FAILED)
+        );
+
+        if (!verificationCode.isVerified()) {
+            throw new CustomException(ErrorCode.UNVERIFIED_EMAIL);
         }
+
+        redisService.delete(userDto.email());
 
         User user = User.builder()
                 .password(passwordEncoder.encode(userDto.password()))
@@ -48,15 +62,62 @@ public class UserService {
         return UserDto.of(user);
     }
 
+    /**
+     * 로그인 유저의 비밀번호를 변경한다
+     * @param userId 유저 아이디
+     * @param changePasswordDto 변경할 비밀번호 데이터
+     */
     @Transactional
     public void updatePassword(Long userId, ChangePasswordDto changePasswordDto) {
         User user = findUserById(userId);
+
         if (!checkPassword(changePasswordDto.oldPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
         }
+
+        updatePassword(user, changePasswordDto);
+    }
+
+    /**
+     * 비로그인 유저의 비밀번호를 변경한다
+     * @param changePasswordDto 변경할 데이터
+     */
+    @Transactional
+    public void updatePassword(ChangePasswordDto changePasswordDto) {
+        String email = changePasswordDto.email();
+
+        verifiedUpdatePasswordCode(email);
+        User user = findUserByEmail(email);
+
+        updatePassword(user, changePasswordDto);
+    }
+
+    /**
+     * 비로그인 유저의 비밀번호 변경 시 인증 여부 확인.
+     * @param email key 값
+     */
+    private void verifiedUpdatePasswordCode(String email) {
+        VerificationCode verificationCode = redisService.get(email, VerificationCode.class).orElseThrow(
+                () -> new CustomException(ErrorCode.CHANGE_PASSWORD_FAILED)
+        );
+
+        if (!verificationCode.isVerified()) {
+            throw new CustomException(ErrorCode.UNVERIFIED_EMAIL);
+        }
+
+        redisService.delete(email);
+    }
+
+    /**
+     * 비밀번호를 변경한다
+     * @param user 변경할 유저 데이터
+     * @param changePasswordDto 변경할 비밀번호 데이터
+     */
+    private void updatePassword(User user, ChangePasswordDto changePasswordDto) {
         String newPassword = passwordEncoder.encode(changePasswordDto.newPassword());
         user.updatePassword(newPassword);
     }
+
 
     public UserDto updateUser(Long userId, UpdateUserDto userDto) {
        User user = findUserById(userId);
@@ -119,6 +180,10 @@ public class UserService {
     public UserDto findByEmail(String email) {
         User user = userRepository.findUserByEmail(email);
         return UserDto.of(user);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     private User findUserById(Long userId) {

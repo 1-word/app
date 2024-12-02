@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabox</title>
+</head>
+<body>
+<table border="0" width="100%" cellspacing="0" style="margin: auto; padding-bottom: 20px; max-width: 516px; min-width: 220px; font-family: 'Noto Sans KR', sans-serif;">
+    <tbody>
+    <tr>
+        <td style="height: 24px;"></td>
+    </tr>
+    <tr>
+        <td>
+            <div align="center" style="padding: 40px 24px; border-style: solid; border-width: thin; border-color:#ddd; border-radius: 8px;">
+                <!-- 이미지 들어가는 영역 -->
+                <img src='cid:logo' width="100px">
+                <div style="font-weight: bold; font-size: 24px; margin-top: 24px; color: #4A4453; font-family: 'Noto Sans KR', sans-serif; letter-spacing: -1.5px;">
+                    인증번호를 확인해주세요.
+                </div>
+                <div style="margin-top: 24px; color: #4A4453; font-family: 'Noto Sans KR', sans-serif; letter-spacing: -1.5px;">
+                    보카박스를 이용해 주셔서 감사합니다.<Br>
+                    하단의 인증 번호를 입력하시면<br>
+                    본인 확인이 완료됩니다.
+                </div>
+                <div style="margin-top: 24px; letter-spacing: -1.5px; font-weight: bold; font-family: 'Noto Sans KR', sans-serif;">인증번호</div>
+                <div style="margin-top:12px; padding: 24px; border-radius: 8px; background-color: #F7F5FC; color: #946CF4; font-size: 24px; font-weight: bold; letter-spacing: -1.5px; font-family: 'Noto Sans KR', sans-serif;"
+                th:text="${number}">
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style="height: 24px;"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

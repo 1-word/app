@@ -1,13 +1,14 @@
 package com.numo.wordapp.controller;
 
+import com.numo.wordapp.dto.auth.UserRequestDto;
 import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
-import com.numo.wordapp.dto.user.UserRequestDto;
 import com.numo.wordapp.dto.user.UserDto;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,14 +23,21 @@ public class UserController {
 
     @Operation(description = "회원가입")
     @PostMapping(value = "/signup")
-    public ResponseEntity<UserDto> signup(@RequestBody UserRequestDto userDto){
+    public ResponseEntity<UserDto> signup(@Valid @RequestBody UserRequestDto userDto){
         return ResponseEntity.ok(userService.signup(userDto));
+    }
+
+    @Operation(description = "비밀번호를 변경한다(비로그인)")
+    @PutMapping(value = "/pw/reset")
+    public ResponseEntity<Void> changePasswordWithoutLogin(@Valid @RequestBody ChangePasswordDto passwordDto) {
+        userService.updatePassword(passwordDto);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(description = "비밀번호를 변경한다")
     @PutMapping(value = "/pw")
     public ResponseEntity<Void> changePassword(@AuthenticationPrincipal UserDetailsImpl user,
-                                               @RequestBody ChangePasswordDto passwordDto) {
+                                               @Valid @RequestBody ChangePasswordDto passwordDto) {
         userService.updatePassword(user.getUserId(), passwordDto);
         return ResponseEntity.noContent().build();
     }

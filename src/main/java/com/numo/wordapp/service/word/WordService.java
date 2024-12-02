@@ -95,6 +95,12 @@ public class WordService {
         return WordResponseDto.of(wordRepository.save(updatedWord));
     }
 
+    @Transactional
+    public void moveFolder(Long userId, Long wordId, Long folderId) {
+        Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
+        word.setFolder(folderId);
+    }
+
     /**
      * 단어를 조회 한다.
      *
@@ -188,5 +194,4 @@ public class WordService {
     private Long getLastWordId(List<Long> wordIds) {
         return !wordIds.isEmpty()? wordIds.get(wordIds.size() - 1) : null;
     }
-
 }

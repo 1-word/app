@@ -1,31 +1,64 @@
+### 회원가입 - 인증 코드 발송
+POST localhost:8088/auth/code/signup
+Content-Type: application/json
+
+{
+  "email": ""
+}
+
+### 회원가입 - 인증 코드 인증
+POST localhost:8088/auth/code/verify
+Content-Type: application/json
+
+{
+  "email": "0157942@gmail.com",
+  "code": 446554
+}
+
 ### 회원가입
 POST localhost:8088/user/signup
 Content-Type: application/json
 
 {
-  "email": "test2@test.com",
+  "email": "0157942@gmail.com",
   "password": "asdfghjkl1!",
   "nickname": "test",
   "profileImagePath": "/data/images/asdf.png"
 }
 
-### 비밀번호 변경
-PUT localhost:8088/user/pw
+### 비밀번호 변경 - 인증 코드 발송
+POST localhost:8088/auth/code/pw
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
-  "oldPassword": "asdfghjkl1!",
-  "newPassword": "asdfghjkl2!"
+  "email": "0157942@gmail.com"
 }
 
-### 비밀번호 변경
+### 비밀번호 변경 - 인증 코드 인증
+POST localhost:8088/auth/code/verify
+Content-Type: application/json
+
+{
+  "email": "0157942@gmail.com",
+  "code": 286338
+}
+
+### 비밀번호 변경 - 비로그인
+PUT localhost:8088/user/pw/reset
+Content-Type: application/json
+
+{
+  "email": "0157942@gmail.com",
+  "newPassword": "asdfghjkl1!a"
+}
+
+### 비밀번호 변경 - 로그인
 PUT localhost:8088/user/pw
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "oldPassword": "asdfghjkl2!",
+  "oldPassword": "asdfghjkl1!a",
   "newPassword": "asdfghjkl1!"
 }
 
