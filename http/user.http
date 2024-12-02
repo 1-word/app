@@ -3,7 +3,7 @@ POST localhost:8088/auth/code/signup
 Content-Type: application/json
 
 {
-  "email": "0157942@gmail.com"
+  "email": ""
 }
 
 ### 회원가입 - 인증 코드 인증
