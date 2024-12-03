@@ -1,10 +1,9 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.word.group.WordGroupReadResponseDto;
 import com.numo.wordapp.dto.word.group.WordGroupRequestDto;
 import com.numo.wordapp.dto.word.group.WordGroupResponseDto;
 import com.numo.wordapp.security.service.UserDetailsImpl;
-import com.numo.wordapp.service.WordGroupService;
+import com.numo.wordapp.service.word.WordGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +23,6 @@ public class WordGroupController {
     public ResponseEntity<List<WordGroupResponseDto>> getWordGroupList(@AuthenticationPrincipal UserDetailsImpl user) {
         Long userId = user.getUserId();
         return ResponseEntity.ok(wordGroupService.getWordGroupList(userId));
-    }
-
-    @Operation(description = "품사를 조회한다.")
-    @GetMapping("/{wordGroupId}")
-    public ResponseEntity<WordGroupReadResponseDto> getWordGroup(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                 @PathVariable("wordGroupId") Long wordGroupId) {
-        Long userId = user.getUserId();
-        return ResponseEntity.ok(wordGroupService.getWordGroup(userId, wordGroupId));
     }
 
     @Operation(description = "품사를 저장한다.")
@@ -54,7 +45,7 @@ public class WordGroupController {
     @Operation(description = "품사를 삭제한다.")
     @DeleteMapping("/{wordGroupId}")
     public ResponseEntity<Void> removeWordGroup(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                @PathVariable("wordGroupId") Long wordGroupId) {
+                                                @PathVariable("wordGroupId") Long wordGroupId) {
         Long userId = user.getUserId();
         wordGroupService.removeWordGroup(userId, wordGroupId);
         return ResponseEntity.noContent().build();

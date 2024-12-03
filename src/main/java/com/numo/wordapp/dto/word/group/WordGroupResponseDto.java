@@ -7,13 +7,15 @@ import lombok.Builder;
 public record WordGroupResponseDto(
         Long wordGroupId,
         String name,
-        String description
+        String description,
+        boolean isDefaultGroup
 ) {
     public static WordGroupResponseDto of(WordGroup wordGroup) {
         return WordGroupResponseDto.builder()
                 .wordGroupId(wordGroup.getWordGroupId())
                 .name(wordGroup.getName())
                 .description(wordGroup.getDescription())
+                .isDefaultGroup(wordGroup.isDefaultGroup())
                 .build();
     }
 }

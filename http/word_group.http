@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "동사",
+  "name": "동사12",
   "description": "동사입니다."
 }
 
@@ -15,11 +15,6 @@ Authorization: Bearer {{accessToken}}
 
 ### 품사 리스트 조회
 GET localhost:8088/wordGroup
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-### 품사 조회
-GET localhost:8088/wordGroup/{{wordGroupId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

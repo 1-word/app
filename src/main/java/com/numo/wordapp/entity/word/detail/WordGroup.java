@@ -7,8 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -22,11 +21,8 @@ public class WordGroup extends Timestamped {
     private Long wordGroupId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false)
     private User user;
-
-    @OneToMany(mappedBy = "wordGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<WordDetail> details;
 
     private String name;
     private String description;
@@ -39,11 +35,7 @@ public class WordGroup extends Timestamped {
         this.description = requestDto.description();
     }
 
-    public void remove() {
-        Iterator<WordDetail> iterator = details.iterator();
-        while(iterator.hasNext()) {
-            iterator.next();
-            iterator.remove();
-        }
+    public boolean isDefaultGroup() {
+       return Objects.equals("Y", defaultGroup);
     }
 }
