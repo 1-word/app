@@ -18,7 +18,7 @@ public class FileStorageService {
     }
 
     public Resource read(String path) {
-        return FileUtil.read(path);
+        return FileUtil.read(basicPath + path);
     }
 
     public FileDto save(String middlePath, MultipartFile file) {
@@ -28,14 +28,15 @@ public class FileStorageService {
         String oriName = file.getOriginalFilename();
         String extension = FileUtil.getFileExtension(oriName);
         String saveName = UUID.randomUUID().toString().substring(1, 8) + System.currentTimeMillis();
-        String savePath = basicPath + middlePath + saveName + "." + extension;
+        String path = "/" + middlePath + saveName + "." + extension;
+        String savePath = basicPath + path;
 
         if (FileUtil.write(savePath, file)) {
             result = FileDto.builder()
                     .oriName(oriName)
                     .extension(extension)
                     .saveName(saveName)
-                    .path(savePath)
+                    .path(path)
                     .build();
         }
 

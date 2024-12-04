@@ -24,8 +24,8 @@ public class PropertyConfig {
     }
 
     public String getPathWithEndFileSeparation() {
-        if (!storagePath.endsWith("/")) {
-            storagePath += "/";
+        if (storagePath.endsWith("/")) {
+            return storagePath.substring(0, storagePath.length()-1);
         }
         return storagePath;
     }

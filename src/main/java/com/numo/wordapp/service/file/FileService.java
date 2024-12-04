@@ -16,12 +16,14 @@ import java.util.List;
 public class FileService {
     private final FileRepository fileRepository;
     private final FileStorageService fileStorageService;
+    private final String clientHost;
 
     public FileService(FileRepository fileRepository,
                        FileStorageService fileStorageService,
                        PropertyConfig propertyConfig) {
         this.fileRepository = fileRepository;
         this.fileStorageService = fileStorageService;
+        this.clientHost = propertyConfig.getClientHost();
     }
 
     public List<String> uploadAndSave(Long userId, String middlePath, ArrayList<MultipartFile> files) {
@@ -45,6 +47,11 @@ public class FileService {
 
     public FileDto storeFile(String middlePath, MultipartFile file) {
         return fileStorageService.save(middlePath, file);
+    }
+
+    public String uploadThumbnail(String middlePath, MultipartFile file) {
+        FileDto fileDto = storeFile(middlePath, file);
+        return clientHost + "/data/files" + fileDto.path();
     }
 
     public Resource download(Long userId, String fileId) {
