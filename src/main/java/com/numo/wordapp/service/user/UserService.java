@@ -3,7 +3,7 @@ package com.numo.wordapp.service.user;
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.redis.RedisService;
-import com.numo.wordapp.dto.auth.UserRequestDto;
+import com.numo.wordapp.dto.user.UserRequestDto;
 import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;

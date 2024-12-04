@@ -1,6 +1,6 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.auth.UserRequestDto;
+import com.numo.wordapp.dto.user.UserRequestDto;
 import com.numo.wordapp.dto.user.ChangePasswordDto;
 import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;
