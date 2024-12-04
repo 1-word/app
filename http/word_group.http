@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "동사",
+  "name": "동사12",
   "description": "동사입니다."
 }
 
@@ -18,18 +18,13 @@ GET localhost:8088/wordGroup
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 품사 조회
-GET localhost:8088/wordGroup/{{wordGroupId}}
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
 ### 품사 수정
 PUT localhost:8088/wordGroup/{{wordGroupId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "형용사",
+  "name": "형용사a",
   "description": "형용사로 수정합니다."
 }
 

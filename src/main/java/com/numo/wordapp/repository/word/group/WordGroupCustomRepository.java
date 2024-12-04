@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface WordGroupCustomRepository {
     List<WordGroup> findWordGroupsByUserId(Long userId);
     Optional<WordGroup> findWordGroupByIdAndUserId(Long wordGroupId, Long userId);
-
+    boolean existsGroup(Long userId, String groupName);
 }
