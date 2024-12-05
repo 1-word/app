@@ -1,9 +1,9 @@
 package com.numo.wordapp.repository.folder;
 
-import com.numo.wordapp.entity.word.Folder;
+import com.numo.wordapp.dto.folder.FolderResponseDto;
 
 import java.util.List;
 
 public interface FolderCustomRepository {
-    List<Folder> getFoldersByUserId(Long userId, Long folderId);
+    List<FolderResponseDto> getFoldersByUserId(Long userId, Long folderId);
 }

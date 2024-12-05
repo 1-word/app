@@ -1,7 +1,8 @@
 package com.numo.wordapp.repository.folder;
 
-import com.numo.wordapp.entity.word.Folder;
+import com.numo.wordapp.dto.folder.FolderResponseDto;
 import com.numo.wordapp.entity.word.QFolder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +17,21 @@ public class FolderCustomRepositoryImpl implements FolderCustomRepository {
 
     /**
      * 폴더를 조회한다.
-     * @param userId 조회할 유저 아이디(Nullable)
+     *
+     * @param userId   조회할 유저 아이디(Nullable)
      * @param folderId 조회할 폴더 아이디(Nullable)
      * @return 조회한 폴더 데이터
      */
-    public List<Folder> getFoldersByUserId(Long userId, Long folderId) {
-        List<Folder> results = queryFactory.selectFrom(qFolder)
+    public List<FolderResponseDto> getFoldersByUserId(Long userId, Long folderId) {
+        List<FolderResponseDto> results = queryFactory.select(Projections.constructor(
+                        FolderResponseDto.class,
+                        qFolder.folderId,
+                        qFolder.folderName,
+                        qFolder.memo,
+                        qFolder.color,
+                        qFolder.background
+                ))
+                .from(qFolder)
                 .where(
                         qFolder.user.userId.eq(userId),
                         eqFolderId(folderId)

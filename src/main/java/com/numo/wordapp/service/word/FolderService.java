@@ -2,16 +2,16 @@ package com.numo.wordapp.service.word;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.dto.folder.FolderRequestDto;
-import com.numo.wordapp.dto.folder.FolderResponseDto;
-import com.numo.wordapp.dto.folder.FolderUpdateDto;
+import com.numo.wordapp.dto.folder.*;
 import com.numo.wordapp.entity.word.Folder;
 import com.numo.wordapp.repository.folder.FolderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,8 @@ public class FolderService {
      * @return 조회한 폴더 데이터
      */
     public List<FolderResponseDto> getFolders(Long userId){
-       return getFolders(userId, null);
+        List<FolderResponseDto> folders = getFolders(userId, null);
+        return folders;
     }
 
     /**
@@ -35,10 +36,29 @@ public class FolderService {
      * @return 조회한 폴더 데이터
      */
     public List<FolderResponseDto> getFolders(Long userId, Long folderId){
-        List<Folder> folders = folderRepository.findFoldersByUserId(userId, folderId);
-        List<FolderResponseDto> res = folders.stream().map(FolderResponseDto::of).toList();
+        List<FolderResponseDto> res = folderRepository.getFoldersByUserId(userId, folderId);
         return res;
     }
+
+    public List<FolderListReadResponseDto> getFolders(List<FolderResponseDto> folders, List<FolderInWordCountDto> folderInWordCountDtos) {
+        List<FolderListReadResponseDto> results = folders.stream()
+                .map(folderResponseDto -> new FolderListReadResponseDto(folderResponseDto,
+                        getWordsCount(folderResponseDto.folderId(), folderInWordCountDtos))).toList();
+        return results;
+    }
+
+    private Long getWordsCount(Long folderId, List<FolderInWordCountDto> countDtos) {
+        Iterator<FolderInWordCountDto> iterator = countDtos.iterator();
+        while(iterator.hasNext()) {
+            FolderInWordCountDto next = iterator.next();
+            if (Objects.equals(next.folderId(), folderId)) {
+                iterator.remove();
+                return next.count();
+            }
+        }
+        return 0L;
+    }
+
 
     public boolean existsFolder(Long folderId, Long userId) {
         return folderRepository.existsByFolderIdAndUser_UserId(folderId, userId);

@@ -1,5 +1,6 @@
 package com.numo.wordapp.repository.word;
 
+import com.numo.wordapp.dto.folder.FolderInWordCountDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.dto.word.WordDto;
@@ -19,4 +20,5 @@ public interface WordCustomRepository {
     Slice<WordDto> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto);
     List<DailyWordDto> findDailyWordBy(Long userId, List<String> words);
     List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds);
+    List<FolderInWordCountDto> countFolderInWord(Long userId);
 }
