@@ -1,4 +1,9 @@
 ### 사전 조회
-GET localhost:8088/dict/exceptionally
+GET localhost:8088/dict/exception
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 사전 조회 (자동완성)
+GET localhost:8088/dict/list/exception
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
