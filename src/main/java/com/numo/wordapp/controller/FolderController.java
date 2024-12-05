@@ -1,10 +1,9 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.folder.FolderRequestDto;
-import com.numo.wordapp.dto.folder.FolderResponseDto;
-import com.numo.wordapp.dto.folder.FolderUpdateDto;
+import com.numo.wordapp.dto.folder.*;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.word.FolderService;
+import com.numo.wordapp.service.word.WordService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +16,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class FolderController {
+    private final WordService wordService;
     private final FolderService folderService;
 
     @Operation(description = "폴더명 리스트를 가져온다.")
     @GetMapping
-    public ResponseEntity<List<FolderResponseDto>> getFolderName(@AuthenticationPrincipal UserDetailsImpl user){
-        Long userId = user.getUserId();
-        return ResponseEntity.ok(folderService.getFolders(userId));
+    public ResponseEntity<List<FolderListReadResponseDto>> getFolderName(@AuthenticationPrincipal UserDetailsImpl user){
+        List<FolderResponseDto> folders = folderService.getFolders(user.getUserId());
+        List<FolderInWordCountDto> folderInWordCount = wordService.getFolderInWordCount(user.getUserId());
+        return ResponseEntity.ok(folderService.getFolders(folders, folderInWordCount));
     }
 
     @Operation(description = "폴더를 생성한다.")

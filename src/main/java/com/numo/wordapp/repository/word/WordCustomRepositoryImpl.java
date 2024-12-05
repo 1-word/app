@@ -1,5 +1,6 @@
 package com.numo.wordapp.repository.word;
 
+import com.numo.wordapp.dto.folder.FolderInWordCountDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.dto.word.WordDto;
@@ -9,6 +10,8 @@ import com.numo.wordapp.entity.word.QWord;
 import com.numo.wordapp.entity.word.detail.QWordDetail;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -88,6 +91,22 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .where(
                         qWordDetail.word.wordId.in(wordIds)
                 )
+                .fetch();
+        return results;
+    }
+
+    @Override
+    public List<FolderInWordCountDto> countFolderInWord(Long userId) {
+        List<FolderInWordCountDto> results = queryFactory.select(Projections.constructor(
+                        FolderInWordCountDto.class,
+                        qWord.folder.folderId,
+                        Expressions.as(Wildcard.count, "count")
+                )).from(qWord)
+                .where(
+                        qWord.folder.folderId.isNotNull(),
+                        qWord.user.userId.eq(userId)
+                )
+                .groupBy(qWord.folder.folderId)
                 .fetch();
         return results;
     }

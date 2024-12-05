@@ -4,6 +4,7 @@ import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.util.ProcessBuilderUtil;
 import com.numo.wordapp.conf.PropertyConfig;
+import com.numo.wordapp.dto.folder.FolderInWordCountDto;
 import com.numo.wordapp.dto.page.PageDto;
 import com.numo.wordapp.dto.page.PageRequestDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
@@ -181,6 +182,10 @@ public class WordService {
         sound = soundRepository.save(sound);
 
         return sound.getSoundId();
+    }
+
+    public List<FolderInWordCountDto> getFolderInWordCount(Long userId) {
+        return wordRepository.countFolderInWord(userId);
     }
 
     /**
