@@ -105,4 +105,17 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                 .fetch();
         return result;
     }
+
+    @Override
+    public List<Integer> findDailySentenceDays(Long userId, DailySentenceParameterDto parameterDto) {
+        return queryFactory.selectDistinct(Projections.constructor(
+                Integer.class,
+                qDailySentence.day
+                )).from(qDailySentence)
+                .where(
+                        qDailySentence.user.userId.eq(userId),
+                        qDailySentence.year.eq(parameterDto.year()),
+                        qDailySentence.month.eq(parameterDto.month())
+                ).fetch();
+    }
 }
