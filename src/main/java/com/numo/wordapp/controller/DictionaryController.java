@@ -19,8 +19,15 @@ public class DictionaryController {
     private final DictionaryService dictionaryService;
 
     @Operation(summary = "사전 검색", description = "사전을 검색한다.")
-    @GetMapping("/{searchText}")
-    public ResponseEntity<List<DictionaryDto>> searchWord(@PathVariable("searchText") String searchText) {
-        return ResponseEntity.ok(dictionaryService.search(searchText));
+    @GetMapping("/list/{searchText}")
+    public ResponseEntity<List<DictionaryDto>> searchWordList(@PathVariable("searchText") String searchText) {
+        return ResponseEntity.ok(dictionaryService.searchWordList(searchText));
     }
+
+    @Operation(summary = "사전 검색", description = "사전을 검색한다.")
+    @GetMapping("/{searchText}")
+    public ResponseEntity<DictionaryDto> searchWord(@PathVariable("searchText") String searchText) {
+        return ResponseEntity.ok(dictionaryService.searchWord(searchText));
+    }
+
 }

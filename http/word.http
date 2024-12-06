@@ -4,13 +4,13 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "word": "exceptionally",
+  "word": "Pneumonoultramicroscopicsilicovolcanoconiosis",
   "mean": "mean",
   "read": "read",
   "memo": "memo",
   "memorization": "N",
   "details": [{
-    "wordGroupId": 12,
+    "wordGroupId": 24,
     "title": "title1",
     "content": "content1"
   }, {
