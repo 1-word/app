@@ -94,6 +94,12 @@ Authorization: Bearer {{accessToken}}
   "memorization": "Y"
 }
 
+### 단어장 이동
+PUT localhost:8088/word/{{wordId}}/folder/6
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
 ### 단어 삭제
 DELETE localhost:8088/word/{{wordId}}
 Content-Type: application/json
