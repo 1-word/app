@@ -4,6 +4,9 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 @Component
 public class PropertyConfig {
@@ -15,6 +18,8 @@ public class PropertyConfig {
     private String storagePath;
     @Value("${CLIENT_HOST}")
     private String clientHost;
+    @Value("${CORS_URL}")
+    private String corsUrl;
 
     public String getProcessPath() {
         if (processPath.endsWith("/")) {
@@ -28,5 +33,9 @@ public class PropertyConfig {
             return storagePath.substring(0, storagePath.length()-1);
         }
         return storagePath;
+    }
+
+    public String[] getCorsUrl() {
+        return corsUrl.split(",");
     }
 }
