@@ -132,4 +132,8 @@ public class DailySentenceService {
         String[] words = sentence.split(" ");
         return Arrays.stream(words).toList();
     }
+
+    public List<Integer> getSentenceDaysByYearAndMonth(Long userId, DailySentenceParameterDto parameterDto) {
+        return dailySentenceRepository.findDailySentenceDays(userId, parameterDto);
+    }
 }

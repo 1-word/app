@@ -34,6 +34,13 @@ public class DailySentenceController {
         return ResponseEntity.ok(dailySentenceService.getSentenceBy(user.getUserId(), parameterDto));
     }
 
+    @Operation(summary = "오늘의 문장 날짜 리스트 조회", description = "년도, 월에 해당하는 저장된 오늘의 문장 데이터의 날짜를 계산한다.")
+    @GetMapping("/days")
+    public ResponseEntity<List<Integer>> getSentenceDaysByYearAndMonth(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                 DailySentenceParameterDto parameterDto) {
+       return ResponseEntity.ok(dailySentenceService.getSentenceDaysByYearAndMonth(user.getUserId(), parameterDto));
+    }
+
     @Operation(summary = "오늘의 문장 수정", description = "오늘의 문장을 수정한다")
     @PutMapping("/{dailySentenceId}")
     public ResponseEntity<DailySentenceDto> updateSentence(@AuthenticationPrincipal UserDetailsImpl user,
