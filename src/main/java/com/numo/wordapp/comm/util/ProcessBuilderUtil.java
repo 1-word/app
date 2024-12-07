@@ -28,7 +28,7 @@ public class ProcessBuilderUtil {
             type = "ja";
         }
         gttsCommand = """
-                $_path/gtts_start.sh $_text $_type
+                $_path/gtts_start.sh $_text $_type $_path
                 """
                 .replace("$_text", text)
                 .replace("$_type", type)
