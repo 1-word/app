@@ -1,5 +1,5 @@
 ### 폴더 생성
-POST localhost:8088/folders
+POST localhost:8088/api/folders
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -15,12 +15,12 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 폴더 조회
-GET localhost:8088/folders
+GET localhost:8088/api/folders
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 폴더 수정
-PUT localhost:8088/folders/{{folderId}}
+PUT localhost:8088/api/folders/{{folderId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -32,6 +32,6 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 폴더 삭제
-DELETE localhost:8088/folders/{{folderId}}
+DELETE localhost:8088/api/folders/{{folderId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

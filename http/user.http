@@ -1,5 +1,5 @@
 ### 회원가입 - 인증 코드 발송
-POST localhost:8088/auth/code/signup
+POST localhost:8088/api/auth/code/signup
 Content-Type: application/json
 
 {
@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ### 회원가입 - 인증 코드 인증
-POST localhost:8088/auth/code/verify
+POST localhost:8088/api/auth/code/verify
 Content-Type: application/json
 
 {
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### 회원가입
-POST localhost:8088/user/signup
+POST localhost:8088/api/user/signup
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ### 비밀번호 변경 - 인증 코드 발송
-POST localhost:8088/auth/code/pw
+POST localhost:8088/api/auth/code/pw
 Content-Type: application/json
 
 {
@@ -35,7 +35,7 @@ Content-Type: application/json
 }
 
 ### 비밀번호 변경 - 인증 코드 인증
-POST localhost:8088/auth/code/verify
+POST localhost:8088/api/auth/code/verify
 Content-Type: application/json
 
 {
@@ -44,7 +44,7 @@ Content-Type: application/json
 }
 
 ### 비밀번호 변경 - 비로그인
-PUT localhost:8088/user/pw/reset
+PUT localhost:8088/api/user/pw/reset
 Content-Type: application/json
 
 {
@@ -53,7 +53,7 @@ Content-Type: application/json
 }
 
 ### 비밀번호 변경 - 로그인
-PUT localhost:8088/user/pw
+PUT localhost:8088/api/user/pw
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -63,12 +63,12 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 회원정보 출력
-GET localhost:8088/user
+GET localhost:8088/api/user
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 회원정보 수정
-PUT localhost:8088/user
+PUT localhost:8088/api/user
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -78,6 +78,6 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 회원 탈퇴
-DELETE localhost:8088/user
+DELETE localhost:8088/api/user
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

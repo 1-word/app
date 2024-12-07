@@ -1,5 +1,5 @@
 ### 품사 저장
-POST localhost:8088/wordGroup
+POST localhost:8088/api/wordGroup
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -14,12 +14,12 @@ Authorization: Bearer {{accessToken}}
 
 
 ### 품사 리스트 조회
-GET localhost:8088/wordGroup
+GET localhost:8088/api/wordGroup
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 품사 수정
-PUT localhost:8088/wordGroup/{{wordGroupId}}
+PUT localhost:8088/api/wordGroup/{{wordGroupId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -29,6 +29,6 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 품사 삭제
-DELETE localhost:8088/wordGroup/{{wordGroupId}}
+DELETE localhost:8088/api/wordGroup/{{wordGroupId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

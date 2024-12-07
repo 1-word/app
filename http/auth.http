@@ -1,5 +1,5 @@
 ### 로그인
-POST localhost:8088/auth/login
+POST localhost:8088/api/auth/login
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
 %}
 
 ### 토큰 재발급
-POST localhost:8088/auth/reissue
+POST localhost:8088/api/auth/reissue
 Content-Type: application/json
 
 {
@@ -21,6 +21,6 @@ Content-Type: application/json
 }
 
 ### 로그아웃
-DELETE localhost:8088/auth
+DELETE localhost:8088/api/auth
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
