@@ -53,7 +53,7 @@ public class SecurityConfig {
     }
 
     public CommonLoginFailureHandler commonLoginFailureHandler() {
-        return new CommonLoginFailureHandler();
+        return new CommonLoginFailureHandler(propertyConfig);
     }
 
     @Bean
@@ -84,10 +84,10 @@ public class SecurityConfig {
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer
                 .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
                         .baseUri("/oauth2/callback/*"))
-                .successHandler(commonLoginSuccessHandler())
-                .failureHandler(commonLoginFailureHandler())
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                         .userService(CustomOAuth2UserService))
+                .successHandler(commonLoginSuccessHandler())
+                .failureHandler(commonLoginFailureHandler())
         );
 
         http.addFilterAt(new JwtFilter(tokenProvider), BasicAuthenticationFilter.class);

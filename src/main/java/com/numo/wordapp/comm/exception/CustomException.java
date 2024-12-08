@@ -20,4 +20,8 @@ public class CustomException extends RuntimeException{
         this.errorCode = errorCode;
         log.info("errorCode: {}, errorMsg {}", errorCode.getCode(), errorCode.getRemark());
     }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
 }

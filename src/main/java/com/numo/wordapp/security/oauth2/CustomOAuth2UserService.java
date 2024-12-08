@@ -1,5 +1,6 @@
 package com.numo.wordapp.security.oauth2;
 
+import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.dto.user.UserDto;
 import com.numo.wordapp.entity.user.Authority;
 import com.numo.wordapp.entity.user.Role;
@@ -12,6 +13,7 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +38,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2ServiceInfo oAuth2ServiceInfo = getOAuth2UserInfo(serviceName);
         OAuth2UserInfo oAuth2UserInfo = oAuth2ServiceInfo.getUserInfo(attributes);
 
-        UserDto userDto = userService.saveOrUpdate(oAuth2UserInfo);
+        UserDto userDto = null;
+
+        try {
+            userDto = userService.saveOrUpdate(oAuth2UserInfo);
+        } catch (CustomException e) {
+           OAuth2Error oauth2Error = new OAuth2Error(String.valueOf(e.getErrorCode().getCode()), e.getErrorCode().getDescription() , serviceName);
+           throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString(), e);
+        }
+
         List<String> authorities = userDto.authorities();
 
         User user = User.builder()
