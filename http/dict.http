@@ -1,9 +1,9 @@
 ### 사전 조회
-GET localhost:8088/dict/exception
+GET localhost:8088/api/dict/exception
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 사전 조회 (자동완성)
-GET localhost:8088/dict/list/Pneumonoultramicroscopicsilicovolcanoconiosis
+GET localhost:8088/api/dict/list/Pneumonoultramicroscopicsilicovolcanoconiosis
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

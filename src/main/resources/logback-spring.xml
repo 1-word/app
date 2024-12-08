@@ -50,18 +50,19 @@
         </rollingPolicy>
     </appender>
 
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+        </root>
+        <logger name="com.numo.wordapp.comm" level="DEBUG">
+            <appender-ref ref="INFO_LOG" />
+        </logger>
+        <logger name="org.hibernate.SQL" level="DEBUG"></logger>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    </springProfile>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="com.numo.wordapp.comm" level="DEBUG">
-        <appender-ref ref="INFO_LOG" />
-    </logger>
-    <!--<logger name="com.numo.wordapp" level="INFO">
-        <appender-ref ref="DAILY_ROLLING_FILE_APPENDER" />
-    </logger>
-    -->
-    <logger name="org.hibernate.SQL" level="DEBUG"></logger>
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
-<!--    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>-->
 </configuration>

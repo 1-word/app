@@ -53,7 +53,7 @@ public class SecurityConfig {
     }
 
     public CommonLoginFailureHandler commonLoginFailureHandler() {
-        return new CommonLoginFailureHandler();
+        return new CommonLoginFailureHandler(propertyConfig);
     }
 
     @Bean
@@ -84,10 +84,10 @@ public class SecurityConfig {
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer
                 .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
                         .baseUri("/oauth2/callback/*"))
-                .successHandler(commonLoginSuccessHandler())
-                .failureHandler(commonLoginFailureHandler())
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                         .userService(CustomOAuth2UserService))
+                .successHandler(commonLoginSuccessHandler())
+                .failureHandler(commonLoginFailureHandler())
         );
 
         http.addFilterAt(new JwtFilter(tokenProvider), BasicAuthenticationFilter.class);
@@ -103,18 +103,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        String[] list = new String[] {"http://localhost:8080"
-                                , "http://localhost:3000"
-                                , "http://144.24.78.52:3000"
-                                , "http://localhost:8088"
-                                , "http://app:8088"
-                                , "https://localhost:3000"
-                                , "https://144.24.78.52:3000"
-                                , "https://www.wordbook.kro.kr/"
-                                , "http://192.168.1.161:3000"};
+        String[] list = propertyConfig.getCorsUrl();
         config.setAllowCredentials(true);   //내 서버가 응답할 때 json을 자바스크립트에서 처리할 수 있게 할지를 설정
-//        config.addAllowedOriginPattern("*");   //모든 ip에 응답 허용
-//        config.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000", "http://144.24.78.52:3000", "http://localhost:8088", "http://app:8088"));  //해당 ip cors 허용
         config.setAllowedOriginPatterns(Arrays.asList(list));
         config.addAllowedHeader("*");   // 모든 header에 응답 허용
         config.addAllowedMethod("*");   //모든 post, get, put, delete, patch 요청 허용

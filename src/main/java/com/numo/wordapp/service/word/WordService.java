@@ -11,10 +11,7 @@ import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.dto.word.detail.ReadWordDetailListResponseDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
-import com.numo.wordapp.entity.word.GttsCode;
-import com.numo.wordapp.entity.word.Sound;
-import com.numo.wordapp.entity.word.UpdateType;
-import com.numo.wordapp.entity.word.Word;
+import com.numo.wordapp.entity.word.*;
 import com.numo.wordapp.repository.SoundRepository;
 import com.numo.wordapp.repository.word.WordRepository;
 import org.springframework.data.domain.PageRequest;
@@ -99,6 +96,10 @@ public class WordService {
     @Transactional
     public void moveFolder(Long userId, Long wordId, Long folderId) {
         Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
+        if (!folderService.existsFolder(folderId, userId)) {
+            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
+        }
+
         word.setFolder(folderId);
     }
 
