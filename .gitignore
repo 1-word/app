@@ -49,7 +49,4 @@ out/
 /was-logs/
 /logs/
 
-## Docker ##
-/Dockerfile
-
 .env

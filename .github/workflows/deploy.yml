@@ -1,0 +1,95 @@
+name: deploy
+# action 트리거 조건
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+  pull_request:
+    branches: ['main']
+    types: [closed]
+  push:
+    branches: ['main', 'deploy-test']
+
+# action 동작
+jobs:
+  # OS 환경
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: bootJar
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_ID }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Check latest release tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
+
+      - name: make tag
+        run: |
+          TAG="${{ steps.tag_version.outputs.new_tag }}"
+          CLEAN_TAG=$(echo "$TAG" | sed -E 's/(v[0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "Cleaned tag: $CLEAN_TAG"
+          echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/word:app
+            ${{ secrets.DOCKERHUB_USERNAME }}/word:app-${{ env.CLEANED_TAG }}
+          platforms: |
+            linux/amd64
+            linux/arm64
+
+      - name: GitHub project release update
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.CLEANED_TAG }}
+          name: Release ${{ env.CLEANED_TAG }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
+  deploy:
+    needs: build
+    name: deploy
+    runs-on: self-hosted
+    steps:
+      - name: app server restart using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: 'cd /data/container/WordApp && docker-compose pull app && docker-compose up -d app'
