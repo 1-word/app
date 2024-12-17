@@ -19,22 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      # 레포지토리 체크아웃
       - name: Checkout source code
         uses: actions/checkout@v3
-
-      - name: Check latest release tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GIT_TOKEN }}
-
-      - name: print tag
-        run: |
-          TAG="${{ steps.tag_version.outputs.new_tag }}"
-          CLEAN_TAG=$(echo "$TAG" | sed -E 's/(v[0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
-          echo "Cleaned tag: $CLEAN_TAG"
-          echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -44,7 +30,6 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
@@ -63,6 +48,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Check latest release tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
+
+      - name: make tag
+        run: |
+          TAG="${{ steps.tag_version.outputs.new_tag }}"
+          CLEAN_TAG=$(echo "$TAG" | sed -E 's/(v[0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "Cleaned tag: $CLEAN_TAG"
+          echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
@@ -74,6 +72,13 @@ jobs:
           platforms: |
             linux/amd64
             linux/arm64
+
+      - name: GitHub project release update
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.CLEANED_TAG }}
+          name: Release ${{ env.CLEANED_TAG }}
+          body: ${{ steps.tag_version.outputs.changelog }}
 
   deploy:
     needs: build
@@ -88,28 +93,3 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: 'cd /data/container/WordApp && docker-compose pull app && docker-compose up -d app'
-
-  # 자동 release
-  release:
-    needs: deploy
-    runs-on: self-hosted
-    steps:
-      - name: Check latest release tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GIT_TOKEN }}
-
-      - name: print tag
-        run: |
-          TAG="${{ steps.tag_version.outputs.new_tag }}"
-          CLEAN_TAG=$(echo "$TAG" | sed -E 's/(v[0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
-          echo "Cleaned tag: $CLEAN_TAG"
-          echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
-
-      - name: GitHub project release update
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ env.CLEANED_TAG }}
-          name: Release ${{ env.CLEANED_TAG }}
-          body: ${{ steps.tag_version.outputs.changelog }}
