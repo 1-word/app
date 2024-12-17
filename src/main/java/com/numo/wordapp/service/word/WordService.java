@@ -112,7 +112,7 @@ public class WordService {
      * @return 단어 데이터
      */
     public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
-        Pageable pageable = PageRequest.of(pageDto.current(), 10);
+        Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
         Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastWordId(),readDto);
         List<WordDto> words = wordsWithPage.getContent();

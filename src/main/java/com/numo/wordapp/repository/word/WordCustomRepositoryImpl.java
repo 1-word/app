@@ -7,7 +7,10 @@ import com.numo.wordapp.dto.word.WordDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.QWord;
+import com.numo.wordapp.entity.word.ReadType;
 import com.numo.wordapp.entity.word.detail.QWordDetail;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -62,11 +66,10 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         eqFolderId(readDto.folderId()),
                         eqMemorization(readDto.memorization()),
                         eqLanguage(readDto.lang()),
-                        ltUpdateTime(lastWordId),
+                        createPageConditionWithReadType(readDto.readType(), lastWordId),
                         likeSearchText(readDto.searchText())
                 )
-                .orderBy(qWord.updateTime.desc())
-                .orderBy(qWord.wordId.desc())
+                .orderBy(wordSort(readDto.readType()).toArray(OrderSpecifier[]::new))
                 // 다음 페이지가 있는지 확인하기 위해 다음 데이터도 함께 조회
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -136,6 +139,42 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 )
                 .fetch();
         return results;
+    }
+
+    /**
+     * word 조회 sort 생성
+     * @param type 조회 타입
+     * @return 조회 타입에 따른 order by 쿼리
+     */
+    private List<OrderSpecifier<?>> wordSort(ReadType type) {
+        List<OrderSpecifier<?>> orderSpecifierList = new ArrayList<>();
+
+        if (type == ReadType.update) {
+            orderSpecifierList.add(new OrderSpecifier<>(Order.DESC, qWord.updateTime));
+        } else if (type == ReadType.current) {
+            orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, qWord.wordId));
+        } else {
+            orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, qWord.wordId));
+        }
+
+        return orderSpecifierList;
+    }
+
+    /**
+     * word 조회 시 noOffSet을 위한 query 추가
+     * @param type 조회 타입
+     * @param lastWordId 마지막으로 조회한 단어 아이디
+     * @return 조회 타입에 따른 마지막으로 조회한 아이디의 쿼리
+     */
+    private BooleanExpression createPageConditionWithReadType(ReadType type, Long lastWordId) {
+
+        if (type == ReadType.update) {
+            return ltUpdateTime(lastWordId);
+        } else if (type == ReadType.current) {
+            return gtWordId(lastWordId);
+        }
+
+        return gtWordId(lastWordId);
     }
 
     /**
@@ -231,6 +270,18 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
             return null;
         }
         return qWord.folder.folderId.eq(folderId);
+    }
+
+    /**
+     * 마지막으로 조회한 단어의 아이디의 다음 단어 데이터를 조회한다.
+     * @param lastWordId 마지막으로 조회한 단어
+     * @return 처음 조회 시 null, 단어 아이디를 바교하는 쿼리 리턴
+     */
+    private BooleanExpression gtWordId(Long lastWordId){
+        if (lastWordId == null) {
+            return null;
+        }
+        return qWord.wordId.gt(lastWordId);
     }
 
     /**
