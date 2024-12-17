@@ -17,17 +17,25 @@ on:
 jobs:
   # OS 환경
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     steps:
       # 레포지토리 체크아웃
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Check latest release tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          github_token: ${{ secrets.GIT_TOKEN }}
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Set up Gradle cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches  # Gradle 캐시 경로
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+              ${{ runner.os }}-gradle-
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -41,8 +49,14 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_ID }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Check latest release tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
