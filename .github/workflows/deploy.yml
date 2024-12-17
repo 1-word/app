@@ -1,0 +1,95 @@
+name: deploy
+# action 트리거 조건
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+  pull_request:
+    branches: ['main']
+    types: [closed]
+  push:
+    branches: ['main', 'deploy-test']
+
+# action 동작
+jobs:
+  # OS 환경
+  build:
+    runs-on: self-hosted
+    steps:
+      # 레포지토리 체크아웃
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Check latest release tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: bootJar
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/word:app
+            ${{ secrets.DOCKERHUB_USERNAME }}/word:app-{{ steps.tag_version.outputs.new_tag }}
+          platforms: |
+            linux/amd64
+            linux/arm64
+
+  deploy:
+    needs: build
+    name: deploy
+    runs-on: self-hosted
+    steps:
+      - name: Copy build files to web server using SCP
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script_path: '/data/container/WordApp'
+          script: 'docker-compose pull && docker-compose up -d app'
+
+  # 자동 release
+  release:
+    needs: deploy
+    runs-on: self-hosted
+    steps:
+      - name: Check latest release tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
+
+      - name: GitHub project release update
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
