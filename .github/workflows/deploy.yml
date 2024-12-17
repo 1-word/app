@@ -36,8 +36,6 @@ jobs:
           echo "Cleaned tag: $CLEAN_TAG"
           echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
 
-
-
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -82,15 +80,14 @@ jobs:
     name: deploy
     runs-on: self-hosted
     steps:
-      - name: Copy build files to web server using SCP
+      - name: app server restart using ssh
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          script_path: '/data/container/WordApp'
-          script: 'docker-compose pull && docker-compose up -d app'
+          script: 'cd /data/container/WordApp && docker-compose pull app && docker-compose up -d app'
 
   # 자동 release
   release:
@@ -103,9 +100,12 @@ jobs:
         with:
           github_token: ${{ secrets.GIT_TOKEN }}
 
-      - name: env print
+      - name: print tag
         run: |
-          echo "env tag: ${{ env.CLEANED_TAG }}"
+          TAG="${{ steps.tag_version.outputs.new_tag }}"
+          CLEAN_TAG=$(echo "$TAG" | sed -E 's/(v[0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "Cleaned tag: $CLEAN_TAG"
+          echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
 
       - name: GitHub project release update
         uses: ncipollo/release-action@v1
