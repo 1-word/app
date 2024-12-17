@@ -23,19 +23,26 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
+      - name: Check latest release tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
+
+      - name: print tag
+        run: |
+          TAG="${{ steps.tag_version.outputs.new_tag }}"
+          CLEAN_TAG=$(echo "$TAG" | sed -E 's/(v[0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "Cleaned tag: $CLEAN_TAG"
+          echo "CLEANED_TAG=$CLEAN_TAG" >> $GITHUB_ENV
+
+
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'corretto'
-
-      - name: Set up Gradle cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches  # Gradle 캐시 경로
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-              ${{ runner.os }}-gradle-
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -47,16 +54,10 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_ID }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Check latest release tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GIT_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -65,12 +66,13 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v4
         with:
+          context: .
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/word:app
-            ${{ secrets.DOCKERHUB_USERNAME }}/word:app-{{ steps.tag_version.outputs.new_tag }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/word:app-${{ env.CLEANED_TAG }}
           platforms: |
             linux/amd64
             linux/arm64
@@ -101,9 +103,13 @@ jobs:
         with:
           github_token: ${{ secrets.GIT_TOKEN }}
 
+      - name: env print
+        run: |
+          echo "env tag: ${{ env.CLEANED_TAG }}"
+
       - name: GitHub project release update
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          tag: ${{ env.CLEANED_TAG }}
+          name: Release ${{ env.CLEANED_TAG }}
           body: ${{ steps.tag_version.outputs.changelog }}
