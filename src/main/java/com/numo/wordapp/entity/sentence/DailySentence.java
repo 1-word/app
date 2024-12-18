@@ -1,9 +1,9 @@
 package com.numo.wordapp.entity.sentence;
 
+import com.numo.wordapp.dto.sentence.CreateWordDailySentenceDto;
 import com.numo.wordapp.dto.sentence.DailySentenceRequestDto;
 import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.user.User;
-import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.WordDailySentence;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -50,13 +50,15 @@ public class DailySentence extends Timestamped {
         setDate();
     }
 
-    public void setWordDailySentence(List<Word> words) {
+    public void setWordDailySentence(List<CreateWordDailySentenceDto> wordDailySentenceDtos) {
         if (wordDailySentences == null) {
             wordDailySentences = new ArrayList<>();
         }
         DailySentence dailySentence = this;
-        for (Word word : words) {
-            WordDailySentence wordDailySentence = new WordDailySentence(word, dailySentence);
+        for (CreateWordDailySentenceDto wordDailySentenceDto : wordDailySentenceDtos) {
+            WordDailySentence wordDailySentence = new WordDailySentence(wordDailySentenceDto.word(),
+                    dailySentence,
+                    wordDailySentenceDto.matchedWord());
             wordDailySentences.add(wordDailySentence);
         }
     }
@@ -83,12 +85,12 @@ public class DailySentence extends Timestamped {
         return weekOfMonth;
     }
 
-    public void update(DailySentenceRequestDto requestDto, List<Word> words) {
+    public void update(DailySentenceRequestDto requestDto, List<CreateWordDailySentenceDto> wordDailySentenceDtos) {
         // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
         this.sentence = requestDto.sentence();
         this.mean = requestDto.mean();
         removeDailyWords();
-        setWordDailySentence(words);
+        setWordDailySentence(wordDailySentenceDtos);
     }
 
     public void update(DailySentenceRequestDto requestDto) {

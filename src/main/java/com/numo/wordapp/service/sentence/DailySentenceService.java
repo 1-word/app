@@ -26,7 +26,7 @@ public class DailySentenceService {
      */
     public DailySentenceDto saveSentence(Long userId, DailySentenceRequestDto requestDto) {
         DailySentence sentence = requestDto.toEntity(userId);
-        List<Word> dailyWords = findDailyWords(userId, requestDto.sentence());
+        List<CreateWordDailySentenceDto> dailyWords = findDailyWords(userId, requestDto.sentence());
         sentence.setWordDailySentence(dailyWords);
         return DailySentenceDto.of(dailySentenceRepository.save(sentence));
     }
@@ -40,7 +40,7 @@ public class DailySentenceService {
     public List<ReadDailySentenceDto> getSentenceBy(Long userId, DailySentenceParameterDto parameterDto) {
         List<DailySentenceDto> dailySentences = dailySentenceRepository.findDailySentencesBy(userId, parameterDto);
         List<Long> sentenceIds = dailySentences.stream().map(DailySentenceDto::dailySentenceId).toList();
-        List<DailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
+        List<ReadDailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
 
         List<ReadDailySentenceDto> res = dailySentences.stream()
                 .map(dailySentenceDto -> ReadDailySentenceDto.of(dailySentenceDto,
@@ -70,7 +70,7 @@ public class DailySentenceService {
             return DailySentenceDto.of(dailySentence);
         }
 
-        List<Word> dailyWords = findDailyWords(userId, requestDto.sentence());
+        List<CreateWordDailySentenceDto> dailyWords = findDailyWords(userId, requestDto.sentence());
         // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
         dailySentence.update(requestDto, dailyWords);
         return DailySentenceDto.of(dailySentence);
@@ -87,36 +87,73 @@ public class DailySentenceService {
         dailySentenceRepository.delete(dailySentence);
     }
 
+    private List<DailyWordDto> matchSearchWordWithDailyWord(List<DailyWordDetailDto> list, List<String> searchWords) {
+        List<String> newSearchWords = new ArrayList<>();
+        newSearchWords.addAll(searchWords);
+
+        List<DailyWordDto> results = list.stream().map(dailyWordDto -> {
+            Iterator<String> iterator = newSearchWords.iterator();
+            DailyWordDto result = null;
+            while (iterator.hasNext()) {
+                String current = iterator.next();
+                if (Objects.equals(current, dailyWordDto.title())) {
+                    iterator.remove();
+                    result = new DailyWordDto(dailyWordDto.wordId(), dailyWordDto.title());
+                    break;
+                } else if (Objects.equals(current, dailyWordDto.content())) {
+                    iterator.remove();
+                    result = new DailyWordDto(dailyWordDto.wordId(), dailyWordDto.content());
+                    break;
+                }
+            }
+            return result;
+        }).toList();
+
+        return results;
+    }
+
     /**
      * 문장에 해당하는 단어를 찾아 내 단어장에 등록된 단어 데이터가 있는지 확인
      * @param userId 유저 아이디
      * @param sentence 문장
      * @return 단어장에 등록된 문장과 연관된 단어 데이터
      */
-    private List<Word> findDailyWords(Long userId, String sentence){
+    private List<CreateWordDailySentenceDto> findDailyWords(Long userId, String sentence){
         // 단어를 쪼갠다
         List<String> words = splitSentence(sentence);
 
-        List<DailyWordDto> dailyWordsDto = wordService.findDailyWord(userId, words);
-        List<Word> dailyWords = dailyWordsDto.stream().map(
-                        dailyWordDto -> Word.builder().wordId(dailyWordDto.wordId()).build())
-                .toList();
-        return dailyWords;
+        DailyWordListDto dailyWordListDto = wordService.findDailyWord(userId, words);
+
+        // 매칭되는 문자열을 확인하기 위해 체크
+        List<DailyWordDto> detailDtos = matchSearchWordWithDailyWord(dailyWordListDto.detailDtos(), words);
+        List<DailyWordDto> wordDtos = dailyWordListDto.wordDtos();
+
+        wordDtos.addAll(detailDtos);
+
+        // 중복 체크
+        List<DailyWordDto> list = wordDtos.stream().distinct().toList();
+
+        List<CreateWordDailySentenceDto> results = list.stream()
+                .map(dailyWordDto -> new CreateWordDailySentenceDto(
+                        Word.builder().wordId(dailyWordDto.wordId()).build(),
+                        dailyWordDto.word())).toList();
+
+        return results;
     }
 
     /**
      * 가져온 단어 데이터에서 해당 문장과 연관된 단어를 찾는다.
      * @param sentenceId 문장
-     * @param dailyWordDtos 검색한 단어 데이터
+     * @param readDailyWordDtos 검색한 단어 데이터
      * @return 해당 문장과 연관된 단어 데이터
      */
-    private List<DailyWordDto> findDailySentenceWords(Long sentenceId, List<DailyWordDto> dailyWordDtos) {
-        List<DailyWordDto> result = new ArrayList<>();
-        Iterator<DailyWordDto> iterator = dailyWordDtos.iterator();
+    private List<ReadDailyWordDto> findDailySentenceWords(Long sentenceId, List<ReadDailyWordDto> readDailyWordDtos) {
+        List<ReadDailyWordDto> result = new ArrayList<>();
+        Iterator<ReadDailyWordDto> iterator = readDailyWordDtos.iterator();
         while (iterator.hasNext()) {
-            DailyWordDto dailyWordDto = iterator.next();
-            if (Objects.equals(sentenceId, dailyWordDto.wordDailyWordId())) {
-                result.add(dailyWordDto);
+            ReadDailyWordDto readDailyWordDto = iterator.next();
+            if (Objects.equals(sentenceId, readDailyWordDto.wordDailyWordId())) {
+                result.add(readDailyWordDto);
                 iterator.remove();
             }
         }

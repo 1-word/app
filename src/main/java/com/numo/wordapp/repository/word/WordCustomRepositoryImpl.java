@@ -1,7 +1,9 @@
 package com.numo.wordapp.repository.word;
 
 import com.numo.wordapp.dto.folder.FolderInWordCountDto;
+import com.numo.wordapp.dto.sentence.DailyWordDetailDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
+import com.numo.wordapp.dto.sentence.DailyWordListDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.dto.word.WordDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
@@ -117,31 +119,29 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
 
     /**
      * word 리스트에 해당하는 단어를 모두 찾는다.
+     *
      * @param userId 유저 아이디
-     * @param words 찾을 단어 리스트
+     * @param words  찾을 단어 리스트
      * @return 단어와 단어장 데이터 리스트(detail 포함x)
      */
     @Override
-    public List<DailyWordDto> findDailyWordBy(Long userId, List<String> words) {
-        List<DailyWordDto> results = queryFactory.select(Projections.constructor(
+    public DailyWordListDto findDailyWordBy(Long userId, List<String> words) {
+        // word에서 가져오기
+        List<DailyWordDto> wordDtos = queryFactory.select(Projections.constructor(
                         DailyWordDto.class,
                         qWord.wordId,
-                        qWord.wordId,
-                        qWord.word,
-                        qWord.mean,
-                        qWord.folder.folderId,
-                        qWord.folder.folderName
+                        qWord.word
                 ))
                 .from(qWord)
-                .leftJoin(qWord.folder)
-                .leftJoin(qWord.wordDetails)
                 .where(
                         qWord.user.userId.eq(userId),
                         createOrConditionWith(words, qWord.word)
-                                .or(qWord.wordId.in(findByDetailWord(words)))
                 )
                 .fetch();
-        return results;
+
+        // detail에서 가져오기
+        List<DailyWordDetailDto> detailDtos = findByDetailWord(userId, words);
+        return new DailyWordListDto(wordDtos, detailDtos);
     }
 
     /**
@@ -235,10 +235,18 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
      * @param words 검색할 내용
      * @return wordId
      */
-    private List<Long> findByDetailWord(List<String> words){
-        return queryFactory.selectDistinct(qWordDetail.word.wordId)
+    private List<DailyWordDetailDto> findByDetailWord(Long userId, List<String> words){
+        return queryFactory.selectDistinct(Projections.constructor(
+                        DailyWordDetailDto.class,
+                qWordDetail.wordDetailId,
+                qWordDetail.word.wordId,
+                qWordDetail.title,
+                qWordDetail.content
+                ))
                 .from(qWordDetail)
+                .leftJoin(qWordDetail.word)
                 .where(
+                        qWordDetail.word.user.userId.eq(userId),
                         createOrConditionWith(words, qWordDetail.title)
                                 .or(createOrConditionWith(words, qWordDetail.content))
                 )

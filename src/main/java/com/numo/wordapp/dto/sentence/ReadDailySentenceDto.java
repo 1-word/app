@@ -14,11 +14,11 @@ public record ReadDailySentenceDto(
    int month,
    int week,
    int day,
-   List<DailyWordDto> dailyWords,
+   List<ReadDailyWordDto> dailyWords,
    LocalDateTime createTime,
    LocalDateTime updateTime
 ) {
-    public static ReadDailySentenceDto of(DailySentenceDto dailySentenceDto, List<DailyWordDto> words) {
+    public static ReadDailySentenceDto of(DailySentenceDto dailySentenceDto, List<ReadDailyWordDto> words) {
         return ReadDailySentenceDto.builder()
                 .dailySentenceId(dailySentenceDto.dailySentenceId())
                 .sentence(dailySentenceDto.sentence())

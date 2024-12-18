@@ -22,9 +22,12 @@ public class WordDailySentence {
     @JoinColumn(name = "daily_sentence_id")
     private DailySentence dailySentence;
 
-    public WordDailySentence(Word word, DailySentence dailySentence) {
+    private String matchedWord;
+
+    public WordDailySentence(Word word, DailySentence dailySentence, String matchedWord) {
         this.word = word;
         this.dailySentence = dailySentence;
+        this.matchedWord = matchedWord;
     }
 
 }
