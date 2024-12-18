@@ -14,6 +14,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -133,9 +134,11 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 ))
                 .from(qWord)
                 .leftJoin(qWord.folder)
+                .leftJoin(qWord.wordDetails)
                 .where(
                         qWord.user.userId.eq(userId),
-                        eqWords(words)
+                        createOrConditionWith(words, qWord.word)
+                                .or(qWord.wordId.in(findByDetailWord(words)))
                 )
                 .fetch();
         return results;
@@ -178,18 +181,18 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
     }
 
     /**
-     * 단어들이 있는지 확인하기 위해 or 조건문을 만든다.
-     * @param words 단어 리스트
-     * @return 단어들을 확인하는 or 조건문
+     * 해당 필드에 대한 or 조건문을 만든다.
+     * @param input 문자열 리스트
+     * @return 해당 필드에 대한 or 조건문
      */
-    private BooleanExpression eqWords(List<String> words) {
+    private BooleanExpression createOrConditionWith(List<String> input, StringPath field) {
         BooleanExpression result = null;
-        for (String s : words) {
+        for (String s : input) {
             if (result == null) {
-                result = qWord.word.eq(s);
+                result = field.eq(s);
                 continue;
             }
-            result = result.or(qWord.word.eq(s));
+            result = result.or(field.eq(s));
         }
         return result;
     }
@@ -229,6 +232,21 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
 
     /**
      * 단어 상세 내용에 해당하는 텍스트가 있는지 확인 후 해당하는 wordId를 리턴한다.
+     * @param words 검색할 내용
+     * @return wordId
+     */
+    private List<Long> findByDetailWord(List<String> words){
+        return queryFactory.selectDistinct(qWordDetail.word.wordId)
+                .from(qWordDetail)
+                .where(
+                        createOrConditionWith(words, qWordDetail.title)
+                                .or(createOrConditionWith(words, qWordDetail.content))
+                )
+                .fetch();
+    }
+
+    /**
+     * 단어 상세 내용에 해당하는 텍스트가 있는지 확인 후 해당하는 wordId를 리턴한다.
      * @param searchText 검색할 내용
      * @return wordId
      */
@@ -238,7 +256,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .where(
                         qWordDetail.content.like(searchText)
 //                                .or(qWordDetail.memo.like(searchText))
-                                .or(qWordDetail.content.like(searchText))
                 )
                 .fetch();
     }
