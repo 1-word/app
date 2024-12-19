@@ -35,6 +35,10 @@ public class DailySentence extends Timestamped {
     private List<WordDailySentence> wordDailySentences;
 
     private String sentence;
+
+    @Column(columnDefinition="TEXT")
+    private String tagSentence;
+
     private String mean;
     private int year;
     private int month;
@@ -50,6 +54,10 @@ public class DailySentence extends Timestamped {
         setDate();
     }
 
+    public void setTagSentence(String tagSentence) {
+        this.tagSentence = tagSentence;
+    }
+
     public void setWordDailySentence(List<CreateWordDailySentenceDto> wordDailySentenceDtos) {
         if (wordDailySentences == null) {
             wordDailySentences = new ArrayList<>();
@@ -60,6 +68,31 @@ public class DailySentence extends Timestamped {
                     dailySentence,
                     wordDailySentenceDto.matchedWord());
             wordDailySentences.add(wordDailySentence);
+        }
+    }
+
+    public void update(DailySentenceRequestDto requestDto, List<CreateWordDailySentenceDto> wordDailySentenceDtos, String tagSentence) {
+        // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
+        this.sentence = requestDto.sentence();
+        this.mean = requestDto.mean();
+        this.tagSentence = tagSentence;
+        removeDailyWords();
+        setWordDailySentence(wordDailySentenceDtos);
+    }
+
+    public void update(DailySentenceRequestDto requestDto) {
+        this.mean = requestDto.mean();
+    }
+
+    public boolean isCurrentSentenceEqual(String sentence) {
+        return Objects.equals(sentence, this.sentence);
+    }
+
+    public void removeDailyWords() {
+        Iterator<WordDailySentence> iterator = wordDailySentences.iterator();
+        while(iterator.hasNext()) {
+            iterator.next();
+            iterator.remove();
         }
     }
 
@@ -83,29 +116,5 @@ public class DailySentence extends Timestamped {
         }
 
         return weekOfMonth;
-    }
-
-    public void update(DailySentenceRequestDto requestDto, List<CreateWordDailySentenceDto> wordDailySentenceDtos) {
-        // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
-        this.sentence = requestDto.sentence();
-        this.mean = requestDto.mean();
-        removeDailyWords();
-        setWordDailySentence(wordDailySentenceDtos);
-    }
-
-    public void update(DailySentenceRequestDto requestDto) {
-        this.mean = requestDto.mean();
-    }
-
-    public boolean isCurrentSentenceEqual(String sentence) {
-        return Objects.equals(sentence, this.sentence);
-    }
-
-    public void removeDailyWords() {
-        Iterator<WordDailySentence> iterator = wordDailySentences.iterator();
-        while(iterator.hasNext()) {
-            iterator.next();
-            iterator.remove();
-        }
     }
 }

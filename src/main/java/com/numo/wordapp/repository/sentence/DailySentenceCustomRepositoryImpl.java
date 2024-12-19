@@ -33,6 +33,7 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                                 DailySentenceDto.class,
                                 qDailySentence.dailySentenceId,
                                 qDailySentence.sentence,
+                                qDailySentence.tagSentence,
                                 qDailySentence.mean,
                                 qDailySentence.year,
                                 qDailySentence.month,

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record DailySentenceDto(
    Long dailySentenceId,
    String sentence,
+   String tagSentence,
    String mean,
    int year,
    int month,
@@ -21,6 +22,7 @@ public record DailySentenceDto(
         return DailySentenceDto.builder()
                 .dailySentenceId(dailySentence.getDailySentenceId())
                 .sentence(dailySentence.getSentence())
+                .tagSentence(dailySentence.getTagSentence())
                 .mean(dailySentence.getMean())
                 .year(dailySentence.getYear())
                 .month(dailySentence.getMonth())

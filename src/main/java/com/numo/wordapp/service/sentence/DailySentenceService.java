@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,8 @@ public class DailySentenceService {
         DailySentence sentence = requestDto.toEntity(userId);
         List<CreateWordDailySentenceDto> dailyWords = findDailyWords(userId, requestDto.sentence());
         sentence.setWordDailySentence(dailyWords);
+        List<String> words = dailyWords.stream().map(CreateWordDailySentenceDto::matchedWord).toList();
+        sentence.setTagSentence(addTag(words, requestDto.sentence()));
         return DailySentenceDto.of(dailySentenceRepository.save(sentence));
     }
 
@@ -71,8 +75,12 @@ public class DailySentenceService {
         }
 
         List<CreateWordDailySentenceDto> dailyWords = findDailyWords(userId, requestDto.sentence());
+
+        List<String> words = dailyWords.stream().map(CreateWordDailySentenceDto::matchedWord).toList();
+
+        String tagSentence = addTag(words, requestDto.sentence());
         // 등록된 단어 데이터를 모두 삭제하고 새로 단어 데이터를 등록
-        dailySentence.update(requestDto, dailyWords);
+        dailySentence.update(requestDto, dailyWords, tagSentence);
         return DailySentenceDto.of(dailySentence);
     }
 
@@ -87,6 +95,12 @@ public class DailySentenceService {
         dailySentenceRepository.delete(dailySentence);
     }
 
+    /**
+     * 매칭되는 문자열을 저장하기 위해 상세 정보 필드 중 어떤 필드가 연관 단어와 일치하는지 확인
+     * @param list 상세정보 리스트
+     * @param searchWords 연관 단어 리스트
+     * @return 단어 고유번호와 매칭 문자열 정보를 가지고 있는 객체
+     */
     private List<DailyWordDto> matchSearchWordWithDailyWord(List<DailyWordDetailDto> list, List<String> searchWords) {
         List<String> newSearchWords = new ArrayList<>();
         newSearchWords.addAll(searchWords);
@@ -115,13 +129,11 @@ public class DailySentenceService {
     /**
      * 문장에 해당하는 단어를 찾아 내 단어장에 등록된 단어 데이터가 있는지 확인
      * @param userId 유저 아이디
-     * @param sentence 문장
+     * @param sentence 문장 문자열
      * @return 단어장에 등록된 문장과 연관된 단어 데이터
      */
     private List<CreateWordDailySentenceDto> findDailyWords(Long userId, String sentence){
-        // 단어를 쪼갠다
         List<String> words = splitSentence(sentence);
-
         DailyWordListDto dailyWordListDto = wordService.findDailyWord(userId, words);
 
         // 매칭되는 문자열을 확인하기 위해 체크
@@ -161,12 +173,34 @@ public class DailySentenceService {
     }
 
     /**
+     * 문장에서 연관 단어 표시를 위해 문장에 태그를 추가한다.
+     * @param words 연관 단어 리스트
+     * @param sentence 문장
+     * @return 연관 단어에 태그가 추가된 문장 문자열
+     */
+    private String addTag(List<String> words, String sentence) {
+        String result = sentence;
+
+        for (String word : words) {
+            // -로 붙어있는 문자열은 같은 단어로 취급하지 않고 전체가 동일해야 한다.
+            String regex = "(?<!-)\\b" + Pattern.quote(word) + "\\b(?!-)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(result);
+
+            result = matcher.replaceAll("<strong>" + word + "</strong>");
+        }
+
+        return result;
+    }
+
+    /**
      * 공백을 기준으로 문장을 분리한다.
      * @param sentence 문장
      * @return 공백을 기준으로 분리된 단어들
      */
     private List<String> splitSentence(String sentence) {
-        String[] words = sentence.split(" ");
+        String newSentence = sentence.replaceAll("[.,\"'\\[\\]{}]+", "");
+        String[] words = newSentence.split(" ");
         return Arrays.stream(words).toList();
     }
 
