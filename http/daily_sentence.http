@@ -42,6 +42,11 @@ GET localhost:8088/api/daily-sentence/days?year=2024&month=12
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+### 오늘의 문장 연관 단어 정보 조회
+GET localhost:8088/api/daily-sentence/relation/33
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 ### 오늘의 문장 수정 - 뜻
 PUT localhost:8088/api/daily-sentence/{{dailySentenceId}}
 Content-Type: application/json

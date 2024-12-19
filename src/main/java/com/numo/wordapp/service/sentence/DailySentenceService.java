@@ -95,6 +95,20 @@ public class DailySentenceService {
         dailySentenceRepository.delete(dailySentence);
     }
 
+    public List<Integer> getSentenceDaysByYearAndMonth(Long userId, DailySentenceParameterDto parameterDto) {
+        return dailySentenceRepository.findDailySentenceDays(userId, parameterDto);
+    }
+
+    /**
+     * 연관 단어 정보 리스트를 조회한다
+     * @param userId 유저 아이디
+     * @param wordDailySentenceId 조회할 오늘의 내 문장 고유 번호
+     * @return 연관 단어 정보 리스트
+     */
+    public List<WordDailySentenceDto> getWordDailySentenceInfo(Long userId, Long wordDailySentenceId) {
+        return dailySentenceRepository.getWordDailySentenceInfo(userId, wordDailySentenceId);
+    }
+
     /**
      * 매칭되는 문자열을 저장하기 위해 상세 정보 필드 중 어떤 필드가 연관 단어와 일치하는지 확인
      * @param list 상세정보 리스트
@@ -202,9 +216,5 @@ public class DailySentenceService {
         String newSentence = sentence.replaceAll("[.,\"'\\[\\]{}]+", "");
         String[] words = newSentence.split(" ");
         return Arrays.stream(words).toList();
-    }
-
-    public List<Integer> getSentenceDaysByYearAndMonth(Long userId, DailySentenceParameterDto parameterDto) {
-        return dailySentenceRepository.findDailySentenceDays(userId, parameterDto);
     }
 }

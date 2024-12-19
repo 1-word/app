@@ -3,6 +3,7 @@ package com.numo.wordapp.repository.sentence;
 import com.numo.wordapp.dto.sentence.DailySentenceDto;
 import com.numo.wordapp.dto.sentence.DailySentenceParameterDto;
 import com.numo.wordapp.dto.sentence.ReadDailyWordDto;
+import com.numo.wordapp.dto.sentence.WordDailySentenceDto;
 import com.numo.wordapp.entity.sentence.QDailySentence;
 import com.numo.wordapp.entity.word.QWordDailySentence;
 import com.querydsl.core.types.Projections;
@@ -118,5 +119,20 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                         qDailySentence.year.eq(parameterDto.year()),
                         qDailySentence.month.eq(parameterDto.month())
                 ).fetch();
+    }
+
+    @Override
+    public List<WordDailySentenceDto> getWordDailySentenceInfo(Long userId, Long wordDailySentenceId) {
+        QWordDailySentence qWordDailySentence = QWordDailySentence.wordDailySentence;
+        return queryFactory.selectDistinct(Projections.constructor(
+                        WordDailySentenceDto.class,
+                        qWordDailySentence.word.wordId,
+                        qWordDailySentence.matchedWord
+                )).from(qWordDailySentence)
+                .where(
+                        qWordDailySentence.dailySentence.user.userId.eq(userId),
+                        qWordDailySentence.dailySentence.dailySentenceId.eq(wordDailySentenceId)
+                )
+                .fetch();
     }
 }
