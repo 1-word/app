@@ -7,11 +7,8 @@ on:
         description: 'Log level'
         required: true
         default: 'warning'
-  pull_request:
-    branches: ['main']
-    types: [closed]
   push:
-    branches: ['main', 'deploy-test']
+    branches: ['main']
 
 # action 동작
 jobs:
