@@ -1,16 +1,22 @@
 package com.numo.wordapp.repository.word;
 
 import com.numo.wordapp.dto.folder.FolderInWordCountDto;
+import com.numo.wordapp.dto.sentence.DailyWordDetailDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
+import com.numo.wordapp.dto.sentence.DailyWordListDto;
 import com.numo.wordapp.dto.word.ReadWordRequestDto;
 import com.numo.wordapp.dto.word.WordDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
 import com.numo.wordapp.entity.word.GttsCode;
 import com.numo.wordapp.entity.word.QWord;
+import com.numo.wordapp.entity.word.ReadType;
 import com.numo.wordapp.entity.word.detail.QWordDetail;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -62,11 +69,10 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         eqFolderId(readDto.folderId()),
                         eqMemorization(readDto.memorization()),
                         eqLanguage(readDto.lang()),
-                        ltUpdateTime(lastWordId),
+                        createPageConditionWithReadType(readDto.readType(), lastWordId),
                         likeSearchText(readDto.searchText())
                 )
-                .orderBy(qWord.updateTime.desc())
-                .orderBy(qWord.wordId.desc())
+                .orderBy(wordSort(readDto.readType()).toArray(OrderSpecifier[]::new))
                 // 다음 페이지가 있는지 확인하기 위해 다음 데이터도 함께 조회
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -113,44 +119,80 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
 
     /**
      * word 리스트에 해당하는 단어를 모두 찾는다.
+     *
      * @param userId 유저 아이디
-     * @param words 찾을 단어 리스트
+     * @param words  찾을 단어 리스트
      * @return 단어와 단어장 데이터 리스트(detail 포함x)
      */
     @Override
-    public List<DailyWordDto> findDailyWordBy(Long userId, List<String> words) {
-        List<DailyWordDto> results = queryFactory.select(Projections.constructor(
+    public DailyWordListDto findDailyWordBy(Long userId, List<String> words) {
+        // word에서 가져오기
+        List<DailyWordDto> wordDtos = queryFactory.select(Projections.constructor(
                         DailyWordDto.class,
                         qWord.wordId,
-                        qWord.wordId,
-                        qWord.word,
-                        qWord.mean,
-                        qWord.folder.folderId,
-                        qWord.folder.folderName
+                        qWord.word
                 ))
                 .from(qWord)
-                .leftJoin(qWord.folder)
                 .where(
                         qWord.user.userId.eq(userId),
-                        eqWords(words)
+                        createOrConditionWith(words, qWord.word)
                 )
                 .fetch();
-        return results;
+
+        // detail에서 가져오기
+        List<DailyWordDetailDto> detailDtos = findByDetailWord(userId, words);
+        return new DailyWordListDto(wordDtos, detailDtos);
     }
 
     /**
-     * 단어들이 있는지 확인하기 위해 or 조건문을 만든다.
-     * @param words 단어 리스트
-     * @return 단어들을 확인하는 or 조건문
+     * word 조회 sort 생성
+     * @param type 조회 타입
+     * @return 조회 타입에 따른 order by 쿼리
      */
-    private BooleanExpression eqWords(List<String> words) {
+    private List<OrderSpecifier<?>> wordSort(ReadType type) {
+        List<OrderSpecifier<?>> orderSpecifierList = new ArrayList<>();
+
+        if (type == ReadType.update) {
+            orderSpecifierList.add(new OrderSpecifier<>(Order.DESC, qWord.updateTime));
+        } else if (type == ReadType.current) {
+            orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, qWord.wordId));
+        } else {
+            orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, qWord.wordId));
+        }
+
+        return orderSpecifierList;
+    }
+
+    /**
+     * word 조회 시 noOffSet을 위한 query 추가
+     * @param type 조회 타입
+     * @param lastWordId 마지막으로 조회한 단어 아이디
+     * @return 조회 타입에 따른 마지막으로 조회한 아이디의 쿼리
+     */
+    private BooleanExpression createPageConditionWithReadType(ReadType type, Long lastWordId) {
+
+        if (type == ReadType.update) {
+            return ltUpdateTime(lastWordId);
+        } else if (type == ReadType.current) {
+            return gtWordId(lastWordId);
+        }
+
+        return gtWordId(lastWordId);
+    }
+
+    /**
+     * 해당 필드에 대한 or 조건문을 만든다.
+     * @param input 문자열 리스트
+     * @return 해당 필드에 대한 or 조건문
+     */
+    private BooleanExpression createOrConditionWith(List<String> input, StringPath field) {
         BooleanExpression result = null;
-        for (String s : words) {
+        for (String s : input) {
             if (result == null) {
-                result = qWord.word.eq(s);
+                result = field.eq(s);
                 continue;
             }
-            result = result.or(qWord.word.eq(s));
+            result = result.or(field.eq(s));
         }
         return result;
     }
@@ -190,6 +232,29 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
 
     /**
      * 단어 상세 내용에 해당하는 텍스트가 있는지 확인 후 해당하는 wordId를 리턴한다.
+     * @param words 검색할 내용
+     * @return wordId
+     */
+    private List<DailyWordDetailDto> findByDetailWord(Long userId, List<String> words){
+        return queryFactory.selectDistinct(Projections.constructor(
+                        DailyWordDetailDto.class,
+                qWordDetail.wordDetailId,
+                qWordDetail.word.wordId,
+                qWordDetail.title,
+                qWordDetail.content
+                ))
+                .from(qWordDetail)
+                .leftJoin(qWordDetail.word)
+                .where(
+                        qWordDetail.word.user.userId.eq(userId),
+                        createOrConditionWith(words, qWordDetail.title)
+                                .or(createOrConditionWith(words, qWordDetail.content))
+                )
+                .fetch();
+    }
+
+    /**
+     * 단어 상세 내용에 해당하는 텍스트가 있는지 확인 후 해당하는 wordId를 리턴한다.
      * @param searchText 검색할 내용
      * @return wordId
      */
@@ -199,7 +264,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .where(
                         qWordDetail.content.like(searchText)
 //                                .or(qWordDetail.memo.like(searchText))
-                                .or(qWordDetail.content.like(searchText))
                 )
                 .fetch();
     }
@@ -231,6 +295,18 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
             return null;
         }
         return qWord.folder.folderId.eq(folderId);
+    }
+
+    /**
+     * 마지막으로 조회한 단어의 아이디의 다음 단어 데이터를 조회한다.
+     * @param lastWordId 마지막으로 조회한 단어
+     * @return 처음 조회 시 null, 단어 아이디를 바교하는 쿼리 리턴
+     */
+    private BooleanExpression gtWordId(Long lastWordId){
+        if (lastWordId == null) {
+            return null;
+        }
+        return qWord.wordId.gt(lastWordId);
     }
 
     /**

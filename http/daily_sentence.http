@@ -4,8 +4,8 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "sentence": "Especially today, as we live with COVID-19, many restaurants, cafes, and businesses require customers to show a QR code before entering.",
-  "mean": "특히 오늘날, 우리가 코로나19와 함께 생활하고 있기 때문에, 많은 식당, 카페, 그리고 기업체들은 입장하기 전에 고객에게 QR 코드를 보여주도록 요구합니다."
+  "sentence": "She was running through the park early in the morning, enjoying the crisp air and the sound of birds chirping, as the first rays of sunlight began to break through the trees.",
+  "mean": "그녀는 아침 일찍 공원을 달리고 있었고, 상쾌한 공기와 새들이 지저귀는 소리를 즐기면서, 첫 번째 햇살이 나무들 사이로 비추기 시작했다."
 }
 
 > {%
@@ -42,6 +42,11 @@ GET localhost:8088/api/daily-sentence/days?year=2024&month=12
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+### 오늘의 문장 연관 단어 정보 조회
+GET localhost:8088/api/daily-sentence/relation/33
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 ### 오늘의 문장 수정 - 뜻
 PUT localhost:8088/api/daily-sentence/{{dailySentenceId}}
 Content-Type: application/json
@@ -63,6 +68,6 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 오늘의 문장 삭제
-DELETE localhost:8088/api/daily-sentence/{{dailySentenceId}}
+DELETE localhost:8088/api/daily-sentence/28
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

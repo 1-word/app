@@ -7,11 +7,14 @@ import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.folder.FolderInWordCountDto;
 import com.numo.wordapp.dto.page.PageDto;
 import com.numo.wordapp.dto.page.PageRequestDto;
-import com.numo.wordapp.dto.sentence.DailyWordDto;
+import com.numo.wordapp.dto.sentence.DailyWordListDto;
 import com.numo.wordapp.dto.word.*;
 import com.numo.wordapp.dto.word.detail.ReadWordDetailListResponseDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
-import com.numo.wordapp.entity.word.*;
+import com.numo.wordapp.entity.word.GttsCode;
+import com.numo.wordapp.entity.word.Sound;
+import com.numo.wordapp.entity.word.UpdateType;
+import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.repository.SoundRepository;
 import com.numo.wordapp.repository.word.WordRepository;
 import org.springframework.data.domain.PageRequest;
@@ -112,7 +115,7 @@ public class WordService {
      * @return 단어 데이터
      */
     public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
-        Pageable pageable = PageRequest.of(pageDto.current(), 10);
+        Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
         Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastWordId(),readDto);
         List<WordDto> words = wordsWithPage.getContent();
@@ -158,7 +161,7 @@ public class WordService {
      * @param words 검색할 단어 리스트
      * @return 해당하는 단어들의 간단한 단어 정보(뜻, 단어, 단어장 정보 등)
      */
-    public List<DailyWordDto> findDailyWord(Long userId, List<String> words) {
+    public DailyWordListDto findDailyWord(Long userId, List<String> words) {
         return wordRepository.findDailyWordBy(userId, words);
     }
 

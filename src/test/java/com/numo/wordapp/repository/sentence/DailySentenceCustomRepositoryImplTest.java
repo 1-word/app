@@ -2,7 +2,7 @@ package com.numo.wordapp.repository.sentence;
 
 import com.numo.wordapp.dto.sentence.DailySentenceDto;
 import com.numo.wordapp.dto.sentence.DailySentenceParameterDto;
-import com.numo.wordapp.dto.sentence.DailyWordDto;
+import com.numo.wordapp.dto.sentence.ReadDailyWordDto;
 import com.numo.wordapp.dto.sentence.ReadDailySentenceDto;
 import com.numo.wordapp.entity.sentence.DailySentence;
 import com.numo.wordapp.service.sentence.DailySentenceService;
@@ -39,7 +39,7 @@ class DailySentenceCustomRepositoryImplTest {
     @Test
     void findDailyWordsBy() {
         List<Long> sentenceIds = List.of(7L, 8L);
-        List<DailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
+        List<ReadDailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
         System.out.println(dailyWords);
     }
 

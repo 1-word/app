@@ -2,7 +2,8 @@ package com.numo.wordapp.repository.sentence;
 
 import com.numo.wordapp.dto.sentence.DailySentenceDto;
 import com.numo.wordapp.dto.sentence.DailySentenceParameterDto;
-import com.numo.wordapp.dto.sentence.DailyWordDto;
+import com.numo.wordapp.dto.sentence.ReadDailyWordDto;
+import com.numo.wordapp.dto.sentence.WordDailySentenceDto;
 import com.numo.wordapp.entity.sentence.QDailySentence;
 import com.numo.wordapp.entity.word.QWordDailySentence;
 import com.querydsl.core.types.Projections;
@@ -33,6 +34,7 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                                 DailySentenceDto.class,
                                 qDailySentence.dailySentenceId,
                                 qDailySentence.sentence,
+                                qDailySentence.tagSentence,
                                 qDailySentence.mean,
                                 qDailySentence.year,
                                 qDailySentence.month,
@@ -86,10 +88,10 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
      * @param sentenceIds 문장 고유번호 리스트
      * @return 문장 고유번호 리스트에 연관된 단어 데이터
      */
-    public List<DailyWordDto> findDailyWordsBy(List<Long> sentenceIds) {
+    public List<ReadDailyWordDto> findDailyWordsBy(List<Long> sentenceIds) {
         QWordDailySentence qWordDailySentence = QWordDailySentence.wordDailySentence;
-        List<DailyWordDto> result = queryFactory.select(Projections.constructor(
-                DailyWordDto.class,
+        List<ReadDailyWordDto> result = queryFactory.select(Projections.constructor(
+                ReadDailyWordDto.class,
                 qWordDailySentence.dailySentence.dailySentenceId,
                 qWordDailySentence.word.wordId,
                 qWordDailySentence.word.word,
@@ -117,5 +119,20 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                         qDailySentence.year.eq(parameterDto.year()),
                         qDailySentence.month.eq(parameterDto.month())
                 ).fetch();
+    }
+
+    @Override
+    public List<WordDailySentenceDto> getWordDailySentenceInfo(Long userId, Long wordDailySentenceId) {
+        QWordDailySentence qWordDailySentence = QWordDailySentence.wordDailySentence;
+        return queryFactory.selectDistinct(Projections.constructor(
+                        WordDailySentenceDto.class,
+                        qWordDailySentence.word.wordId,
+                        qWordDailySentence.matchedWord
+                )).from(qWordDailySentence)
+                .where(
+                        qWordDailySentence.dailySentence.user.userId.eq(userId),
+                        qWordDailySentence.dailySentence.dailySentenceId.eq(wordDailySentenceId)
+                )
+                .fetch();
     }
 }
