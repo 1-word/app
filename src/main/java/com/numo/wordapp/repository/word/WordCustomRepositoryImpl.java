@@ -79,6 +79,38 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         return checkLastPage(pageable, results);
     }
 
+    /**
+     * wordId에 해당하는 단어 데이터를 찾는다
+     * @param userId 유저 아이디
+     * @param wordId 단어 고유 번호
+     * @return wordId에 해당하는 단어 데이터
+     */
+    @Override
+    public WordDto findWordByWordId(Long userId, Long wordId) {
+        return queryFactory.select(Projections.constructor(
+                        WordDto.class,
+                        qWord.wordId,
+                        qWord.folder.folderId,
+                        qWord.word,
+                        qWord.mean,
+                        qWord.read,
+                        qWord.memo,
+                        qWord.sound.word,
+                        qWord.memorization,
+                        qWord.lang,
+                        qWord.updateTime,
+                        qWord.createTime
+                ))
+                .from(qWord)
+                .leftJoin(qWord.folder)
+                .leftJoin(qWord.sound)
+                .leftJoin(qWord.user)
+                .where(
+                        qWord.wordId.eq(wordId),
+                        qWord.user.userId.eq(userId)
+                ).fetchOne();
+    }
+
     @Override
     public List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds) {
         List<WordDetailResponseDto> results = queryFactory.select(Projections.constructor(

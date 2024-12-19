@@ -38,11 +38,19 @@ public class WordController {
 
     @Operation(summary = "단어 조회", description = "단어를 조회한다.")
     @GetMapping
-    public ResponseEntity<ReadWordListResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
+    public ResponseEntity<ReadWordListResponseDto> getWords(@AuthenticationPrincipal UserDetailsImpl user,
                                                            PageRequestDto page,
                                                            ReadWordRequestDto readDto) {
         Long userId = user.getUserId();
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
+    }
+
+    @Operation(summary = "단어 단건 조회", description = "해당하는 단어를 조회한다.")
+    @GetMapping("/item/{wordId}")
+    public ResponseEntity<ReadWordResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                       @PathVariable("wordId") Long wordId) {
+        Long userId = user.getUserId();
+        return ResponseEntity.ok(wordService.getWord(userId, wordId));
     }
 
     @Operation(summary = "단어 저장", description = "단어를 저장한다.")

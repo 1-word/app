@@ -19,6 +19,9 @@ public interface WordCustomRepository {
      */
     Slice<WordDto> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto);
     DailyWordListDto findDailyWordBy(Long userId, List<String> words);
+
+    WordDto findWordByWordId(Long userId, Long wordId);
+
     List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds);
     List<FolderInWordCountDto> countFolderInWord(Long userId);
 }
