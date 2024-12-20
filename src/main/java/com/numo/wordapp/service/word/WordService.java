@@ -135,6 +135,13 @@ public class WordService {
         return new ReadWordListResponseDto(dto, pageResponse);
     }
 
+    public ReadWordResponseDto getWord(Long userId, Long wordId) {
+        WordDto wordDto = wordRepository.findWordByWordId(userId, wordId);
+        List<WordDetailResponseDto> wordDetails = wordRepository.findWordDetailByIds(List.of(wordId));
+        List<ReadWordDetailListResponseDto> detailGroups = WordDetailResponseDto.grouping(wordDetails);
+        return ReadWordResponseDto.of(wordDto, detailGroups);
+    }
+
     /**
      * 단어 상세 데이터 리스트에서 단어와 연관된 단어 상세 데이터를 찾는다.
      * @param wordId 단어 고유번호

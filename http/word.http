@@ -4,7 +4,8 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "word": "Pneumonoultram",
+  "folderId": 6,
+  "word": "rasdf",
   "mean": "mean",
   "read": "read",
   "memo": "memo",
@@ -27,6 +28,11 @@ Authorization: Bearer {{accessToken}}
 > {%
     client.global.set("wordId", response.body.wordId)
 %}
+
+### 해당 단어 조회
+GET localhost:8088/api/word/item/89
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 ### 단어 조회
 GET localhost:8088/api/word?current=1&lastWordId=62
