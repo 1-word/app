@@ -61,7 +61,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./module-api
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/word:app

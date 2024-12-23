@@ -1,1 +1,4 @@
 rootProject.name = 'WordApp'
+include 'module-domain'
+include 'module-api'
+

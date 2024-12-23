@@ -4,10 +4,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-/src/test/**/config/
-/src/main/resources/application-env.properties
-/src/main/resources/logback-spring-env.xml
-/src/main/generated
+/module-api/src/test/**/config/
+/module-api/src/main/resources/application-env.properties
+/module-api/src/main/resources/logback-spring-env.xml
+**/src/main/generated/
 
 ### STS ###
 .apt_generated
@@ -39,10 +39,6 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### frontEnd ###
-/frontend/**
-/src/main/resources/static/**
 
 ## log ##
 /log/
