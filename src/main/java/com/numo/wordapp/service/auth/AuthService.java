@@ -11,9 +11,9 @@ import com.numo.wordapp.dto.auth.LoginDto;
 import com.numo.wordapp.dto.user.TokenDto;
 import com.numo.wordapp.dto.user.UserDto;
 import com.numo.wordapp.dto.user.VerificationRequestDto;
-import com.numo.wordapp.entity.auth.VerificationCode;
-import com.numo.wordapp.entity.auth.VerificationType;
-import com.numo.wordapp.entity.user.RefreshToken;
+import com.numo.domain.auth.VerificationCode;
+import com.numo.domain.auth.VerificationType;
+import com.numo.domain.user.RefreshToken;
 import com.numo.wordapp.security.jwt.TokenProvider;
 import com.numo.wordapp.service.user.RefreshTokenService;
 import com.numo.wordapp.service.user.UserService;
@@ -74,7 +74,7 @@ public class AuthService {
         }
 
         if (check) {
-            throw new CustomException(type.getErrorCode());
+            throw new CustomException(getErrorCode(type));
         }
 
         String email = emailDto.email();
@@ -85,6 +85,13 @@ public class AuthService {
         MailTemplate mailTemplate = new AuthMailTemplate(email, number, type.getName() );
         mailService.send(mailTemplate.createMail());
         return "해당하는 메일로 인증 메일 발송이 완료되었습니다";
+    }
+
+    private ErrorCode getErrorCode(VerificationType type) {
+        return switch (type) {
+            case signup -> ErrorCode.SIGNUP_FAILED;
+            case pw -> ErrorCode.CHANGE_PASSWORD_FAILED;
+        };
     }
 
     /**

@@ -4,7 +4,7 @@ import com.numo.wordapp.dto.auth.EmailRequestDto;
 import com.numo.wordapp.dto.auth.LoginDto;
 import com.numo.wordapp.dto.user.TokenDto;
 import com.numo.wordapp.dto.user.VerificationRequestDto;
-import com.numo.wordapp.entity.auth.VerificationType;
+import com.numo.domain.auth.VerificationType;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;

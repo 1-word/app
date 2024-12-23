@@ -2,7 +2,7 @@ package com.numo.wordapp.repository.file;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.entity.file.File;
+import com.numo.domain.file.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FileRepository extends JpaRepository<File, String> {

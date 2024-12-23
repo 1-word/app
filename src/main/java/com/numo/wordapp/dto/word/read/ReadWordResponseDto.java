@@ -2,7 +2,7 @@ package com.numo.wordapp.dto.word.read;
 
 import com.numo.wordapp.dto.word.WordDto;
 import com.numo.wordapp.dto.word.detail.read.ReadWordDetailListResponseDto;
-import com.numo.wordapp.entity.Timestamped;
+import com.numo.domain.Timestamped;
 import lombok.Builder;
 
 import java.util.List;

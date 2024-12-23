@@ -1,6 +1,7 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.sentence.*;
+import com.numo.domain.sentence.dto.DailySentenceRequestDto;
+import com.numo.wordapp.dto.sentence.DailySentenceDto;
 import com.numo.wordapp.dto.sentence.read.ReadDailySentenceDto;
 import com.numo.wordapp.dto.sentence.search.DailySentenceParameterDto;
 import com.numo.wordapp.dto.sentence.wordDailySentence.WordDailySentenceDto;

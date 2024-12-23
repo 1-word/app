@@ -1,6 +1,6 @@
 package com.numo.wordapp.dto.word.search;
 
-import com.numo.wordapp.entity.word.type.ReadType;
+import com.numo.domain.word.type.ReadType;
 
 public record SearchWordRequestDto(
         Long folderId,

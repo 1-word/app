@@ -2,7 +2,7 @@ package com.numo.wordapp.security.service;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.entity.user.User;
+import com.numo.domain.user.User;
 import com.numo.wordapp.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

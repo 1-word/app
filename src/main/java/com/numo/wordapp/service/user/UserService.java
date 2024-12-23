@@ -1,22 +1,24 @@
 package com.numo.wordapp.service.user;
 
+import com.numo.domain.auth.VerificationCode;
+import com.numo.domain.user.Authority;
+import com.numo.domain.user.Role;
+import com.numo.domain.user.User;
+import com.numo.domain.user.dto.UpdateUserDto;
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.comm.redis.RedisService;
-import com.numo.wordapp.dto.user.UserRequestDto;
 import com.numo.wordapp.dto.user.ChangePasswordDto;
-import com.numo.wordapp.dto.user.UpdateUserDto;
 import com.numo.wordapp.dto.user.UserDto;
-import com.numo.wordapp.entity.auth.VerificationCode;
-import com.numo.wordapp.entity.user.Authority;
-import com.numo.wordapp.entity.user.Role;
-import com.numo.wordapp.entity.user.User;
+import com.numo.wordapp.dto.user.UserRequestDto;
 import com.numo.wordapp.repository.user.UserRepository;
 import com.numo.wordapp.security.oauth2.info.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -160,7 +162,7 @@ public class UserService {
         }
 
         User user = userRepository.findByEmail(userInfo.email())
-                .map(u -> u.update(userInfo))
+                .map(u -> checkAndUpdateUser(userInfo, u))
                 .orElse(userInfo.toEntity());
 
         user = userRepository.save(user);
@@ -175,6 +177,13 @@ public class UserService {
         }
 
         return UserDto.of(user);
+    }
+
+    private static User checkAndUpdateUser(OAuth2UserInfo userInfo, User u) {
+        if (!Objects.equals(u.getServiceType(), userInfo.clientName())) {
+            throw new CustomException(ErrorCode.OAUTH2_EMAIL_EXISTS);
+        }
+        return u.update(u.getNickname(), u.getProfileImagePath());
     }
 
     public UserDto findByEmail(String email) {

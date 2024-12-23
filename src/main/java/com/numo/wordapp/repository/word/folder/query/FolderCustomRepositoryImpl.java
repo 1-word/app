@@ -1,7 +1,7 @@
 package com.numo.wordapp.repository.word.folder.query;
 
+import com.numo.domain.word.folder.QFolder;
 import com.numo.wordapp.dto.folder.FolderResponseDto;
-import com.numo.wordapp.entity.word.QFolder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

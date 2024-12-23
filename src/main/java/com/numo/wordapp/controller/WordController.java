@@ -1,14 +1,15 @@
 package com.numo.wordapp.controller;
 
+import com.numo.domain.word.dto.UpdateWordDto;
+import com.numo.domain.word.type.UpdateType;
 import com.numo.wordapp.aop.WordAspect;
 import com.numo.wordapp.dto.page.PageRequestDto;
-import com.numo.wordapp.dto.word.*;
+import com.numo.wordapp.dto.word.WordRequestDto;
+import com.numo.wordapp.dto.word.WordResponseDto;
 import com.numo.wordapp.dto.word.read.ReadWordListResponseDto;
 import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
 import com.numo.wordapp.dto.word.read.ReadWordResponseDto;
 import com.numo.wordapp.dto.word.search.SearchWordRequestDto;
-import com.numo.wordapp.dto.word.UpdateWordDto;
-import com.numo.wordapp.entity.word.type.UpdateType;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.word.WordService;
 import io.swagger.v3.oas.annotations.Operation;

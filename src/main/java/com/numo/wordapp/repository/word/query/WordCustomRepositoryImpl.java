@@ -1,16 +1,16 @@
 package com.numo.wordapp.repository.word.query;
 
+import com.numo.domain.word.QWord;
+import com.numo.domain.word.detail.QWordDetail;
+import com.numo.domain.word.sound.type.GttsCode;
+import com.numo.domain.word.type.ReadType;
 import com.numo.wordapp.dto.folder.FolderInWordCountDto;
-import com.numo.wordapp.dto.sentence.wordDailySentence.DailyWordDetailDto;
 import com.numo.wordapp.dto.sentence.DailyWordDto;
 import com.numo.wordapp.dto.sentence.DailyWordListDto;
-import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
+import com.numo.wordapp.dto.sentence.wordDailySentence.DailyWordDetailDto;
 import com.numo.wordapp.dto.word.WordDto;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
-import com.numo.wordapp.entity.word.type.GttsCode;
-import com.numo.wordapp.entity.word.QWord;
-import com.numo.wordapp.entity.word.type.ReadType;
-import com.numo.wordapp.entity.word.detail.QWordDetail;
+import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;

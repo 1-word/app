@@ -1,9 +1,11 @@
 package com.numo.wordapp.service.file;
 
+import com.numo.domain.file.File;
+import com.numo.domain.user.User;
+import com.numo.wordapp.comm.exception.CustomException;
+import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.file.FileDto;
-import com.numo.wordapp.entity.file.File;
-import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.repository.file.FileRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class FileService {
@@ -80,8 +83,16 @@ public class FileService {
 
     private File getFileAndCheckPermission(Long userId, String fileId) {
         File file = findFileById(fileId);
-        file.checkPermission(userId);
+        checkPermission(file, userId);
         return file;
+    }
+
+    private void checkPermission(File file, Long userId) {
+        if (file.isSecret()) {
+            if (!Objects.equals(userId, file.getUser().getUserId())) {
+                throw new CustomException(ErrorCode.FILE_ACCESS_DENIED);
+            }
+        }
     }
 
     private File findFileById(String fileId) {

@@ -1,7 +1,7 @@
 package com.numo.wordapp.service.word.update;
 
-import com.numo.wordapp.dto.word.UpdateWordDto;
-import com.numo.wordapp.entity.word.Word;
+import com.numo.domain.word.Word;
+import com.numo.domain.word.dto.UpdateWordDto;
 
 public class UpdateAll implements UpdateWord {
     @Override

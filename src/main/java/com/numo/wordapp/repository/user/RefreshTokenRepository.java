@@ -2,7 +2,7 @@ package com.numo.wordapp.repository.user;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.entity.user.RefreshToken;
+import com.numo.domain.user.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

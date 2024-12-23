@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository.dictionary.query;
 
-import com.numo.wordapp.entity.dictionary.Dictionary;
+import com.numo.domain.dictionary.Dictionary;
 
 import java.util.List;
 

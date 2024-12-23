@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository.dictionary;
 
-import com.numo.wordapp.entity.dictionary.Dictionary;
+import com.numo.domain.dictionary.Dictionary;
 import com.numo.wordapp.repository.dictionary.query.DictionaryCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 

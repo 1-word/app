@@ -1,6 +1,6 @@
 package com.numo.wordapp.dto.sentence;
 
-import com.numo.wordapp.entity.sentence.DailySentence;
+import com.numo.domain.sentence.DailySentence;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

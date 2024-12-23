@@ -1,6 +1,6 @@
 package com.numo.wordapp.service.user;
 
-import com.numo.wordapp.entity.user.RefreshToken;
+import com.numo.domain.user.RefreshToken;
 import com.numo.wordapp.repository.user.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

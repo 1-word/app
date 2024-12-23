@@ -1,11 +1,11 @@
 package com.numo.wordapp.dto.word;
 
+import com.numo.domain.Timestamped;
+import com.numo.domain.word.Word;
+import com.numo.domain.word.detail.WordDetail;
+import com.numo.domain.word.folder.Folder;
+import com.numo.domain.word.sound.Sound;
 import com.numo.wordapp.dto.word.detail.WordDetailResponseDto;
-import com.numo.wordapp.entity.Timestamped;
-import com.numo.wordapp.entity.word.Folder;
-import com.numo.wordapp.entity.word.Sound;
-import com.numo.wordapp.entity.word.Word;
-import com.numo.wordapp.entity.word.detail.WordDetail;
 import lombok.Builder;
 
 import java.util.List;

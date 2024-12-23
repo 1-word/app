@@ -1,10 +1,10 @@
 package com.numo.wordapp.repository.sentence;
 
+import com.numo.domain.sentence.DailySentence;
 import com.numo.wordapp.dto.sentence.DailySentenceDto;
-import com.numo.wordapp.dto.sentence.search.DailySentenceParameterDto;
-import com.numo.wordapp.dto.sentence.read.ReadDailyWordDto;
 import com.numo.wordapp.dto.sentence.read.ReadDailySentenceDto;
-import com.numo.wordapp.entity.sentence.DailySentence;
+import com.numo.wordapp.dto.sentence.read.ReadDailyWordDto;
+import com.numo.wordapp.dto.sentence.search.DailySentenceParameterDto;
 import com.numo.wordapp.service.sentence.DailySentenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

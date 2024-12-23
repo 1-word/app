@@ -1,6 +1,6 @@
 package com.numo.wordapp.security.service;
 
-import com.numo.wordapp.entity.user.User;
+import com.numo.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -2,7 +2,7 @@ package com.numo.wordapp.repository.user;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.entity.user.User;
+import com.numo.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

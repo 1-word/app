@@ -1,7 +1,7 @@
 package com.numo.wordapp.dto.word.read;
 
 import com.numo.wordapp.dto.word.search.SearchWordRequestDto;
-import com.numo.wordapp.entity.word.type.ReadType;
+import com.numo.domain.word.type.ReadType;
 import lombok.Builder;
 
 @Builder

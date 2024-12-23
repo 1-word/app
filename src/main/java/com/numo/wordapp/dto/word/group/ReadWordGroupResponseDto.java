@@ -1,6 +1,6 @@
 package com.numo.wordapp.dto.word.group;
 
-import com.numo.wordapp.entity.word.detail.WordGroup;
+import com.numo.domain.word.detail.WordGroup;
 import lombok.Builder;
 
 @Builder

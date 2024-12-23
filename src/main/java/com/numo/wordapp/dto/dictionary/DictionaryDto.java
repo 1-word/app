@@ -1,6 +1,6 @@
 package com.numo.wordapp.dto.dictionary;
 
-import com.numo.wordapp.entity.dictionary.Dictionary;
+import com.numo.domain.dictionary.Dictionary;
 import lombok.Builder;
 
 @Builder

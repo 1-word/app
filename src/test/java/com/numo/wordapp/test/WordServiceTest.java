@@ -4,11 +4,11 @@
 //import com.numo.wordapp.dto.page.PageDto;
 //import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
 //import com.numo.wordapp.dto.word.WordResponseDto;
-//import com.numo.wordapp.entity.word.type.GttsCode;
-//import com.numo.wordapp.entity.word.Word;
-//import com.numo.wordapp.entity.word.detail.WordDetailMain;
-//import com.numo.wordapp.entity.word.detail.WordDetailSub;
-//import com.numo.wordapp.entity.word.detail.WordDetailTitle;
+//import com.numo.domain.word.type.GttsCode;
+//import com.numo.domain.word.Word;
+//import com.numo.domain.word.detail.WordDetailMain;
+//import com.numo.domain.word.detail.WordDetailSub;
+//import com.numo.domain.word.detail.WordDetailTitle;
 //import com.numo.wordapp.repository.word.WordRepository;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

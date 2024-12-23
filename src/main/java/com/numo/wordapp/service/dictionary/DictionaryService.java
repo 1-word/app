@@ -2,7 +2,7 @@ package com.numo.wordapp.service.dictionary;
 
 import com.numo.wordapp.dto.dictionary.DictionaryCrawlingDto;
 import com.numo.wordapp.dto.dictionary.DictionaryDto;
-import com.numo.wordapp.entity.dictionary.Dictionary;
+import com.numo.domain.dictionary.Dictionary;
 import com.numo.wordapp.repository.dictionary.DictionaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

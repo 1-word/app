@@ -1,7 +1,7 @@
 package com.numo.wordapp.dto.folder;
 
-import com.numo.wordapp.entity.user.User;
-import com.numo.wordapp.entity.word.Folder;
+import com.numo.domain.user.User;
+import com.numo.domain.word.folder.Folder;
 import lombok.Builder;
 
 @Builder

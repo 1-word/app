@@ -2,9 +2,9 @@ package com.numo.wordapp.security.oauth2;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.dto.user.UserDto;
-import com.numo.wordapp.entity.user.Authority;
-import com.numo.wordapp.entity.user.Role;
-import com.numo.wordapp.entity.user.User;
+import com.numo.domain.user.Authority;
+import com.numo.domain.user.Role;
+import com.numo.domain.user.User;
 import com.numo.wordapp.security.oauth2.info.*;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.user.UserService;

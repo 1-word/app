@@ -1,6 +1,6 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.word.group.WordGroupRequestDto;
+import com.numo.domain.word.detail.dto.WordGroupRequestDto;
 import com.numo.wordapp.dto.word.group.WordGroupResponseDto;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.word.WordGroupService;

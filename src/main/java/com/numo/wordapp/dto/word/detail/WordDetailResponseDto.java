@@ -3,8 +3,8 @@ package com.numo.wordapp.dto.word.detail;
 import com.numo.wordapp.dto.word.detail.read.ReadWordDetailGroupKey;
 import com.numo.wordapp.dto.word.detail.read.ReadWordDetailListResponseDto;
 import com.numo.wordapp.dto.word.detail.read.ReadWordDetailResponseDto;
-import com.numo.wordapp.entity.word.detail.WordDetail;
-import com.numo.wordapp.entity.word.detail.WordGroup;
+import com.numo.domain.word.detail.WordDetail;
+import com.numo.domain.word.detail.WordGroup;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

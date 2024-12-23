@@ -1,6 +1,6 @@
 package com.numo.wordapp.dto.user;
 
-import com.numo.wordapp.entity.user.User;
+import com.numo.domain.user.User;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

@@ -2,7 +2,7 @@ package com.numo.wordapp.repository.word.group;
 
 import com.numo.wordapp.dto.word.group.ReadWordGroupResponseDto;
 import com.numo.wordapp.dto.word.group.WordGroupResponseDto;
-import com.numo.wordapp.entity.word.detail.WordGroup;
+import com.numo.domain.word.detail.WordGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

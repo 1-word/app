@@ -1,6 +1,6 @@
 package com.numo.wordapp.security.oauth2.info;
 
-import com.numo.wordapp.entity.user.User;
+import com.numo.domain.user.User;
 import lombok.Builder;
 
 @Builder

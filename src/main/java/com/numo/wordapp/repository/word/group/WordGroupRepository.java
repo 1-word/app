@@ -2,7 +2,7 @@ package com.numo.wordapp.repository.word.group;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.entity.word.detail.WordGroup;
+import com.numo.domain.word.detail.WordGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WordGroupRepository extends JpaRepository<WordGroup, Long>, WordGroupCustomRepository {

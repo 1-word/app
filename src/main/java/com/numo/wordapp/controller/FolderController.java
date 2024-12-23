@@ -1,6 +1,10 @@
 package com.numo.wordapp.controller;
 
-import com.numo.wordapp.dto.folder.*;
+import com.numo.domain.word.folder.dto.FolderUpdateDto;
+import com.numo.wordapp.dto.folder.FolderInWordCountDto;
+import com.numo.wordapp.dto.folder.FolderListReadResponseDto;
+import com.numo.wordapp.dto.folder.FolderRequestDto;
+import com.numo.wordapp.dto.folder.FolderResponseDto;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.word.FolderService;
 import com.numo.wordapp.service.word.WordService;

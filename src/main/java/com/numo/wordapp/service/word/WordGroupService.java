@@ -1,11 +1,11 @@
 package com.numo.wordapp.service.word;
 
+import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.word.detail.dto.WordGroupRequestDto;
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.dto.word.group.ReadWordGroupResponseDto;
-import com.numo.wordapp.dto.word.group.WordGroupRequestDto;
 import com.numo.wordapp.dto.word.group.WordGroupResponseDto;
-import com.numo.wordapp.entity.word.detail.WordGroup;
 import com.numo.wordapp.repository.word.WordDetailRepository;
 import com.numo.wordapp.repository.word.group.WordGroupRepository;
 import lombok.RequiredArgsConstructor;

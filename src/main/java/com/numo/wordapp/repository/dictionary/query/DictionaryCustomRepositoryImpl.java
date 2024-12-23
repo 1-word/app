@@ -1,7 +1,7 @@
 package com.numo.wordapp.repository.dictionary.query;
 
-import com.numo.wordapp.entity.dictionary.Dictionary;
-import com.numo.wordapp.entity.dictionary.QDictionary;
+import com.numo.domain.dictionary.Dictionary;
+import com.numo.domain.dictionary.QDictionary;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

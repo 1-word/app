@@ -1,7 +1,7 @@
 package com.numo.wordapp.comm.init;
 
-import com.numo.wordapp.entity.word.detail.WordGroup;
-import com.numo.wordapp.entity.word.type.WordGroupType;
+import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.word.detail.type.WordGroupType;
 import com.numo.wordapp.repository.word.group.WordGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

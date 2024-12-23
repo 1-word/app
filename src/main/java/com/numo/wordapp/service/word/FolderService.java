@@ -1,9 +1,13 @@
 package com.numo.wordapp.service.word;
 
+import com.numo.domain.word.folder.Folder;
+import com.numo.domain.word.folder.dto.FolderUpdateDto;
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.dto.folder.*;
-import com.numo.wordapp.entity.word.Folder;
+import com.numo.wordapp.dto.folder.FolderInWordCountDto;
+import com.numo.wordapp.dto.folder.FolderListReadResponseDto;
+import com.numo.wordapp.dto.folder.FolderRequestDto;
+import com.numo.wordapp.dto.folder.FolderResponseDto;
 import com.numo.wordapp.repository.word.folder.FolderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@ package com.numo.wordapp.repository.word;
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
-import com.numo.wordapp.entity.word.Word;
+import com.numo.domain.word.Word;
 import com.numo.wordapp.repository.word.query.WordCustomRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
