@@ -31,6 +31,15 @@ public class DaumDictionary implements DictionaryCrawling {
         return new DictionaryCrawlingDto(word, definition, definitions);
     }
 
+    @Override
+    public String getSearchUrl(String word) {
+        return dictUrl + "?" + getQuery(word);
+    }
+
+    private String getQuery(String word) {
+        return q.replace("${word}", word);
+    }
+
     private List<String> definitionToList(String definition) {
         List<String> result = new ArrayList<>();
         String[] definitions = definition.split("[0-9]+.");

@@ -9,12 +9,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DictionaryCrawlingService {
-    String dictUrl = "https://dic.daum.net/search.do";
-    String q = "q=${word}";
 
     public DictionaryCrawlingDto searchWord(String word) {
         DictionaryCrawling site = create("daum");
-        String url = dictUrl + "?" + getQuery(word);
+        String url = site.getSearchUrl(word);
         Document doc = getDocument(url);
         DictionaryCrawlingDto searchWord = site.getSearchWord(doc, word);
         return searchWord;
@@ -36,7 +34,4 @@ public class DictionaryCrawlingService {
         }
     }
 
-    private String getQuery(String word) {
-        return q.replace("${word}", word);
-    }
 }
