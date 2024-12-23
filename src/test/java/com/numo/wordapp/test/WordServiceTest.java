@@ -2,9 +2,9 @@
 //
 //import com.numo.wordapp.comm.util.JsonUtil;
 //import com.numo.wordapp.dto.page.PageDto;
-//import com.numo.wordapp.dto.word.ReadWordRequestDto;
+//import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
 //import com.numo.wordapp.dto.word.WordResponseDto;
-//import com.numo.wordapp.entity.word.GttsCode;
+//import com.numo.wordapp.entity.word.type.GttsCode;
 //import com.numo.wordapp.entity.word.Word;
 //import com.numo.wordapp.entity.word.detail.WordDetailMain;
 //import com.numo.wordapp.entity.word.detail.WordDetailSub;

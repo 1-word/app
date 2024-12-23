@@ -2,7 +2,7 @@ package com.numo.wordapp.service.word;
 
 import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
-import com.numo.wordapp.dto.word.group.WordGroupReadResponseDto;
+import com.numo.wordapp.dto.word.group.ReadWordGroupResponseDto;
 import com.numo.wordapp.dto.word.group.WordGroupRequestDto;
 import com.numo.wordapp.dto.word.group.WordGroupResponseDto;
 import com.numo.wordapp.entity.word.detail.WordGroup;
@@ -38,9 +38,9 @@ public class WordGroupService {
      * @return 조회한 품사 데이터
      */
     @Transactional
-    public WordGroupReadResponseDto getWordGroup(Long userId, Long wordGroupId) {
+    public ReadWordGroupResponseDto getWordGroup(Long userId, Long wordGroupId) {
         WordGroup wordGroup = wordGroupRepository.findWordGroupByIdAndUser(wordGroupId, userId);
-        return WordGroupReadResponseDto.of(wordGroup);
+        return ReadWordGroupResponseDto.of(wordGroup);
     }
 
     /**

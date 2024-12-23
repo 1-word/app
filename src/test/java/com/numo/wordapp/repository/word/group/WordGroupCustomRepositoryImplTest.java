@@ -1,6 +1,6 @@
 package com.numo.wordapp.repository.word.group;
 
-import com.numo.wordapp.dto.word.group.WordGroupReadResponseDto;
+import com.numo.wordapp.dto.word.group.ReadWordGroupResponseDto;
 import com.numo.wordapp.dto.word.group.WordGroupResponseDto;
 import com.numo.wordapp.entity.word.detail.WordGroup;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class WordGroupCustomRepositoryImplTest {
 
         WordGroup wordGroup = wordGroupRepository.findWordGroupByIdAndUserId(wordGroupId, userId)
                 .orElse(WordGroup.builder().build());
-        WordGroupReadResponseDto res = WordGroupReadResponseDto.of(wordGroup);
+        ReadWordGroupResponseDto res = ReadWordGroupResponseDto.of(wordGroup);
         assertThat(Objects.nonNull(res.wordGroup().wordGroupId()));
     }
 }

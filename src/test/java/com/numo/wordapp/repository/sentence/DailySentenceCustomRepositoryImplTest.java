@@ -1,9 +1,9 @@
 package com.numo.wordapp.repository.sentence;
 
 import com.numo.wordapp.dto.sentence.DailySentenceDto;
-import com.numo.wordapp.dto.sentence.DailySentenceParameterDto;
-import com.numo.wordapp.dto.sentence.ReadDailyWordDto;
-import com.numo.wordapp.dto.sentence.ReadDailySentenceDto;
+import com.numo.wordapp.dto.sentence.search.DailySentenceParameterDto;
+import com.numo.wordapp.dto.sentence.read.ReadDailyWordDto;
+import com.numo.wordapp.dto.sentence.read.ReadDailySentenceDto;
 import com.numo.wordapp.entity.sentence.DailySentence;
 import com.numo.wordapp.service.sentence.DailySentenceService;
 import org.junit.jupiter.api.Test;

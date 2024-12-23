@@ -1,6 +1,12 @@
 package com.numo.wordapp.service.sentence;
 
 import com.numo.wordapp.dto.sentence.*;
+import com.numo.wordapp.dto.sentence.read.ReadDailySentenceDto;
+import com.numo.wordapp.dto.sentence.read.ReadDailyWordDto;
+import com.numo.wordapp.dto.sentence.search.DailySentenceParameterDto;
+import com.numo.wordapp.dto.sentence.wordDailySentence.CreateWordDailySentenceDto;
+import com.numo.wordapp.dto.sentence.wordDailySentence.DailyWordDetailDto;
+import com.numo.wordapp.dto.sentence.wordDailySentence.WordDailySentenceDto;
 import com.numo.wordapp.entity.sentence.DailySentence;
 import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.repository.sentence.DailySentenceRepository;

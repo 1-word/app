@@ -4,7 +4,7 @@ import com.numo.wordapp.conf.PropertyConfig;
 import com.numo.wordapp.dto.file.FileDto;
 import com.numo.wordapp.entity.file.File;
 import com.numo.wordapp.entity.user.User;
-import com.numo.wordapp.repository.FileRepository;
+import com.numo.wordapp.repository.file.FileRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

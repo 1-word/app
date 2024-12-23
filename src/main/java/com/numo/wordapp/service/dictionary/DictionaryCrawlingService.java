@@ -1,8 +1,6 @@
 package com.numo.wordapp.service.dictionary;
 
 import com.numo.wordapp.comm.util.JsoupUtil;
-import com.numo.wordapp.dto.dictionary.DaumDictionary;
-import com.numo.wordapp.dto.dictionary.DictionaryCrawling;
 import com.numo.wordapp.dto.dictionary.DictionaryCrawlingDto;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;

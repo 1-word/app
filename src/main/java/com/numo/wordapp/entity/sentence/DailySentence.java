@@ -1,10 +1,9 @@
 package com.numo.wordapp.entity.sentence;
 
-import com.numo.wordapp.dto.sentence.CreateWordDailySentenceDto;
+import com.numo.wordapp.dto.sentence.wordDailySentence.CreateWordDailySentenceDto;
 import com.numo.wordapp.dto.sentence.DailySentenceRequestDto;
 import com.numo.wordapp.entity.Timestamped;
 import com.numo.wordapp.entity.user.User;
-import com.numo.wordapp.entity.word.WordDailySentence;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

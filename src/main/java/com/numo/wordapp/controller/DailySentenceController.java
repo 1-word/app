@@ -1,6 +1,9 @@
 package com.numo.wordapp.controller;
 
 import com.numo.wordapp.dto.sentence.*;
+import com.numo.wordapp.dto.sentence.read.ReadDailySentenceDto;
+import com.numo.wordapp.dto.sentence.search.DailySentenceParameterDto;
+import com.numo.wordapp.dto.sentence.wordDailySentence.WordDailySentenceDto;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.sentence.DailySentenceService;
 import io.swagger.v3.oas.annotations.Operation;

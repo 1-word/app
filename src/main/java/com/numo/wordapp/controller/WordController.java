@@ -3,7 +3,12 @@ package com.numo.wordapp.controller;
 import com.numo.wordapp.aop.WordAspect;
 import com.numo.wordapp.dto.page.PageRequestDto;
 import com.numo.wordapp.dto.word.*;
-import com.numo.wordapp.entity.word.UpdateType;
+import com.numo.wordapp.dto.word.read.ReadWordListResponseDto;
+import com.numo.wordapp.dto.word.read.ReadWordRequestDto;
+import com.numo.wordapp.dto.word.read.ReadWordResponseDto;
+import com.numo.wordapp.dto.word.search.SearchWordRequestDto;
+import com.numo.wordapp.dto.word.UpdateWordDto;
+import com.numo.wordapp.entity.word.type.UpdateType;
 import com.numo.wordapp.security.service.UserDetailsImpl;
 import com.numo.wordapp.service.word.WordService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,8 +44,8 @@ public class WordController {
     @Operation(summary = "단어 조회", description = "단어를 조회한다.")
     @GetMapping
     public ResponseEntity<ReadWordListResponseDto> getWords(@AuthenticationPrincipal UserDetailsImpl user,
-                                                           PageRequestDto page,
-                                                           ReadWordRequestDto readDto) {
+                                                            PageRequestDto page,
+                                                            ReadWordRequestDto readDto) {
         Long userId = user.getUserId();
         return ResponseEntity.ok(wordService.getWord(userId, page, readDto));
     }

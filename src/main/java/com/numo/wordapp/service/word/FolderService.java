@@ -4,7 +4,7 @@ import com.numo.wordapp.comm.exception.CustomException;
 import com.numo.wordapp.comm.exception.ErrorCode;
 import com.numo.wordapp.dto.folder.*;
 import com.numo.wordapp.entity.word.Folder;
-import com.numo.wordapp.repository.folder.FolderRepository;
+import com.numo.wordapp.repository.word.folder.FolderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

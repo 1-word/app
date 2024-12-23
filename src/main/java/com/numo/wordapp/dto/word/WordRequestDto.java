@@ -3,7 +3,7 @@ package com.numo.wordapp.dto.word;
 import com.numo.wordapp.dto.word.detail.WordDetailRequestDto;
 import com.numo.wordapp.entity.user.User;
 import com.numo.wordapp.entity.word.Folder;
-import com.numo.wordapp.entity.word.GttsCode;
+import com.numo.wordapp.entity.word.type.GttsCode;
 import com.numo.wordapp.entity.word.Sound;
 import com.numo.wordapp.entity.word.Word;
 import com.numo.wordapp.entity.word.detail.WordDetail;
