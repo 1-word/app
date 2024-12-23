@@ -23,10 +23,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class WordService {
@@ -195,7 +192,7 @@ public class WordService {
         return sound.getSoundId();
     }
 
-    public List<FolderInWordCountDto> getFolderInWordCount(Long userId) {
+    public Map<Long, FolderInWordCountDto> getFolderInWordCount(Long userId) {
         return wordRepository.countFolderInWord(userId);
     }
 

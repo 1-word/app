@@ -26,6 +26,9 @@ import org.springframework.data.domain.SliceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class WordCustomRepositoryImpl implements WordCustomRepository {
@@ -134,8 +137,8 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
     }
 
     @Override
-    public List<FolderInWordCountDto> countFolderInWord(Long userId) {
-        List<FolderInWordCountDto> results = queryFactory.select(Projections.constructor(
+    public Map<Long, FolderInWordCountDto> countFolderInWord(Long userId) {
+        Map<Long, FolderInWordCountDto> result = queryFactory.select(Projections.constructor(
                         FolderInWordCountDto.class,
                         qWord.folder.folderId,
                         Expressions.as(Wildcard.count, "count")
@@ -145,8 +148,11 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         qWord.user.userId.eq(userId)
                 )
                 .groupBy(qWord.folder.folderId)
-                .fetch();
-        return results;
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(FolderInWordCountDto::folderId, Function.identity()));
+
+        return result;
     }
 
     /**

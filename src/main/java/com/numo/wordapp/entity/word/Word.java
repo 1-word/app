@@ -53,6 +53,10 @@ public class Word extends Timestamped {
     @OneToMany(mappedBy = "word")
     private List<WordDailySentence> wordDailySentences;
 
+    public Word(Long wordId) {
+        this.wordId = wordId;
+    }
+
     public void setWordDetails() {
         addWordDetails(wordDetails);
     }

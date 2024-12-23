@@ -9,9 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,25 +39,33 @@ public class FolderService {
         return res;
     }
 
-    public List<FolderListReadResponseDto> getFolders(List<FolderResponseDto> folders, List<FolderInWordCountDto> folderInWordCountDtos) {
+    /**
+     * 폴더 및 폴더 안의 단어 수 조회
+     * @param folders 폴더
+     * @param folderInWordCountMap folderId가 key로 되어있는 폴더 안의 단어 수 정보
+     * @return 폴더 및 폴더 안의 단어 수 조회 데이터
+     */
+    public List<FolderListReadResponseDto> getFolders(List<FolderResponseDto> folders, Map<Long, FolderInWordCountDto> folderInWordCountMap) {
         List<FolderListReadResponseDto> results = folders.stream()
-                .map(folderResponseDto -> new FolderListReadResponseDto(folderResponseDto,
-                        getWordsCount(folderResponseDto.folderId(), folderInWordCountDtos))).toList();
+                .map(folderResponseDto -> new FolderListReadResponseDto(
+                        folderResponseDto, getFolderInWordCount(folderResponseDto.folderId(), folderInWordCountMap))
+                ).toList();
         return results;
     }
 
-    private Long getWordsCount(Long folderId, List<FolderInWordCountDto> countDtos) {
-        Iterator<FolderInWordCountDto> iterator = countDtos.iterator();
-        while(iterator.hasNext()) {
-            FolderInWordCountDto next = iterator.next();
-            if (Objects.equals(next.folderId(), folderId)) {
-                iterator.remove();
-                return next.count();
-            }
+    /**
+     * 폴더 안의 단어 수 조회
+     * @param folderId 폴더 아이디
+     * @param folderInWordCountMap folderId가 key로 되어있는 폴더 안의 단어 수 정보
+     * @return 폴더 안의 단어 수, 데이터가 없으면 0을 리턴
+     */
+    private Long getFolderInWordCount(Long folderId, Map<Long, FolderInWordCountDto> folderInWordCountMap) {
+        if (folderInWordCountMap.containsKey(folderId)) {
+            return folderInWordCountMap.get(folderId).count();
         }
+
         return 0L;
     }
-
 
     public boolean existsFolder(Long folderId, Long userId) {
         return folderRepository.existsByFolderIdAndUser_UserId(folderId, userId);

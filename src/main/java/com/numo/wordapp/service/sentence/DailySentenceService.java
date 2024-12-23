@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,9 +47,12 @@ public class DailySentenceService {
         List<Long> sentenceIds = dailySentences.stream().map(DailySentenceDto::dailySentenceId).toList();
         List<ReadDailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
 
+        Map<Long, List<ReadDailyWordDto>> dailyWordsMap = dailyWords.stream()
+                .collect(Collectors.groupingBy(ReadDailyWordDto::wordDailyWordId));
+
         List<ReadDailySentenceDto> res = dailySentences.stream()
                 .map(dailySentenceDto -> ReadDailySentenceDto.of(dailySentenceDto,
-                        findDailySentenceWords(dailySentenceDto.dailySentenceId(), dailyWords))
+                        dailyWordsMap.get(dailySentenceDto.dailySentenceId()))
                 ).toList();
 
         return res;
@@ -110,6 +114,34 @@ public class DailySentenceService {
     }
 
     /**
+     * 문장에 해당하는 단어를 찾아 내 단어장에 등록된 단어 데이터가 있는지 확인
+     * @param userId 유저 아이디
+     * @param sentence 문장 문자열
+     * @return 단어장에 등록된 문장과 연관된 단어 데이터
+     */
+    private List<CreateWordDailySentenceDto> findDailyWords(Long userId, String sentence){
+        List<String> words = splitSentence(sentence);
+        DailyWordListDto dailyWordListDto = wordService.findDailyWord(userId, words);
+
+        // 매칭되는 문자열을 확인하기 위해 체크
+        List<DailyWordDto> detailDtos = matchSearchWordWithDailyWord(dailyWordListDto.detailDtos(), words);
+        List<DailyWordDto> wordDtos = dailyWordListDto.wordDtos();
+
+        wordDtos.addAll(detailDtos);
+
+        // 중복 체크
+        List<DailyWordDto> list = wordDtos.stream().distinct().toList();
+
+        List<CreateWordDailySentenceDto> results = list.stream()
+                .map(dailyWordDto -> new CreateWordDailySentenceDto(
+                        new Word(dailyWordDto.wordId()),
+                        dailyWordDto.word())
+                ).toList();
+
+        return results;
+    }
+
+    /**
      * 매칭되는 문자열을 저장하기 위해 상세 정보 필드 중 어떤 필드가 연관 단어와 일치하는지 확인
      * @param list 상세정보 리스트
      * @param searchWords 연관 단어 리스트
@@ -138,52 +170,6 @@ public class DailySentenceService {
         }).toList();
 
         return results;
-    }
-
-    /**
-     * 문장에 해당하는 단어를 찾아 내 단어장에 등록된 단어 데이터가 있는지 확인
-     * @param userId 유저 아이디
-     * @param sentence 문장 문자열
-     * @return 단어장에 등록된 문장과 연관된 단어 데이터
-     */
-    private List<CreateWordDailySentenceDto> findDailyWords(Long userId, String sentence){
-        List<String> words = splitSentence(sentence);
-        DailyWordListDto dailyWordListDto = wordService.findDailyWord(userId, words);
-
-        // 매칭되는 문자열을 확인하기 위해 체크
-        List<DailyWordDto> detailDtos = matchSearchWordWithDailyWord(dailyWordListDto.detailDtos(), words);
-        List<DailyWordDto> wordDtos = dailyWordListDto.wordDtos();
-
-        wordDtos.addAll(detailDtos);
-
-        // 중복 체크
-        List<DailyWordDto> list = wordDtos.stream().distinct().toList();
-
-        List<CreateWordDailySentenceDto> results = list.stream()
-                .map(dailyWordDto -> new CreateWordDailySentenceDto(
-                        Word.builder().wordId(dailyWordDto.wordId()).build(),
-                        dailyWordDto.word())).toList();
-
-        return results;
-    }
-
-    /**
-     * 가져온 단어 데이터에서 해당 문장과 연관된 단어를 찾는다.
-     * @param sentenceId 문장
-     * @param readDailyWordDtos 검색한 단어 데이터
-     * @return 해당 문장과 연관된 단어 데이터
-     */
-    private List<ReadDailyWordDto> findDailySentenceWords(Long sentenceId, List<ReadDailyWordDto> readDailyWordDtos) {
-        List<ReadDailyWordDto> result = new ArrayList<>();
-        Iterator<ReadDailyWordDto> iterator = readDailyWordDtos.iterator();
-        while (iterator.hasNext()) {
-            ReadDailyWordDto readDailyWordDto = iterator.next();
-            if (Objects.equals(sentenceId, readDailyWordDto.wordDailyWordId())) {
-                result.add(readDailyWordDto);
-                iterator.remove();
-            }
-        }
-        return result;
     }
 
     /**

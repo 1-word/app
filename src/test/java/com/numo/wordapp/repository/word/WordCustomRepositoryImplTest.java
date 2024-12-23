@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 class WordCustomRepositoryImplTest {
@@ -16,7 +16,7 @@ class WordCustomRepositoryImplTest {
     @Test
     void findFolderInWord() {
         Long userId = 2L;
-        List<FolderInWordCountDto> folderInWord = wordRepository.countFolderInWord(userId);
+        Map<Long, FolderInWordCountDto> folderInWord = wordRepository.countFolderInWord(userId);
         System.out.println(folderInWord);
     }
 }

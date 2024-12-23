@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
+import java.util.Map;
 
 public interface WordCustomRepository {
     /**
@@ -23,5 +24,5 @@ public interface WordCustomRepository {
     WordDto findWordByWordId(Long userId, Long wordId);
 
     List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds);
-    List<FolderInWordCountDto> countFolderInWord(Long userId);
+    Map<Long, FolderInWordCountDto> countFolderInWord(Long userId);
 }

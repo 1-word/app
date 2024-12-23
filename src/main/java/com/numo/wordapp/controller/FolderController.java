@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/folders")
 @RestController
@@ -23,8 +24,8 @@ public class FolderController {
     @GetMapping
     public ResponseEntity<List<FolderListReadResponseDto>> getFolderName(@AuthenticationPrincipal UserDetailsImpl user){
         List<FolderResponseDto> folders = folderService.getFolders(user.getUserId());
-        List<FolderInWordCountDto> folderInWordCount = wordService.getFolderInWordCount(user.getUserId());
-        return ResponseEntity.ok(folderService.getFolders(folders, folderInWordCount));
+        Map<Long, FolderInWordCountDto> folderInWordCountMap = wordService.getFolderInWordCount(user.getUserId());
+        return ResponseEntity.ok(folderService.getFolders(folders, folderInWordCountMap));
     }
 
     @Operation(description = "폴더를 생성한다.")
