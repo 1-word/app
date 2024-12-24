@@ -122,7 +122,7 @@ public class WordService {
     public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
         Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
-        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastWordId(),readDto);
+        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastId(), readDto);
         List<WordDto> words = wordsWithPage.getContent();
 
         List<Long> wordIds = words.stream().map(WordDto::wordId).toList();
