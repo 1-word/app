@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
     NOT_AUTHORIZED(1000, "로그인이 필요합니다.", "로그인이 필요합니다."),
-    UNRECOGNIZED_ROLE(1001, "에러가 발생했습니다. 잠시 후 시도해주세요.", "권한이 없습니다."),
+    UNRECOGNIZED_ROLE(1001, "권한이 없습니다.", "권한이 없습니다."),
     USER_NOT_FOUND(1002, "해당하는 유저를 찾을 수 없습니다.", "해당하는 유저를 찾을 수 없습니다."),
     LOGIN_ID_FAILED(1003, "아이디 또는 비밀번호가 올바르지 않습니다.", "아이디가 없습니다."),
     LOGIN_PW_FAILED(1004, "아이디 또는 비밀번호가 올바르지 않습니다.", "비밀번호가 맞지 않습니다"),
@@ -45,6 +45,8 @@ public enum ErrorCode {
     DEFAULT_GROUP_EDIT_FAILED(3052, "기본 품사는 삭제하거나 수정할 수 없습니다.", "기본 품사는 삭제하거나 수정할 수 없습니다."),
 
     DAILY_SENTENCE_NOT_FOUND(4000, "해당하는 오늘의 문장 데이터를 찾을 수 없습니다.", "해당하는 오늘의 문장 데이터가 없습니다"),
+
+    POST_NOT_OWNED(5000, "해당 게시글에 권한이 없습니다.", "게시글에 권한이 없습니다."),
     ;
 
     private final int code;
