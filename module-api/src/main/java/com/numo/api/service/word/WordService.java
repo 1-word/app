@@ -10,7 +10,7 @@ import com.numo.api.comm.exception.ErrorCode;
 import com.numo.api.comm.util.ProcessBuilderUtil;
 import com.numo.api.conf.PropertyConfig;
 import com.numo.api.dto.folder.FolderInWordCountDto;
-import com.numo.api.dto.page.PageDto;
+import com.numo.api.comm.page.PageDto;
 import com.numo.api.dto.page.PageRequestDto;
 import com.numo.api.dto.sentence.DailyWordListDto;
 import com.numo.api.dto.word.WordDto;

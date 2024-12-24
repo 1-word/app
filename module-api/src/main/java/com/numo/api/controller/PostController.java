@@ -1,8 +1,9 @@
 package com.numo.api.controller;
 
+import com.numo.api.comm.page.PageResponse;
+import com.numo.api.dto.post.PostListResponseDto;
 import com.numo.api.dto.post.PostRequestDto;
 import com.numo.api.dto.post.PostResponseDto;
-import com.numo.api.dto.post.ReadPostListResponseDto;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.api.service.post.PostService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<ReadPostListResponseDto> getPostList(Pageable page) {
+    public ResponseEntity<PageResponse<PostListResponseDto>> getPostList(Pageable page) {
         return ResponseEntity.ok(postService.getPostList(page));
     }
 

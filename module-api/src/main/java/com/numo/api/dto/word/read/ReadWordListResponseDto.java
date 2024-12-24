@@ -1,6 +1,6 @@
 package com.numo.api.dto.word.read;
 
-import com.numo.api.dto.page.PageDto;
+import com.numo.api.comm.page.PageDto;
 
 import java.util.List;
 

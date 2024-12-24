@@ -1,4 +1,4 @@
-package com.numo.api.dto.page;
+package com.numo.api.comm.page;
 
 public record PageDto(
     int current,

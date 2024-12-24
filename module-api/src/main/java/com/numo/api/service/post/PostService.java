@@ -2,11 +2,10 @@ package com.numo.api.service.post;
 
 import com.numo.api.comm.exception.CustomException;
 import com.numo.api.comm.exception.ErrorCode;
-import com.numo.api.dto.page.PageDto;
+import com.numo.api.comm.page.PageResponse;
 import com.numo.api.dto.post.PostListResponseDto;
 import com.numo.api.dto.post.PostRequestDto;
 import com.numo.api.dto.post.PostResponseDto;
-import com.numo.api.dto.post.ReadPostListResponseDto;
 import com.numo.api.repository.post.PostRepository;
 import com.numo.api.repository.post.query.PostQueryRepository;
 import com.numo.domain.post.Post;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -39,11 +37,9 @@ public class PostService {
         return postQueryRepository.findPost(postId);
     }
 
-    public ReadPostListResponseDto getPostList(Pageable page) {
+    public PageResponse<PostListResponseDto> getPostList(Pageable page) {
         Slice<PostListResponseDto> postList = postQueryRepository.findPostList(page);
-        List<PostListResponseDto> content = postList.getContent();
-        PageDto pageDto = new PageDto(postList.getNumber(), postList.hasNext(), null);
-        return new ReadPostListResponseDto(pageDto, content);
+        return new PageResponse<>(postList);
     }
 
     @Transactional

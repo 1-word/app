@@ -1,5 +1,6 @@
 package com.numo.api.repository.word.query;
 
+import com.numo.api.comm.page.PageUtil;
 import com.numo.domain.word.QWord;
 import com.numo.domain.word.detail.QWordDetail;
 import com.numo.domain.word.sound.type.GttsCode;
@@ -79,7 +80,8 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 // 다음 페이지가 있는지 확인하기 위해 다음 데이터도 함께 조회
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
-        return checkLastPage(pageable, results);
+
+        return PageUtil.of(results, pageable);
     }
 
     /**

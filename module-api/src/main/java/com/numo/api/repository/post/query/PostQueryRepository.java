@@ -1,14 +1,14 @@
 package com.numo.api.repository.post.query;
 
-import com.numo.api.dto.post.PostResponseDto;
+import com.numo.api.comm.page.PageUtil;
 import com.numo.api.dto.post.PostListResponseDto;
+import com.numo.api.dto.post.PostResponseDto;
 import com.numo.domain.post.QPost;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -53,12 +53,6 @@ public class PostQueryRepository {
                 .limit(page.getPageSize())
                 .fetch();
 
-        boolean hasNext = false;
-        if (posts.size() > page.getPageSize()) {
-            posts.remove(page.getPageSize());
-            hasNext = true;
-        }
-
-        return new SliceImpl<>(posts, page, hasNext);
+       return PageUtil.of(posts, page);
     }
 }
