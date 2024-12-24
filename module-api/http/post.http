@@ -1,0 +1,39 @@
+### 게시글 작성
+POST localhost:8088/api/posts
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "v1.0 출시",
+  "content": "단어장 출시"
+}
+
+> {%
+    client.global.set("postId", response.body.postId)
+%}
+
+### 게시글 조회
+GET localhost:8088/api/posts/{{postId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 게시글 리스트 조회
+GET localhost:8088/api/posts?page=0&size=5
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 게시글 수정
+PUT localhost:8088/api/posts/{{postId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "v1.0.0 출시",
+  "content": "단어장 출시 수정"
+}
+
+### 게시글 삭제
+DELETE localhost:8088/api/posts/{{postId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+

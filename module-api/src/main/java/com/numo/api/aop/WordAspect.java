@@ -27,10 +27,10 @@ public class WordAspect {
         this.dictionaryCacheService = dictionaryCacheService;
     }
 
-    @Pointcut("execution(* com.numo.domain.controller..*.*(..))")
+    @Pointcut("execution(* com.numo.api.controller..*.*(..))")
     private void wordControllerCut(){}
 
-    @Pointcut("execution(* com.numo.domain.controller..*.*(..))")
+    @Pointcut("execution(* com.numo.api.controller..*.*(..))")
     private void securityControllerCut(){}
 
     /**
@@ -61,7 +61,7 @@ public class WordAspect {
      * 이미 사전 데이터베이스에 있다면 저장하지 않는다.
      * @param res 저장된 단어 데이터
      */
-    @AfterReturning(value = "execution(* com.numo.domain.service..WordService.saveWord(..))", returning = "res")
+    @AfterReturning(value = "execution(* com.numo.api.service..WordService.saveWord(..))", returning = "res")
     public void afterWordSave(WordResponseDto res) {
         DictionaryDto dictionaryDto = DictionaryDto.builder()
                 .word(res.word())

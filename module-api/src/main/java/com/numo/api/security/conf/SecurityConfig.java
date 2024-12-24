@@ -37,7 +37,6 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final RefreshTokenService refreshTokenService;
     private final PropertyConfig propertyConfig;
 
@@ -56,6 +55,10 @@ public class SecurityConfig {
         return new CommonLoginFailureHandler(propertyConfig);
     }
 
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler() {
+        return new JwtAccessDeniedHandler();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuth2UserService<OAuth2UserRequest, OAuth2User> CustomOAuth2UserService) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
@@ -63,7 +66,7 @@ public class SecurityConfig {
 
         http.exceptionHandling(handlingConfigurer -> {
             handlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
-            handlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler);
+            handlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler());
         });
 
         http.sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -78,6 +81,8 @@ public class SecurityConfig {
             authorize.requestMatchers("/files/images/**", "/files/upload/thumbnail").permitAll();
             authorize.requestMatchers("/oauth2/**", "/login/**").permitAll();
             authorize.requestMatchers("/resources/**").permitAll();
+            authorize.requestMatchers(HttpMethod.GET,"/posts/**").permitAll();
+            authorize.requestMatchers("/posts/**").hasRole("ADMIN");
             authorize.anyRequest().authenticated();
         });
 

@@ -52,7 +52,7 @@ public class FileService {
         return fileStorageService.save(middlePath, file);
     }
 
-    public String uploadThumbnail(String middlePath, MultipartFile file) {
+    public String uploadImage(String middlePath, MultipartFile file) {
         FileDto fileDto = storeFile(middlePath, file);
         return clientHost + "/data/files" + fileDto.path();
     }

@@ -10,7 +10,7 @@ import com.numo.api.comm.exception.ErrorCode;
 import com.numo.api.comm.util.ProcessBuilderUtil;
 import com.numo.api.conf.PropertyConfig;
 import com.numo.api.dto.folder.FolderInWordCountDto;
-import com.numo.api.dto.page.PageDto;
+import com.numo.api.comm.page.PageDto;
 import com.numo.api.dto.page.PageRequestDto;
 import com.numo.api.dto.sentence.DailyWordListDto;
 import com.numo.api.dto.word.WordDto;
@@ -122,7 +122,7 @@ public class WordService {
     public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
         Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
-        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastWordId(),readDto);
+        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastId(), readDto);
         List<WordDto> words = wordsWithPage.getContent();
 
         List<Long> wordIds = words.stream().map(WordDto::wordId).toList();
