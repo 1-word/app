@@ -1,0 +1,25 @@
+### 퀴즈 생성
+POST localhost:8088/api/quiz-info
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "type": "multipleChoice",
+  "sort": "create",
+  "memorization": "",
+  "count": 5
+}
+
+> {%
+    client.global.set("quizInfoId", response.body)
+%}
+
+### 퀴즈 조회
+GET localhost:8088/api/quiz-info/{{quizInfoId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 삭제
+DELETE localhost:8088/api/quiz-info/{{quizInfoId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
