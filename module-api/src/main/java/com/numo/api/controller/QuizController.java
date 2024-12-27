@@ -52,4 +52,11 @@ public class QuizController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "퀴즈를 이어한다.")
+    @GetMapping("/continue/{quizInfoId}")
+    public ResponseEntity<PageResponse<QuizResponseDto>> continueQuiz(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                     @PathVariable("quizInfoId") Long quizInfoId,
+                                                                     PageRequestDto pageDto) {
+        return ResponseEntity.ok(quizService.getUnsolvedQuiz(user.getUserId(), quizInfoId, pageDto));
+    }
 }

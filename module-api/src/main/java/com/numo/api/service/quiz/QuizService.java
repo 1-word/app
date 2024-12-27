@@ -52,7 +52,7 @@ public class QuizService {
 
     public PageResponse<QuizResponseDto> getQuizInfo(Long userId, Long quizInfoId, PageRequestDto pageDto) {
         PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
-        Slice<QuizResponseDto> quiz = quizQueryRepository.findQuizById(quizInfoId, userId, pageRequest);
+        Slice<QuizResponseDto> quiz = quizQueryRepository.findQuizById(quizInfoId, userId, pageRequest, false);
 
         return new PageResponse<>(quiz);
     }
@@ -74,5 +74,12 @@ public class QuizService {
             Boolean correct = requestMap.get(quiz.getId());
             quiz.setCorrect(correct);
         }
+    }
+
+    public PageResponse<QuizResponseDto> getUnsolvedQuiz(Long userId, Long quizInfoId, PageRequestDto pageDto) {
+        PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
+        Slice<QuizResponseDto> quiz = quizQueryRepository.findUnsolvedQuizById(quizInfoId, userId, pageRequest);
+
+        return new PageResponse<>(quiz);
     }
 }

@@ -58,3 +58,8 @@ Authorization: Bearer {{accessToken}}
     "correct": true
   }]
 }
+
+### 퀴즈 이어하기
+GET localhost:8088/api/quiz/continue/{{quizInfoId}}?current=0
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
