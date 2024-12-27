@@ -16,8 +16,17 @@ public class Quiz {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "quiz_info_id")
     QuizInfo quizInfo;
 
     @ManyToOne
+    @JoinColumn(name = "word_id")
     Word word;
+
+    @Column(columnDefinition="int(1)")
+    Integer correct;
+
+    public void setCorrect(boolean correct) {
+        this.correct = correct? 1 : 0;
+    }
 }

@@ -4,6 +4,7 @@ import com.numo.domain.Timestamped;
 import com.numo.domain.quiz.type.QuizSort;
 import com.numo.domain.quiz.type.QuizType;
 import com.numo.domain.user.User;
+import com.numo.domain.word.folder.Folder;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,10 @@ public class QuizInfo extends Timestamped {
     @JoinColumn(name = "user_id")
     User user;
 
+    @ManyToOne
+    @JoinColumn(name = "folder_id")
+    Folder folder;
+
     @Column(name = "quiz_type")
     private QuizType type;
     private QuizSort sort;
@@ -30,4 +35,6 @@ public class QuizInfo extends Timestamped {
 
     @Column(name = "quiz_count")
     private int count;
+
+    private boolean complete;
 }

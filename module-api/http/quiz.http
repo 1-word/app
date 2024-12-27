@@ -1,25 +1,60 @@
-### 퀴즈 생성
+### 퀴즈 정보 생성
 POST localhost:8088/api/quiz-info
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
+  "folderId": 6,
   "type": "multipleChoice",
-  "sort": "create",
+  "sort": "random",
   "memorization": "",
-  "count": 5
+  "count": 50
 }
 
 > {%
     client.global.set("quizInfoId", response.body)
 %}
 
-### 퀴즈 조회
+### 퀴즈 정보 조회
 GET localhost:8088/api/quiz-info/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 퀴즈 삭제
+### 퀴즈 정보 삭제
 DELETE localhost:8088/api/quiz-info/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 퀴즈 생성
+POST localhost:8088/api/quiz/{{quizInfoId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 조회
+GET localhost:8088/api/quiz/{{quizInfoId}}?current=1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 단건 풀이
+PUT localhost:8088/api/quiz/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "correct": true
+}
+
+### 퀴즈 다건 풀이
+PUT localhost:8088/api/quiz
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "datas": [{
+    "quizId": 1,
+    "correct": false
+  }, {
+    "quizId": 2,
+    "correct": true
+  }]
+}

@@ -9,6 +9,7 @@ import lombok.Builder;
 @Builder
 public record QuizInfoResponseDto(
         Long quizInfoId,
+        Long folderId,
         QuizType type,
         QuizSort sort,
         String memorization,
@@ -19,6 +20,7 @@ public record QuizInfoResponseDto(
     public static QuizInfoResponseDto of(QuizInfo quizInfo) {
         return QuizInfoResponseDto.builder()
                 .quizInfoId(quizInfo.getId())
+                .folderId(quizInfo.getFolder().getFolderId())
                 .type(quizInfo.getType())
                 .sort(quizInfo.getSort())
                 .memorization(quizInfo.getMemorization())

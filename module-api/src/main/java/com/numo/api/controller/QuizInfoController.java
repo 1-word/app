@@ -24,14 +24,14 @@ public class QuizInfoController {
     }
 
     @Operation(summary = "퀴즈 정보를 조회한다.")
-    @GetMapping("{quizInfoId}")
+    @GetMapping("/{quizInfoId}")
     public ResponseEntity<QuizInfoResponseDto> getQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                            @PathVariable("quizInfoId") Long quizInfoId) {
         return ResponseEntity.ok(quizInfoService.getQuizInfo(user.getUserId(), quizInfoId));
     }
 
     @Operation(summary = "퀴즈 정보를 삭제한다.", description = "삭제 시 연동된 퀴즈 데이터까지 모두 삭제(통계 포함)")
-    @DeleteMapping("{quizInfoId}")
+    @DeleteMapping("/{quizInfoId}")
     public ResponseEntity<Void> deleteQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                            @PathVariable("quizInfoId") Long quizInfoId) {
         quizInfoService.deleteQuizInfo(user.getUserId(), quizInfoId);
