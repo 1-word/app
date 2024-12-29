@@ -37,4 +37,8 @@ public class QuizInfo extends Timestamped {
     private int count;
 
     private boolean complete;
+
+    public void quizComplete() {
+        this.complete = true;
+    }
 }
