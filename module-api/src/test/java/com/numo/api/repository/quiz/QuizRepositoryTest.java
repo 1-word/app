@@ -1,5 +1,6 @@
 package com.numo.api.repository.quiz;
 
+import com.numo.api.domain.quiz.repository.QuizRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

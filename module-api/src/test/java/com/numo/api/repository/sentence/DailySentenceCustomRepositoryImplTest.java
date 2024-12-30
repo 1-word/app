@@ -1,11 +1,12 @@
 package com.numo.api.repository.sentence;
 
-import com.numo.api.dto.sentence.DailySentenceDto;
-import com.numo.api.dto.sentence.read.ReadDailySentenceDto;
-import com.numo.api.dto.sentence.read.ReadDailyWordDto;
-import com.numo.api.dto.sentence.search.DailySentenceParameterDto;
+import com.numo.api.domain.dailySentence.dto.DailySentenceDto;
+import com.numo.api.domain.dailySentence.dto.read.ReadDailySentenceDto;
+import com.numo.api.domain.dailySentence.dto.read.ReadDailyWordDto;
+import com.numo.api.domain.dailySentence.dto.search.DailySentenceParameterDto;
+import com.numo.api.domain.dailySentence.repository.DailySentenceRepository;
 import com.numo.domain.sentence.DailySentence;
-import com.numo.api.service.sentence.DailySentenceService;
+import com.numo.api.domain.dailySentence.DailySentenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

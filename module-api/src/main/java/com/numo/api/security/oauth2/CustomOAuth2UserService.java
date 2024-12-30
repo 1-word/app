@@ -1,10 +1,10 @@
 package com.numo.api.security.oauth2;
 
-import com.numo.api.comm.exception.CustomException;
-import com.numo.api.dto.user.UserDto;
+import com.numo.api.global.comm.exception.CustomException;
+import com.numo.api.domain.user.dto.UserDto;
 import com.numo.api.security.oauth2.info.*;
 import com.numo.api.security.service.UserDetailsImpl;
-import com.numo.api.service.user.UserService;
+import com.numo.api.domain.user.service.UserService;
 import com.numo.domain.user.Authority;
 import com.numo.domain.user.Role;
 import com.numo.domain.user.User;

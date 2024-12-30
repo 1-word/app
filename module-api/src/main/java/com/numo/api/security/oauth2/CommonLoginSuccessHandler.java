@@ -1,10 +1,10 @@
 package com.numo.api.security.oauth2;
 
-import com.numo.api.conf.PropertyConfig;
-import com.numo.api.dto.user.TokenDto;
+import com.numo.api.global.conf.PropertyConfig;
+import com.numo.api.domain.user.dto.TokenDto;
 import com.numo.api.security.jwt.TokenProvider;
 import com.numo.api.security.service.UserDetailsImpl;
-import com.numo.api.service.user.RefreshTokenService;
+import com.numo.api.domain.user.service.RefreshTokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
