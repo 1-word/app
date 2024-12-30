@@ -2,6 +2,7 @@ package com.numo.api.controller;
 
 import com.numo.api.comm.page.PageResponse;
 import com.numo.api.dto.page.PageRequestDto;
+import com.numo.api.dto.quiz.QuizQuestionDto;
 import com.numo.api.dto.quiz.QuizResponseDto;
 import com.numo.api.dto.quiz.QuizSolvedRequestDto;
 import com.numo.api.dto.quiz.QuizSolvedListRequestDto;
@@ -13,18 +14,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/quiz")
 @RestController
 @RequiredArgsConstructor
 public class QuizController {
     private final QuizService quizService;
 
-    @Operation(summary = "퀴즈를 생성한다.")
+    @Operation(summary = "퀴즈를 생성한다.", description = "폴더에 맞는 단어 데이터를 응답")
     @PostMapping("/{quizInfoId}")
-    public ResponseEntity<Void> createQuiz(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                    @PathVariable("quizInfoId") Long quizInfoId) {
-        quizService.createQuiz(user.getUserId(), quizInfoId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<List<QuizQuestionDto>> createQuiz(@AuthenticationPrincipal UserDetailsImpl user,
+                                                            @PathVariable("quizInfoId") Long quizInfoId) {
+        return ResponseEntity.ok(quizService.createQuiz(user.getUserId(), quizInfoId));
     }
 
     @Operation(summary = "퀴즈를 조회한다.")
