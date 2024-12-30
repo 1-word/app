@@ -47,6 +47,8 @@ public enum ErrorCode {
     DAILY_SENTENCE_NOT_FOUND(4000, "해당하는 오늘의 문장 데이터를 찾을 수 없습니다.", "해당하는 오늘의 문장 데이터가 없습니다"),
 
     POST_NOT_OWNED(5000, "해당 게시글에 권한이 없습니다.", "게시글에 권한이 없습니다."),
+
+    QUIZ_DATA_EXISTS(5050, "해당하는 퀴즈 데이터가 있습니다.", "해당하는 퀴즈 데이터가 있습니다."),
     ;
 
     private final int code;
