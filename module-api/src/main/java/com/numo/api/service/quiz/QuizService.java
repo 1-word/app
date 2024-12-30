@@ -5,10 +5,12 @@ import com.numo.api.comm.exception.ErrorCode;
 import com.numo.api.comm.page.PageResponse;
 import com.numo.api.dto.page.PageRequestDto;
 import com.numo.api.dto.quiz.QuizInfoResponseDto;
+import com.numo.api.dto.quiz.QuizQuestionDto;
 import com.numo.api.dto.quiz.QuizResponseDto;
 import com.numo.api.dto.quiz.QuizSolvedRequestDto;
 import com.numo.api.repository.quiz.QuizRepository;
 import com.numo.api.repository.quiz.query.QuizQueryRepository;
+import com.numo.api.repository.word.query.WordQueryRepository;
 import com.numo.domain.quiz.Quiz;
 import com.numo.domain.quiz.type.QuizSort;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +29,15 @@ public class QuizService {
     private final QuizInfoService quizInfoService;
     private final QuizRepository quizRepository;
     private final QuizQueryRepository quizQueryRepository;
+    private final WordQueryRepository wordQueryRepository;
     private int pageSize = 30;
 
-    public void createQuiz(Long userId, Long quizInfoId) {
+    /**
+     * 퀴즈 생성 조건에 따라 퀴즈를 생성한다.
+     * @param userId 유저 아이디
+     * @param quizInfoId 퀴즈 정보 아이디
+     */
+    public List<QuizQuestionDto> createQuiz(Long userId, Long quizInfoId) {
         if (quizRepository.existsByQuizInfo_Id(quizInfoId)) {
             throw new CustomException(ErrorCode.QUIZ_DATA_EXISTS);
         }
@@ -40,8 +48,29 @@ public class QuizService {
 
         // 퀴즈 생성
         createQuiz(quizInfo.sort(), quizInfoId, folderId, userId, limit);
+
+        // 퀴즈 관련 데이터 조회
+        return getQuizQuestion(folderId, userId);
     }
 
+    /**
+     * 퀴즈 문제를 만들기 위해 단어 데이터 조회
+     * @param folderId 폴더 아이디
+     * @param userId 유저 아이디
+     * @return 퀴즈 문제
+     */
+    private List<QuizQuestionDto> getQuizQuestion(Long folderId, Long userId) {
+        return wordQueryRepository.findQuizQuestion(folderId, userId);
+    }
+
+    /**
+     * 퀴즈 생성 조건에 따라 퀴즈를 생성한다.
+     * @param sort 퀴즈 생성 조건
+     * @param quizInfoId 퀴즈 정보 아이디
+     * @param folderId 폴더 아이디
+     * @param userId 유저 아이디
+     * @param limit 퀴즈 개수
+     */
     private void createQuiz(QuizSort sort, Long quizInfoId, Long folderId, Long userId, int limit) {
         switch (sort) {
             case created -> quizRepository.createQuizOrderByCreated(quizInfoId, folderId, userId, limit);
@@ -50,6 +79,13 @@ public class QuizService {
         }
     }
 
+    /**
+     * 퀴즈를 가져온다.
+     * @param userId 유저 아이디
+     * @param quizInfoId 퀴즈 정보 아이디
+     * @param pageDto 페이징 데이터
+     * @return 해당하는 퀴즈의 퀴즈 데이터
+     */
     public PageResponse<QuizResponseDto> getQuizInfo(Long userId, Long quizInfoId, PageRequestDto pageDto) {
         PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
         Slice<QuizResponseDto> quiz = quizQueryRepository.findQuizById(quizInfoId, userId, pageRequest, false);
@@ -57,12 +93,23 @@ public class QuizService {
         return new PageResponse<>(quiz);
     }
 
+    /**
+     * 단건으로 퀴즈를 풀이한다.
+     * @param userId 유저 아이디
+     * @param quizId 퀴즈 아이디
+     * @param requestDto 퀴즈 맞춤 여부
+     */
     @Transactional
     public void solveQuiz(Long userId, Long quizId, QuizSolvedRequestDto requestDto) {
         Quiz quiz = quizRepository.findQuizBy(quizId);
         quiz.setCorrect(requestDto.correct());
     }
 
+    /**
+     * 다건으로 퀴즈를 풀이한다.
+     * @param userId 유저 아이디
+     * @param requestDto 퀴즈 맞춤 여부
+     */
     @Transactional
     public void solveQuizzes(Long userId, List<QuizSolvedRequestDto> requestDto) {
         List<Long> quizIds = requestDto.stream().map(QuizSolvedRequestDto::quizId).toList();
@@ -76,6 +123,13 @@ public class QuizService {
         }
     }
 
+    /**
+     * 퀴즈 이어 풀기를 위해 안 푼 퀴즈를 가져온다
+     * @param userId 유저 아이디
+     * @param quizInfoId 퀴즈 정보 아이디
+     * @param pageDto 페이징 데이터
+     * @return 안 푼 퀴즈 데이터
+     */
     public PageResponse<QuizResponseDto> getUnsolvedQuiz(Long userId, Long quizInfoId, PageRequestDto pageDto) {
         PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
         Slice<QuizResponseDto> quiz = quizQueryRepository.findUnsolvedQuizById(quizInfoId, userId, pageRequest);
