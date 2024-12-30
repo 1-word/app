@@ -37,4 +37,9 @@ public class QuizInfoService {
         QuizInfo quizInfo = quizInfoRepository.findQuizInfo(quizInfoId, userId);
         quizInfo.quizComplete();
     }
+
+    public boolean isCompleteQuiz(Long userId, Long quizInfoId) {
+        QuizInfo quizInfo = quizInfoRepository.findQuizInfo(quizInfoId, userId);
+        return quizInfo.isComplete();
+    }
 }

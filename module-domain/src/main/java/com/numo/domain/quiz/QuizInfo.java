@@ -38,6 +38,10 @@ public class QuizInfo extends Timestamped {
 
     private boolean complete;
 
+    public QuizInfo(Long id) {
+        this.id = id;
+    }
+
     public void quizComplete() {
         this.complete = true;
     }

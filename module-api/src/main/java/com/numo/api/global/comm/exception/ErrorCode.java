@@ -49,6 +49,7 @@ public enum ErrorCode {
     POST_NOT_OWNED(5000, "해당 게시글에 권한이 없습니다.", "게시글에 권한이 없습니다."),
 
     QUIZ_DATA_EXISTS(5050, "해당하는 퀴즈 데이터가 있습니다.", "해당하는 퀴즈 데이터가 있습니다."),
+    QUIZ_NOT_FINISHED(5051, "퀴즈가 아직 진행 중 입니다. 완료 후 시도해주세요.", "퀴즈가 아직 진행 중 입니다."),
     ;
 
     private final int code;

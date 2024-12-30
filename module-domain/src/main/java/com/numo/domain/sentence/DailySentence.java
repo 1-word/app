@@ -4,15 +4,14 @@ import com.numo.domain.Timestamped;
 import com.numo.domain.sentence.dto.CreateWordDailySentenceDto;
 import com.numo.domain.sentence.dto.DailySentenceRequestDto;
 import com.numo.domain.user.User;
+import com.numo.domain.util.DateUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -100,20 +99,6 @@ public class DailySentence extends Timestamped {
         this.year = localDate.getYear();
         this.month = localDate.getMonthValue();
         this.day = localDate.getDayOfMonth();
-        this.week = getCurrentWeekOfMonth(localDate);
-    }
-
-    private int getCurrentWeekOfMonth(LocalDate localDate) {
-        // 한 주의 시작은 월요일이고, 첫 주에 4일이 포함되어있어야 첫 주 취급 (목/금/토/일)
-        WeekFields weekFields = WeekFields.of(DayOfWeek.MONDAY, 4);
-
-        int weekOfMonth = localDate.get(weekFields.weekOfMonth());
-
-        // 첫 주에 해당하지 않는 주의 경우 1주차로 계산
-        if (weekOfMonth == 0) {
-            weekOfMonth++;
-        }
-
-        return weekOfMonth;
+        this.week = DateUtil.getCurrentWeekOfMonth(localDate);
     }
 }
