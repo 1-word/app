@@ -1,9 +1,9 @@
 package com.numo.api.security.service;
 
-import com.numo.api.comm.exception.CustomException;
-import com.numo.api.comm.exception.ErrorCode;
+import com.numo.api.global.comm.exception.CustomException;
+import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.user.User;
-import com.numo.api.repository.user.UserRepository;
+import com.numo.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

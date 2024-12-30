@@ -1,8 +1,8 @@
 package com.numo.api.security.handle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.numo.api.comm.exception.ErrorCode;
-import com.numo.api.comm.response.CommonResult;
+import com.numo.api.global.comm.exception.ErrorCode;
+import com.numo.api.global.comm.response.CommonResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
