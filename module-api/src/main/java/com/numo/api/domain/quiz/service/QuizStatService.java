@@ -7,6 +7,7 @@ import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.quiz.QuizInfo;
 import com.numo.domain.quiz.QuizStat;
+import com.numo.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,21 @@ public class QuizStatService {
 
         QuizStat quizStat = QuizStat.builder()
                 .quizInfo(new QuizInfo(quizInfoId))
+                .user(User.builder().userId(userId).build())
                 .totalCount(quizResult.getTotalCount())
                 .correctCount(quizResult.getCorrectCount())
                 .wrongCount(quizResult.getWrongCount())
                 .build();
 
         return QuizStatResponseDto.of(quizStatRepository.save(quizStat));
+    }
+
+    public QuizStatResponseDto getQuizStat(Long quizStatId, Long userId) {
+        QuizStat quizStat = quizStatRepository.findQuizStatByIdAndUserId(quizStatId, userId);
+        return QuizStatResponseDto.of(quizStat);
+    }
+
+    public QuizStatResponseDto getQuizStats(Long userId) {
+        return null;
     }
 }

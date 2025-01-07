@@ -69,7 +69,3 @@ PUT localhost:8088/api/quiz-info/complete/15
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 퀴즈 통계 생성
-POST localhost:8088/api/quiz-stat/15
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}

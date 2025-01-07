@@ -1,0 +1,9 @@
+### 퀴즈 통계 생성
+POST localhost:8088/api/quiz-stat/15
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 통계 가져오기
+GET localhost:8088/api/quiz-stat/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

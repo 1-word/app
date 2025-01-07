@@ -10,10 +10,6 @@ public record QuizStatResponseDto(
         int totalCount,
         int correctCount,
         int wrongCount,
-        int year,
-        int month,
-        int day,
-        int week,
         String createTime,
         String updateTime
 ) {
@@ -23,12 +19,8 @@ public record QuizStatResponseDto(
                 .totalCount(quizStat.getTotalCount())
                 .correctCount(quizStat.getCorrectCount())
                 .wrongCount(quizStat.getWrongCount())
-                .year(quizStat.getYear())
-                .month(quizStat.getMonth())
-                .day(quizStat.getDay())
-                .week(quizStat.getWeek())
-                .createTime(Timestamped.getTimeString(quizStat.getCreateTime()))
-                .updateTime(Timestamped.getTimeString(quizStat.getUpdateTime()))
+                .createTime(Timestamped.getFormatTime(quizStat.getCreateTime(), "yyyy-MM-dd hh:mm:ss"))
+                .updateTime(Timestamped.getFormatTime(quizStat.getUpdateTime(), "yyyy-MM-dd hh:mm:ss"))
                 .build();
     }
 }
