@@ -1,23 +1,22 @@
 package com.numo.api.domain.wordbook.word.repository.query;
 
+import com.numo.api.domain.dailySentence.dto.DailyWordDto;
+import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
+import com.numo.api.domain.dailySentence.dto.wordDailySentence.DailyWordDetailDto;
+import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
+import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
+import com.numo.api.domain.wordbook.word.dto.WordDto;
+import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.global.comm.page.PageUtil;
 import com.numo.domain.word.QWord;
 import com.numo.domain.word.detail.QWordDetail;
 import com.numo.domain.word.sound.type.GttsCode;
 import com.numo.domain.word.type.ReadType;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
-import com.numo.api.domain.dailySentence.dto.DailyWordDto;
-import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
-import com.numo.api.domain.dailySentence.dto.wordDailySentence.DailyWordDetailDto;
-import com.numo.api.domain.wordbook.word.dto.WordDto;
-import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
-import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -175,7 +174,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .from(qWord)
                 .where(
                         qWord.user.userId.eq(userId),
-                        createOrConditionWith(words, qWord.word)
+                        qWord.word.in(words)
                 )
                 .fetch();
 
@@ -218,23 +217,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         }
 
         return gtWordId(lastWordId);
-    }
-
-    /**
-     * 해당 필드에 대한 or 조건문을 만든다.
-     * @param input 문자열 리스트
-     * @return 해당 필드에 대한 or 조건문
-     */
-    private BooleanExpression createOrConditionWith(List<String> input, StringPath field) {
-        BooleanExpression result = null;
-        for (String s : input) {
-            if (result == null) {
-                result = field.eq(s);
-                continue;
-            }
-            result = result.or(field.eq(s));
-        }
-        return result;
     }
 
     /**
@@ -287,8 +269,8 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .leftJoin(qWordDetail.word)
                 .where(
                         qWordDetail.word.user.userId.eq(userId),
-                        createOrConditionWith(words, qWordDetail.title)
-                                .or(createOrConditionWith(words, qWordDetail.content))
+                        qWordDetail.title.in(words)
+                                .or(qWordDetail.content.in(words))
                 )
                 .fetch();
     }
