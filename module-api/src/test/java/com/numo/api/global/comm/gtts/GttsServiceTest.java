@@ -17,8 +17,8 @@ class GttsServiceTest {
     @Test
     void saveAudio() {
 
-        Gtts gtts = new Gtts("color", "en", "/Users/hyun/Projects/wordApp/tmp/color.mp3");
-        Gtts gtts1 = new Gtts("색, 색상", "ko", "/Users/hyun/Projects/wordApp/tmp/color_mean.mp3");
+        Gtts gtts = new Gtts("color", "en", "/usr/src/app/data/sound/color.mp3");
+        Gtts gtts1 = new Gtts("색, 색상", "ko", "/usr/src/app/data/sound/color_mean.mp3");
 
         gttsService.saveAudio(gtts);
 

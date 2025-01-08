@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GttsService {
 
-    @Value("${cstm.gtts-api}")
+    @Value("${cstm.gtts.url}")
     private String gttsAPIServerUrl;
 
     public void saveAudio(Gtts request) {

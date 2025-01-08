@@ -38,4 +38,6 @@ cstm:
     program: ${PROCESS_BUILDER_PROGRAM}
   file:
     path: ${FILE_PATH}
-  gtts-api: ${GTTS_API}
+  gtts:
+    url: ${GTTS_API}
+    path: ${GTTS_PATH}

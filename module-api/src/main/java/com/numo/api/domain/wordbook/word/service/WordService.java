@@ -53,7 +53,7 @@ public class WordService {
         this.wordRepository = wordRepository;
         this.soundRepository = soundRepository;
         this.folderService = folderService;
-        this.path = propertyConfig.getStoragePath();
+        this.path = propertyConfig.getGttsPath();
         this.gttsService = gttsService;
     }
 
@@ -194,7 +194,7 @@ public class WordService {
     @Transactional(propagation = Propagation.NEVER)
     public void createSoundFile(String wordName, String gttsType){
         String lang = GttsCode.valueOf(gttsType).getTTS();
-        String savePath = path + "/sound/" + wordName + ".mp3";
+        String savePath = path + "/" + wordName + ".mp3";
         Gtts gtts = new Gtts(wordName, lang, savePath);
 
         gttsService.saveAudio(gtts);

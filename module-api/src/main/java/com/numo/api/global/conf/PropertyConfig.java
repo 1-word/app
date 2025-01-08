@@ -17,19 +17,14 @@ public class PropertyConfig {
     private String clientHost;
     @Value("${CORS_URL}")
     private String corsUrl;
+    @Value("${cstm.gtts.path}")
+    private String gttsPath;
 
     public String getProcessPath() {
         if (processPath.endsWith("/")) {
             return processPath.substring(0, processPath.length() - 2);
         }
         return processPath;
-    }
-
-    public String getStoragePath() {
-        if (storagePath.endsWith("/")) {
-            return storagePath.substring(0, storagePath.length() - 1);
-        }
-        return storagePath;
     }
 
     public String getPathWithEndFileSeparation() {
