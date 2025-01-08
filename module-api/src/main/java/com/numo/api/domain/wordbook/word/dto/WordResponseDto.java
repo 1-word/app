@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.word.dto;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.word.Word;
 import com.numo.domain.word.detail.WordDetail;
 import com.numo.domain.word.folder.Folder;

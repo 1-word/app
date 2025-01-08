@@ -1,6 +1,7 @@
 package com.numo.domain.sentence;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.BaseDate;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.sentence.dto.CreateWordDailySentenceDto;
 import com.numo.domain.sentence.dto.DailySentenceRequestDto;
 import com.numo.domain.user.User;
@@ -10,9 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +37,9 @@ public class DailySentence extends Timestamped {
     private String tagSentence;
 
     private String mean;
-    private int year;
-    private int month;
-    private int week;
-    private int day;
+
+    @Embedded
+    private BaseDate baseDate;
 
     @Builder
     public DailySentence(Long dailySentenceId, User user, String sentence, String mean) {
@@ -50,7 +47,7 @@ public class DailySentence extends Timestamped {
         this.user = user;
         this.sentence = sentence;
         this.mean = mean;
-        setDate();
+        this.baseDate = new BaseDate();
     }
 
     public void setTagSentence(String tagSentence) {
@@ -95,25 +92,4 @@ public class DailySentence extends Timestamped {
         }
     }
 
-    private void setDate() {
-        LocalDate localDate = LocalDate.now();
-        this.year = localDate.getYear();
-        this.month = localDate.getMonthValue();
-        this.day = localDate.getDayOfMonth();
-        this.week = getCurrentWeekOfMonth(localDate);
-    }
-
-    private int getCurrentWeekOfMonth(LocalDate localDate) {
-        // 한 주의 시작은 월요일이고, 첫 주에 4일이 포함되어있어야 첫 주 취급 (목/금/토/일)
-        WeekFields weekFields = WeekFields.of(DayOfWeek.MONDAY, 4);
-
-        int weekOfMonth = localDate.get(weekFields.weekOfMonth());
-
-        // 첫 주에 해당하지 않는 주의 경우 1주차로 계산
-        if (weekOfMonth == 0) {
-            weekOfMonth++;
-        }
-
-        return weekOfMonth;
-    }
 }

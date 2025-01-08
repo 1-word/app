@@ -2,7 +2,7 @@ package com.numo.api.domain.wordbook.word.dto.read;
 
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import lombok.Builder;
 
 import java.util.List;

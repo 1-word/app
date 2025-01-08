@@ -63,3 +63,9 @@ Authorization: Bearer {{accessToken}}
 GET localhost:8088/api/quiz/continue/{{quizInfoId}}?current=0
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 퀴즈 완료
+PUT localhost:8088/api/quiz-info/complete/15
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+

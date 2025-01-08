@@ -1,6 +1,6 @@
 package com.numo.api.domain.quiz.dto.quizInfo;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.QuizInfo;
 import com.numo.domain.quiz.type.QuizSort;
 import com.numo.domain.quiz.type.QuizType;

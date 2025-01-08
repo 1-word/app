@@ -1,6 +1,6 @@
 package com.numo.domain.user;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.file.File;
 import com.numo.domain.user.dto.UpdateUserDto;
 import jakarta.persistence.*;

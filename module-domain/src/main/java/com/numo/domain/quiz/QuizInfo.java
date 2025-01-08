@@ -1,6 +1,6 @@
 package com.numo.domain.quiz;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.type.QuizSort;
 import com.numo.domain.quiz.type.QuizType;
 import com.numo.domain.user.User;
@@ -37,6 +37,10 @@ public class QuizInfo extends Timestamped {
     private int count;
 
     private boolean complete;
+
+    public QuizInfo(Long id) {
+        this.id = id;
+    }
 
     public void quizComplete() {
         this.complete = true;

@@ -1,0 +1,19 @@
+### 퀴즈 통계 생성
+POST localhost:8088/api/quiz-stat/15
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 통계 조회
+GET localhost:8088/api/quiz-stat/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 통계 리스트 조회
+GET localhost:8088/api/quiz-stat?year=2025&month=1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 통계 삭제
+DELETE localhost:8088/api/quiz-stat/4
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

@@ -39,7 +39,7 @@ public class QuizInfoController {
     }
 
     @Operation(summary = "퀴즈 완료")
-    @PostMapping("/complete/{quizInfoId}")
+    @PutMapping("/complete/{quizInfoId}")
     public ResponseEntity<Void> completeQuiz(@AuthenticationPrincipal UserDetailsImpl user,
                                              @PathVariable("quizInfoId") Long quizInfoId) {
         quizInfoService.completeQuiz(user.getUserId(), quizInfoId);

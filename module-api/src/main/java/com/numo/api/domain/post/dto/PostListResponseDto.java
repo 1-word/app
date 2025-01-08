@@ -1,6 +1,6 @@
 package com.numo.api.domain.post.dto;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 
 import java.time.LocalDateTime;
 

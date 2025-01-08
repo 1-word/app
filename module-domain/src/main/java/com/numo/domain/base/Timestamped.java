@@ -1,4 +1,4 @@
-package com.numo.domain;
+package com.numo.domain.base;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -35,7 +35,7 @@ public abstract class Timestamped {
         return getFormatTime(time, "yyyy-MM-dd");
     }
 
-    private static String getFormatTime(LocalDateTime time, String format) {
+    public static String getFormatTime(LocalDateTime time, String format) {
         return time.format(DateTimeFormatter.ofPattern(format));
     }
 

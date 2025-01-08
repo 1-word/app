@@ -3,7 +3,7 @@ package com.numo.api.domain.dailySentence;
 import com.numo.domain.sentence.dto.DailySentenceRequestDto;
 import com.numo.api.domain.dailySentence.dto.DailySentenceDto;
 import com.numo.api.domain.dailySentence.dto.read.ReadDailySentenceDto;
-import com.numo.api.domain.dailySentence.dto.search.DailySentenceParameterDto;
+import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.WordDailySentenceDto;
 import com.numo.api.security.service.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +30,7 @@ public class DailySentenceController {
     @Operation(summary = "오늘의 문장 리스트 조회", description = "오늘의 문장 리스트를 조회한다")
     @GetMapping
     public ResponseEntity<List<ReadDailySentenceDto>> getSentence(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                  DailySentenceParameterDto parameterDto) {
+                                                                  DateRequestDto parameterDto) {
         return ResponseEntity.ok(dailySentenceService.getSentenceBy(user.getUserId(), parameterDto));
     }
 
@@ -44,7 +44,7 @@ public class DailySentenceController {
     @Operation(summary = "오늘의 문장 날짜 리스트 조회", description = "년도, 월에 해당하는 저장된 오늘의 문장 데이터의 날짜를 계산한다.")
     @GetMapping("/days")
     public ResponseEntity<List<Integer>> getSentenceDaysByYearAndMonth(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                 DailySentenceParameterDto parameterDto) {
+                                                                 DateRequestDto parameterDto) {
        return ResponseEntity.ok(dailySentenceService.getSentenceDaysByYearAndMonth(user.getUserId(), parameterDto));
     }
 

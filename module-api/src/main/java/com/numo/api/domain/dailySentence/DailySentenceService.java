@@ -9,7 +9,7 @@ import com.numo.api.domain.dailySentence.dto.DailyWordDto;
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
 import com.numo.api.domain.dailySentence.dto.read.ReadDailySentenceDto;
 import com.numo.api.domain.dailySentence.dto.read.ReadDailyWordDto;
-import com.numo.api.domain.dailySentence.dto.search.DailySentenceParameterDto;
+import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.DailyWordDetailDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.WordDailySentenceDto;
 import com.numo.api.domain.dailySentence.repository.DailySentenceRepository;
@@ -51,7 +51,7 @@ public class DailySentenceService {
      * @param parameterDto 년도, 달, 월, 주
      * @return 연도, 월, 주, 일별 문장 데이터
      */
-    public List<ReadDailySentenceDto> getSentenceBy(Long userId, DailySentenceParameterDto parameterDto) {
+    public List<ReadDailySentenceDto> getSentenceBy(Long userId, DateRequestDto parameterDto) {
         List<DailySentenceDto> dailySentences = dailySentenceRepository.findDailySentencesBy(userId, parameterDto);
         List<Long> sentenceIds = dailySentences.stream().map(DailySentenceDto::dailySentenceId).toList();
         List<ReadDailyWordDto> dailyWords = dailySentenceRepository.findDailyWordsBy(sentenceIds);
@@ -108,7 +108,7 @@ public class DailySentenceService {
         dailySentenceRepository.delete(dailySentence);
     }
 
-    public List<Integer> getSentenceDaysByYearAndMonth(Long userId, DailySentenceParameterDto parameterDto) {
+    public List<Integer> getSentenceDaysByYearAndMonth(Long userId, DateRequestDto parameterDto) {
         return dailySentenceRepository.findDailySentenceDays(userId, parameterDto);
     }
 

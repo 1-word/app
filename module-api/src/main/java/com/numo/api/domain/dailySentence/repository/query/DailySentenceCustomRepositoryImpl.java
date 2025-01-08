@@ -2,13 +2,12 @@ package com.numo.api.domain.dailySentence.repository.query;
 
 import com.numo.api.domain.dailySentence.dto.DailySentenceDto;
 import com.numo.api.domain.dailySentence.dto.read.ReadDailyWordDto;
-import com.numo.api.domain.dailySentence.dto.search.DailySentenceParameterDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.WordDailySentenceDto;
+import com.numo.api.global.comm.date.DateCondition;
+import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.domain.sentence.QDailySentence;
 import com.numo.domain.sentence.QWordDailySentence;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -23,12 +22,12 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
      * 연도, 월, 일, 주별 문장 데이터 조회
      * parameterDto에 값이 없으면 해당하는 모든 유저 문장 데이터를 조회
      *
-     * @param userId 유저 아이디
+     * @param userId       유저 아이디
      * @param parameterDto 연도, 월, 일, 주별 데이터
      * @return 조회된 연도, 월, 일, 주별 문장 데이터 조회
      */
     @Override
-    public List<DailySentenceDto> findDailySentencesBy(Long userId, DailySentenceParameterDto parameterDto) {
+    public List<DailySentenceDto> findDailySentencesBy(Long userId, DateRequestDto parameterDto) {
         List<DailySentenceDto> result = queryFactory.select(
                         Projections.constructor(
                                 DailySentenceDto.class,
@@ -36,68 +35,38 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                                 qDailySentence.sentence,
                                 qDailySentence.tagSentence,
                                 qDailySentence.mean,
-                                qDailySentence.year,
-                                qDailySentence.month,
-                                qDailySentence.week,
-                                qDailySentence.day,
+                                qDailySentence.baseDate.year,
+                                qDailySentence.baseDate.month,
+                                qDailySentence.baseDate.week,
+                                qDailySentence.baseDate.day,
                                 qDailySentence.createTime,
                                 qDailySentence.updateTime
                         ))
                 .from(qDailySentence)
                 .where(
                         qDailySentence.user.userId.eq(userId),
-                        createDailySentenceCondition(parameterDto)
+                        DateCondition.createDateCondition(qDailySentence.baseDate, parameterDto)
                 )
                 .fetch();
         return result;
     }
 
     /**
-     * 파라미터에 해당하는 쿼리 조건문을 만든다
-     * @param parameterDto 조건문에 들어갈 필드 값
-     * @return 파라미터에 해당하는 쿼리 조건문
-     */
-    private BooleanExpression createDailySentenceCondition(DailySentenceParameterDto parameterDto) {
-        BooleanExpression result = Expressions.asString("1").eq("1");
-        Integer year = parameterDto.year();
-        Integer month = parameterDto.month();
-        Integer day = parameterDto.day();
-        Integer week = parameterDto.week();
-
-        if (year != null) {
-            result = result.and(qDailySentence.year.eq(year));
-        }
-
-        if (month != null) {
-            result = result.and(qDailySentence.month.eq(month));
-        }
-
-        if (day != null) {
-            result = result.and(qDailySentence.day.eq(day));
-        }
-
-        if (week != null) {
-            result = result.and(qDailySentence.week.eq(week));
-        }
-
-        return result;
-    }
-
-    /**
      * 문장 고유번호 리스트에 연관된 단어 조회
+     *
      * @param sentenceIds 문장 고유번호 리스트
      * @return 문장 고유번호 리스트에 연관된 단어 데이터
      */
     public List<ReadDailyWordDto> findDailyWordsBy(List<Long> sentenceIds) {
         QWordDailySentence qWordDailySentence = QWordDailySentence.wordDailySentence;
         List<ReadDailyWordDto> result = queryFactory.select(Projections.constructor(
-                ReadDailyWordDto.class,
-                qWordDailySentence.dailySentence.dailySentenceId,
-                qWordDailySentence.word.wordId,
-                qWordDailySentence.word.word,
-                qWordDailySentence.word.mean,
-                qWordDailySentence.word.folder.folderId,
-                qWordDailySentence.word.folder.folderName
+                        ReadDailyWordDto.class,
+                        qWordDailySentence.dailySentence.dailySentenceId,
+                        qWordDailySentence.word.wordId,
+                        qWordDailySentence.word.word,
+                        qWordDailySentence.word.mean,
+                        qWordDailySentence.word.folder.folderId,
+                        qWordDailySentence.word.folder.folderName
                 ))
                 .from(qWordDailySentence)
                 .leftJoin(qWordDailySentence.word)
@@ -109,15 +78,15 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
     }
 
     @Override
-    public List<Integer> findDailySentenceDays(Long userId, DailySentenceParameterDto parameterDto) {
+    public List<Integer> findDailySentenceDays(Long userId, DateRequestDto parameterDto) {
         return queryFactory.selectDistinct(Projections.constructor(
-                Integer.class,
-                qDailySentence.day
+                        Integer.class,
+                        qDailySentence.baseDate.day
                 )).from(qDailySentence)
                 .where(
                         qDailySentence.user.userId.eq(userId),
-                        qDailySentence.year.eq(parameterDto.year()),
-                        qDailySentence.month.eq(parameterDto.month())
+                        qDailySentence.baseDate.year.eq(parameterDto.year()),
+                        qDailySentence.baseDate.month.eq(parameterDto.month())
                 ).fetch();
     }
 
