@@ -25,6 +25,13 @@ public class PropertyConfig {
         return processPath;
     }
 
+    public String getStoragePath() {
+        if (storagePath.endsWith("/")) {
+            return storagePath.substring(0, storagePath.length() - 1);
+        }
+        return storagePath;
+    }
+
     public String getPathWithEndFileSeparation() {
         if (storagePath.endsWith("/")) {
             return storagePath.substring(0, storagePath.length()-1);
