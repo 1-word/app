@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public interface QuizStatRepository extends JpaRepository<QuizStat, Long> {
 
+    boolean existsByQuizInfo_Id(Long quizInfoId);
+
     @Query(value = "select " +
             "    count(*) as totalCount, " +
             "    count(case when correct = 1 then 1 end) as correctCount, " +

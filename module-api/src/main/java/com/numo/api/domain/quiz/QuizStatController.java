@@ -2,11 +2,14 @@ package com.numo.api.domain.quiz;
 
 import com.numo.api.domain.quiz.dto.QuizStatResponseDto;
 import com.numo.api.domain.quiz.service.QuizStatService;
+import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.api.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/quiz-stat")
 @RestController
@@ -27,7 +30,15 @@ public class QuizStatController {
     }
 
     @GetMapping
-    public ResponseEntity<QuizStatResponseDto> getQuizStats(@AuthenticationPrincipal UserDetailsImpl user) {
-        return ResponseEntity.ok(quizStatService.getQuizStats(user.getUserId()));
+    public ResponseEntity<List<QuizStatResponseDto>> getQuizStats(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                  DateRequestDto dateRequest) {
+        return ResponseEntity.ok(quizStatService.getQuizStatList(user.getUserId(), dateRequest));
+    }
+
+    @DeleteMapping("/{quizStatId}")
+    public ResponseEntity<Void> deleteQuizStat(@AuthenticationPrincipal UserDetailsImpl user,
+                                               @PathVariable("quizStatId") Long quizStatId) {
+        quizStatService.deleteQuizStat(user.getUserId(), quizStatId);
+        return ResponseEntity.noContent().build();
     }
 }
