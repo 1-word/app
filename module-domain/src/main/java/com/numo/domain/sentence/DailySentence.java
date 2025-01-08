@@ -1,17 +1,16 @@
 package com.numo.domain.sentence;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.BaseDate;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.sentence.dto.CreateWordDailySentenceDto;
 import com.numo.domain.sentence.dto.DailySentenceRequestDto;
 import com.numo.domain.user.User;
-import com.numo.domain.util.DateUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,10 +37,9 @@ public class DailySentence extends Timestamped {
     private String tagSentence;
 
     private String mean;
-    private int year;
-    private int month;
-    private int week;
-    private int day;
+
+    @Embedded
+    private BaseDate baseDate;
 
     @Builder
     public DailySentence(Long dailySentenceId, User user, String sentence, String mean) {
@@ -49,7 +47,7 @@ public class DailySentence extends Timestamped {
         this.user = user;
         this.sentence = sentence;
         this.mean = mean;
-        setDate();
+        this.baseDate = new BaseDate();
     }
 
     public void setTagSentence(String tagSentence) {
@@ -94,11 +92,4 @@ public class DailySentence extends Timestamped {
         }
     }
 
-    private void setDate() {
-        LocalDate localDate = LocalDate.now();
-        this.year = localDate.getYear();
-        this.month = localDate.getMonthValue();
-        this.day = localDate.getDayOfMonth();
-        this.week = DateUtil.getCurrentWeekOfMonth(localDate);
-    }
 }

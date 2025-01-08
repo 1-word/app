@@ -3,7 +3,7 @@ package com.numo.api.repository.sentence;
 import com.numo.api.domain.dailySentence.dto.DailySentenceDto;
 import com.numo.api.domain.dailySentence.dto.read.ReadDailySentenceDto;
 import com.numo.api.domain.dailySentence.dto.read.ReadDailyWordDto;
-import com.numo.api.domain.dailySentence.dto.search.DailySentenceParameterDto;
+import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.api.domain.dailySentence.repository.DailySentenceRepository;
 import com.numo.domain.sentence.DailySentence;
 import com.numo.api.domain.dailySentence.DailySentenceService;
@@ -26,7 +26,7 @@ class DailySentenceCustomRepositoryImplTest {
     @Test
     void findDailySentencesBy() {
         Long userId = 2L;
-        DailySentenceParameterDto dto = new DailySentenceParameterDto(
+        DateRequestDto dto = new DateRequestDto(
                 null,
                 null,
                 null,
@@ -47,7 +47,7 @@ class DailySentenceCustomRepositoryImplTest {
     @Test
     void getSentenceBy() {
         Long userId = 2L;
-        DailySentenceParameterDto dto = new DailySentenceParameterDto(
+        DateRequestDto dto = new DateRequestDto(
                 null,
                 null,
                 null,
