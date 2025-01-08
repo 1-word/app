@@ -15,11 +15,12 @@ public class QuizStat extends Timestamped {
     @Column(name = "quiz_stat_id")
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "quiz_info_id")
     QuizInfo quizInfo;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     private int totalCount;
