@@ -1,11 +1,10 @@
 package com.numo.domain.quiz;
 
-import com.numo.domain.Timestamped;
-import com.numo.domain.util.DateUtil;
+import com.numo.domain.base.Timestamped;
+import com.numo.domain.user.User;
+import com.numo.domain.base.BaseDate;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -20,30 +19,25 @@ public class QuizStat extends Timestamped {
     @JoinColumn(name = "quiz_info_id")
     QuizInfo quizInfo;
 
+    @OneToOne
+    private User user;
+
     private int totalCount;
     private int correctCount;
     private int wrongCount;
 
-    private int year;
-    private int month;
-    private int week;
-    private int day;
+    @Embedded
+    private BaseDate baseDate;
 
     @Builder
-    public QuizStat(Long id, QuizInfo quizInfo, int totalCount, int correctCount, int wrongCount) {
+    public QuizStat(Long id, QuizInfo quizInfo, int totalCount, int correctCount, int wrongCount, User user) {
         this.id = id;
         this.quizInfo = quizInfo;
         this.totalCount = totalCount;
         this.correctCount = correctCount;
         this.wrongCount = wrongCount;
-        setDate();
+        this.user = user;
+        this.baseDate = new BaseDate();
     }
 
-    private void setDate() {
-        LocalDate localDate = LocalDate.now();
-        this.year = localDate.getYear();
-        this.month = localDate.getMonthValue();
-        this.day = localDate.getDayOfMonth();
-        this.week = DateUtil.getCurrentWeekOfMonth(localDate);
-    }
 }

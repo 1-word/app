@@ -1,6 +1,6 @@
 package com.numo.domain.post;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;

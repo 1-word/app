@@ -1,6 +1,6 @@
 package com.numo.domain.word.detail;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.word.Word;
 import com.numo.domain.word.detail.dto.UpdateWordDetailDto;
 import jakarta.persistence.*;

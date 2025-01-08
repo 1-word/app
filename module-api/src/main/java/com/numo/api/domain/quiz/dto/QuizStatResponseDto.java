@@ -1,6 +1,6 @@
 package com.numo.api.domain.quiz.dto;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.QuizStat;
 import lombok.Builder;
 

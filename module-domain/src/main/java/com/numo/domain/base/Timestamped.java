@@ -1,4 +1,4 @@
-package com.numo.domain;
+package com.numo.domain.base;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

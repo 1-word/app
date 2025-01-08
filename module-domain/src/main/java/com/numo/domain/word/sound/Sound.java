@@ -1,6 +1,6 @@
 package com.numo.domain.word.sound;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import lombok.*;
 
 import jakarta.persistence.*;

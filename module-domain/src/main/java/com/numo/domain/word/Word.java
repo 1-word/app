@@ -1,6 +1,6 @@
 package com.numo.domain.word;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import com.numo.domain.sentence.WordDailySentence;
 import com.numo.domain.user.User;
 import com.numo.domain.word.detail.WordDetail;
@@ -13,7 +13,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,7 +50,7 @@ public class Word extends Timestamped {
     private Folder folder;
 
     @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WordDetail> wordDetails = new ArrayList<>();
+    private List<WordDetail> wordDetails;
 
     // 오늘의 문장 추가
     @OneToMany(mappedBy = "word")
