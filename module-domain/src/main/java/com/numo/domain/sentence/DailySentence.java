@@ -31,9 +31,10 @@ public class DailySentence extends Timestamped {
     @OneToMany(mappedBy = "dailySentence", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDailySentence> wordDailySentences;
 
+    @Column(columnDefinition="VARCHAR(1000)")
     private String sentence;
 
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition="VARCHAR(2000)")
     private String tagSentence;
 
     private String mean;

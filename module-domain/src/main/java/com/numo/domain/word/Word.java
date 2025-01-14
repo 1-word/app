@@ -53,7 +53,7 @@ public class Word extends Timestamped {
     private List<WordDetail> wordDetails;
 
     // 오늘의 문장 추가
-    @OneToMany(mappedBy = "word")
+    @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDailySentence> wordDailySentences;
 
     public Word(Long wordId) {
