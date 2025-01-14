@@ -17,6 +17,8 @@ public class PropertyConfig {
     private String clientHost;
     @Value("${CORS_URL}")
     private String corsUrl;
+    @Value("${cstm.gtts.path}")
+    private String gttsPath;
 
     public String getProcessPath() {
         if (processPath.endsWith("/")) {

@@ -5,7 +5,7 @@ Authorization: Bearer {{accessToken}}
 
 {
   "folderId": 6,
-  "word": "rasdf",
+  "word": "color",
   "mean": "mean",
   "read": "read",
   "memo": "memo",

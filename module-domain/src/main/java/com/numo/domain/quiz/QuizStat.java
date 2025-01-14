@@ -1,22 +1,25 @@
 package com.numo.domain.quiz;
 
+import com.numo.domain.base.BaseDate;
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.user.User;
-import com.numo.domain.base.BaseDate;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class QuizStat extends Timestamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "quiz_stat_id")
+    @Column(name = "quiz_info_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_info_id")
+    @MapsId
     QuizInfo quizInfo;
 
     @ManyToOne

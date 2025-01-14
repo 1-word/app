@@ -19,6 +19,13 @@ spring:
     username: ${DB_USERNAME}
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?characterEncoding=UTF-8&serverTimezone=UTC
 
+  datasource-meta:
+    password: ${META_DB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: ${META_DB_USERNAME}
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/${META_DB_DATABASE}?characterEncoding=UTF-8&serverTimezone=UTC
+
+
 server:
   servlet:
     context-path: /api
@@ -38,3 +45,6 @@ cstm:
     program: ${PROCESS_BUILDER_PROGRAM}
   file:
     path: ${FILE_PATH}
+  gtts:
+    url: ${GTTS_API}
+    path: ${GTTS_PATH}

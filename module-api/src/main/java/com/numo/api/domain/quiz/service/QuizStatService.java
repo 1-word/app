@@ -10,6 +10,7 @@ import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.quiz.QuizInfo;
 import com.numo.domain.quiz.QuizStat;
 import com.numo.domain.user.User;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class QuizStatService {
     private final QuizStatRepository quizStatRepository;
     private final QuizInfoService quizInfoService;
     private final QuizStatQueryRepository quizStatQueryRepository;
+    private final EntityManager entityManager;
 
     /**
      * 통계 데이터를 생성한다
@@ -39,8 +41,10 @@ public class QuizStatService {
         
         QuizResultDto quizResult = quizStatRepository.findQuiz(quizInfoId, userId);
 
+        QuizInfo quizInfo = entityManager.getReference(QuizInfo.class, quizInfoId);
+
         QuizStat quizStat = QuizStat.builder()
-                .quizInfo(new QuizInfo(quizInfoId))
+                .quizInfo(quizInfo)
                 .user(User.builder().userId(userId).build())
                 .totalCount(quizResult.getTotalCount())
                 .correctCount(quizResult.getCorrectCount())

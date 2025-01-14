@@ -65,7 +65,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 완료
-PUT localhost:8088/api/quiz-info/complete/15
+PUT localhost:8088/api/quiz-info/complete/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

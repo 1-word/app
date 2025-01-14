@@ -1,35 +1,37 @@
 package com.numo.api.domain.wordbook.word.service;
 
+import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
+import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
+import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
+import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
 import com.numo.api.domain.wordbook.folder.service.FolderService;
+import com.numo.api.domain.wordbook.sound.repository.SoundRepository;
+import com.numo.api.domain.wordbook.word.dto.WordDto;
+import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
+import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
+import com.numo.api.domain.wordbook.word.dto.read.ReadWordListResponseDto;
+import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
+import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
+import com.numo.api.domain.wordbook.word.repository.WordRepository;
+import com.numo.api.domain.wordbook.word.service.update.UpdateFactory;
+import com.numo.api.domain.wordbook.word.service.update.UpdateWord;
+import com.numo.api.global.comm.exception.CustomException;
+import com.numo.api.global.comm.exception.ErrorCode;
+import com.numo.api.global.comm.gtts.Gtts;
+import com.numo.api.global.comm.gtts.GttsService;
+import com.numo.api.global.comm.page.PageDto;
+import com.numo.api.global.comm.page.PageRequestDto;
+import com.numo.api.global.conf.PropertyConfig;
 import com.numo.domain.word.Word;
 import com.numo.domain.word.dto.UpdateWordDto;
 import com.numo.domain.word.sound.Sound;
 import com.numo.domain.word.sound.type.GttsCode;
 import com.numo.domain.word.type.UpdateType;
-import com.numo.api.global.comm.exception.CustomException;
-import com.numo.api.global.comm.exception.ErrorCode;
-import com.numo.api.global.comm.util.ProcessBuilderUtil;
-import com.numo.api.global.conf.PropertyConfig;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
-import com.numo.api.global.comm.page.PageDto;
-import com.numo.api.global.comm.page.PageRequestDto;
-import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
-import com.numo.api.domain.wordbook.word.dto.WordDto;
-import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
-import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
-import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
-import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
-import com.numo.api.domain.wordbook.word.dto.read.ReadWordListResponseDto;
-import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
-import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
-import com.numo.api.domain.wordbook.word.repository.WordRepository;
-import com.numo.api.domain.wordbook.sound.repository.SoundRepository;
-import com.numo.api.domain.wordbook.word.service.update.UpdateFactory;
-import com.numo.api.domain.wordbook.word.service.update.UpdateWord;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -41,15 +43,18 @@ public class WordService {
     private final SoundRepository soundRepository;
     private final FolderService folderService;
     private final String path;
+    private final GttsService gttsService;
 
     public WordService(WordRepository wordRepository,
                        SoundRepository soundRepository,
                        FolderService folderService,
-                       PropertyConfig propertyConfig) {
+                       PropertyConfig propertyConfig,
+                       GttsService gttsService) {
         this.wordRepository = wordRepository;
         this.soundRepository = soundRepository;
         this.folderService = folderService;
-        this.path = propertyConfig.getProcessPath();
+        this.path = propertyConfig.getGttsPath();
+        this.gttsService = gttsService;
     }
 
     /**
@@ -75,10 +80,14 @@ public class WordService {
         Sound sound = soundRepository.findByWord(requestDto.word());
 
         if (sound == null) {
-            soundId = createSoundFile(wordName, gttsType);
-        } else {
-            soundId = sound.getSoundId();
+            createSoundFile(wordName, gttsType);
+            // sound 테이블에 데이터 insert
+            sound = Sound.builder()
+                    .word(wordName)
+                    .build();
+            sound = soundRepository.save(sound);
         }
+        soundId = sound.getSoundId();
 
         Word word = requestDto.toEntity(userId, gttsType, soundId);
         word.setWordDetails();
@@ -182,23 +191,13 @@ public class WordService {
      * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
      * @param wordName 단어명
      * */
-    @Transactional
-    public Long createSoundFile(String wordName, String gttsType){
-        int code = new ProcessBuilderUtil(path, wordName, GttsCode.valueOf(gttsType).getTTS()).run();
+    @Transactional(propagation = Propagation.NEVER)
+    public void createSoundFile(String wordName, String gttsType){
+        String lang = GttsCode.valueOf(gttsType).getTTS();
+        String savePath = path + "/" + wordName + ".mp3";
+        Gtts gtts = new Gtts(wordName, lang, savePath);
 
-        // 파일생성 실패 시
-        if (code < 0) {
-            throw new CustomException(ErrorCode.SOUND_CANNOT_CREATED);
-        }
-
-        // sound 테이블에 데이터 insert
-        Sound sound = Sound.builder()
-                .word(wordName)
-                .build();
-
-        sound = soundRepository.save(sound);
-
-        return sound.getSoundId();
+        gttsService.saveAudio(gtts);
     }
 
     public Map<Long, FolderInWordCountDto> getFolderInWordCount(Long userId) {
