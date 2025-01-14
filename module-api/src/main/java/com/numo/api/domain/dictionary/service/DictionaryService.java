@@ -2,8 +2,8 @@ package com.numo.api.domain.dictionary.service;
 
 import com.numo.api.domain.dictionary.dto.DictionaryCrawlingDto;
 import com.numo.api.domain.dictionary.dto.DictionaryDto;
-import com.numo.domain.dictionary.Dictionary;
 import com.numo.api.domain.dictionary.repository.DictionaryRepository;
+import com.numo.domain.dictionary.Dictionary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -89,5 +89,9 @@ public class DictionaryService {
 
         Dictionary dictionary = dictionaryDto.toEntity(mean, "Y");
         return DictionaryDto.of(dictionaryRepository.save(dictionary));
+    }
+
+    public List<DictionaryDto> searchWordListDB(String searchText) {
+        return dictionaryRepository.findDictList(searchText);
     }
 }
