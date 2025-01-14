@@ -1,6 +1,6 @@
 package com.numo.api.controller;
 
-import com.numo.api.service.word.WordService;
+import com.numo.api.domain.wordbook.word.service.WordService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.numo.api.security.oauth2;
 
-import com.numo.api.conf.PropertyConfig;
+import com.numo.api.global.conf.PropertyConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

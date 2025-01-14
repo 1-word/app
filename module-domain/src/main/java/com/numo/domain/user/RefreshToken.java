@@ -1,6 +1,6 @@
 package com.numo.domain.user;
 
-import com.numo.domain.Timestamped;
+import com.numo.domain.base.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

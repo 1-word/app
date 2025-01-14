@@ -1,6 +1,7 @@
 package com.numo.api.service.dictionary;
 
-import com.numo.api.dto.dictionary.DictionaryDto;
+import com.numo.api.domain.dictionary.dto.DictionaryDto;
+import com.numo.api.domain.dictionary.service.DictionaryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

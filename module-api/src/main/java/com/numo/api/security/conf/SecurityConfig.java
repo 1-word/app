@@ -1,13 +1,13 @@
 package com.numo.api.security.conf;
 
-import com.numo.api.conf.PropertyConfig;
+import com.numo.api.global.conf.PropertyConfig;
 import com.numo.api.security.handle.JwtAccessDeniedHandler;
 import com.numo.api.security.handle.JwtAuthenticationEntryPoint;
 import com.numo.api.security.jwt.JwtFilter;
 import com.numo.api.security.jwt.TokenProvider;
 import com.numo.api.security.oauth2.CommonLoginFailureHandler;
 import com.numo.api.security.oauth2.CommonLoginSuccessHandler;
-import com.numo.api.service.user.RefreshTokenService;
+import com.numo.api.domain.user.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

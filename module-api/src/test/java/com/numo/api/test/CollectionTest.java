@@ -1,9 +1,9 @@
 package com.numo.api.test;
 
-import com.numo.api.dto.word.detail.read.ReadWordDetailGroupKey;
-import com.numo.api.dto.word.detail.read.ReadWordDetailResponseDto;
-import com.numo.api.dto.word.detail.read.ReadWordDetailListResponseDto;
-import com.numo.api.dto.word.detail.WordDetailResponseDto;
+import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailGroupKey;
+import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailResponseDto;
+import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
+import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

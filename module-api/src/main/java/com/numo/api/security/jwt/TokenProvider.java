@@ -1,6 +1,6 @@
 package com.numo.api.security.jwt;
 
-import com.numo.api.dto.user.TokenDto;
+import com.numo.api.domain.user.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
