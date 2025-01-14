@@ -30,4 +30,9 @@ public class DictionaryController {
         return ResponseEntity.ok(dictionaryService.searchWord(searchText));
     }
 
+    @Operation(summary = "자동 완성 사전 검색", description = "사전을 검색한다.")
+    @GetMapping("/list/db/{searchText}")
+    public ResponseEntity<List<DictionaryDto>> searchWordListDB(@PathVariable("searchText") String searchText) {
+        return ResponseEntity.ok(dictionaryService.searchWordListDB(searchText));
+    }
 }
