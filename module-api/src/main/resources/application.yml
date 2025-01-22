@@ -43,3 +43,21 @@ cstm:
   gtts:
     url: ${GTTS_API}
     path: ${GTTS_PATH}
+
+
+management:
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+    env:
+      enabled: true
+  server:
+    port: 18088
+    health:
+      show-components: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
