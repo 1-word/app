@@ -33,6 +33,8 @@ dependencies {
 
     compileOnly project(':module-domain')
     implementation project(':module-domain')
+
+    implementation project(':module-batch')
 }
 
 tasks.named('test') {

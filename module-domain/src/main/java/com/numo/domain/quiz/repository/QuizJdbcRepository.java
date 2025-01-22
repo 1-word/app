@@ -1,6 +1,5 @@
-package com.numo.batch.quiz;
+package com.numo.domain.quiz.repository;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +9,7 @@ import javax.sql.DataSource;
 public class QuizJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public QuizJdbcRepository(@Qualifier("dataDBSource") DataSource dataSource) {
+    public QuizJdbcRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 

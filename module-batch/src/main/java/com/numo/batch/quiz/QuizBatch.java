@@ -1,6 +1,7 @@
 package com.numo.batch.quiz;
 
 import com.numo.domain.base.Timestamped;
+import com.numo.domain.quiz.repository.QuizJdbcRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
 
 @Configuration
@@ -24,10 +26,10 @@ public class QuizBatch {
     private final PlatformTransactionManager platformTransactionManager;
     private final QuizJdbcRepository quizJdbcRepository;
 
-    public QuizBatch(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager, QuizJdbcRepository quizJdbcRepository) {
+    public QuizBatch(JobRepository jobRepository, DataSource dataSource, PlatformTransactionManager platformTransactionManager) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
-        this.quizJdbcRepository = quizJdbcRepository;
+        this.quizJdbcRepository = new QuizJdbcRepository(dataSource);
     }
 
     @Bean
