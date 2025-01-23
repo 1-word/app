@@ -1,0 +1,12 @@
+spring:
+  datasource-meta:
+    driver-class-name: org.mariadb.jdbc.Driver
+    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/${META_DB_DATABASE}?characterEncoding=UTF-8&serverTimezone=UTC
+    username: ${META_DB_USERNAME}
+    password: ${META_DB_PASSWORD}
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always

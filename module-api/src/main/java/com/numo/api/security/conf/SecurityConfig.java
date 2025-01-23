@@ -83,6 +83,7 @@ public class SecurityConfig {
             authorize.requestMatchers("/resources/**").permitAll();
             authorize.requestMatchers(HttpMethod.GET,"/posts/**").permitAll();
             authorize.requestMatchers("/posts/**").hasRole("ADMIN");
+            authorize.requestMatchers("/actuator/**").permitAll();
             authorize.anyRequest().authenticated();
         });
 
