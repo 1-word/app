@@ -32,6 +32,7 @@ public class QuizBatchScheduler {
     @Scheduled(cron = "0 10 0 * * *")
     public void runJob() {
         String time = Timestamped.getTimeString(LocalDateTime.now());
+        log.info("time: {}, start quiz batch", time);
         try {
             jobLauncher.run(job,
                     new JobParametersBuilder()
