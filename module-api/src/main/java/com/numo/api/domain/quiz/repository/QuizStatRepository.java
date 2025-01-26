@@ -7,6 +7,7 @@ import com.numo.domain.quiz.QuizStat;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -18,9 +19,11 @@ public interface QuizStatRepository extends JpaRepository<QuizStat, Long> {
             "    count(*) as totalCount, " +
             "    count(case when correct = 1 then 1 end) as correctCount, " +
             "    count(case when correct = 0 then 1 end) as wrongCount " +
-            "from quiz " +
-            "where quiz_info_id = 15", nativeQuery = true)
-    QuizResultDto findQuiz(Long quizInfoId, Long userId);
+            "from quiz q " +
+            "left join quiz_info qi on q.quiz_info_id = qi.quiz_info_id " +
+            "where q.quiz_info_id = :quizInfoId " +
+            "  and qi.user_id = :userId", nativeQuery = true)
+    QuizResultDto findQuiz(@Param("quizInfoId") Long quizInfoId, @Param("userId") Long userId);
 
     @EntityGraph(attributePaths = {"quizInfo"})
     Optional<QuizStat> findByIdAndUser_UserId(Long quizStatId, Long userId);
