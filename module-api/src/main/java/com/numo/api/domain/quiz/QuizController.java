@@ -22,14 +22,14 @@ import java.util.List;
 public class QuizController {
     private final QuizService quizService;
 
-    @Operation(summary = "퀴즈를 생성한다.", description = "폴더에 맞는 단어 데이터를 응답")
+    @Operation(summary = "퀴즈 생성", description = "폴더에 맞는 전체 단어 데이터를 응답")
     @PostMapping("/{quizInfoId}")
     public ResponseEntity<List<QuizQuestionDto>> createQuiz(@AuthenticationPrincipal UserDetailsImpl user,
                                                             @PathVariable("quizInfoId") Long quizInfoId) {
         return ResponseEntity.ok(quizService.createQuiz(user.getUserId(), quizInfoId));
     }
 
-    @Operation(summary = "퀴즈를 조회한다.")
+    @Operation(summary = "퀴즈 조회", description = "퀴즈 문제 데이터 조회")
     @GetMapping("/{quizInfoId}")
     public ResponseEntity<PageResponse<QuizResponseDto>> getQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                                            @PathVariable("quizInfoId") Long quizInfoId,
@@ -54,7 +54,7 @@ public class QuizController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "퀴즈를 이어한다.")
+    @Operation(summary = "퀴즈 이어하기")
     @GetMapping("/continue/{quizInfoId}")
     public ResponseEntity<PageResponse<QuizResponseDto>> continueQuiz(@AuthenticationPrincipal UserDetailsImpl user,
                                                                      @PathVariable("quizInfoId") Long quizInfoId,
