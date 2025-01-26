@@ -1,5 +1,5 @@
 package com.numo.domain.quiz.type;
 
 public enum QuizType {
-    multipleChoice
+    all, word, mean
 }
