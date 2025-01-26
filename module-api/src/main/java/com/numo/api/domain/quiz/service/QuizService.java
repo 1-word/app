@@ -1,17 +1,17 @@
 package com.numo.api.domain.quiz.service;
 
-import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
-import com.numo.api.global.comm.exception.CustomException;
-import com.numo.api.global.comm.exception.ErrorCode;
-import com.numo.api.global.comm.page.PageResponse;
-import com.numo.api.global.comm.page.PageRequestDto;
-import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoResponseDto;
 import com.numo.api.domain.quiz.dto.QuizQuestionDto;
 import com.numo.api.domain.quiz.dto.QuizResponseDto;
 import com.numo.api.domain.quiz.dto.QuizSolvedRequestDto;
+import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoResponseDto;
+import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
 import com.numo.api.domain.quiz.repository.QuizRepository;
 import com.numo.api.domain.quiz.repository.query.QuizQueryRepository;
 import com.numo.api.domain.wordbook.word.repository.query.WordQueryRepository;
+import com.numo.api.global.comm.exception.CustomException;
+import com.numo.api.global.comm.exception.ErrorCode;
+import com.numo.api.global.comm.page.PageRequestDto;
+import com.numo.api.global.comm.page.PageResponse;
 import com.numo.domain.quiz.Quiz;
 import com.numo.domain.quiz.type.QuizSort;
 import lombok.RequiredArgsConstructor;
@@ -140,14 +140,16 @@ public class QuizService {
 
     /**
      * 퀴즈 결과의 퀴즈 데이터를 조회한다
-     * @param userId 유저 아이디
+     *
+     * @param userId     유저 아이디
      * @param quizInfoId 퀴즈 정보 아이디
-     * @param pageDto 페이징 데이터
+     * @param pageDto    페이징 데이터
+     * @param search
      * @return 퀴즈 결과의 퀴즈 데이터
      */
-    public PageResponse<QuizStatWordDto> getQuizResultWord(Long userId, Long quizInfoId, PageRequestDto pageDto) {
+    public PageResponse<QuizStatWordDto> getQuizResultWord(Long userId, Long quizInfoId, PageRequestDto pageDto, Boolean correct) {
         PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
-        Slice<QuizStatWordDto> result = quizQueryRepository.findQuizResultWord(quizInfoId, userId, pageRequest);
+        Slice<QuizStatWordDto> result = quizQueryRepository.findQuizResultWord(quizInfoId, userId, pageRequest, correct);
 
         return new PageResponse<>(result);
     }

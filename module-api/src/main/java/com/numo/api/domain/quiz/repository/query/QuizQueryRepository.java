@@ -24,7 +24,7 @@ public class QuizQueryRepository {
     /**
      * 퀴즈 결과의 퀴즈 데이터 조회
      */
-    public Slice<QuizStatWordDto> findQuizResultWord(Long quizInfoId, Long userId, Pageable pageable) {
+    public Slice<QuizStatWordDto> findQuizResultWord(Long quizInfoId, Long userId, Pageable pageable, Boolean correct) {
         List<QuizStatWordDto> results = jpaQueryFactory.select(Projections.constructor(
                         QuizStatWordDto.class,
                         qQuiz.id,
@@ -38,13 +38,23 @@ public class QuizQueryRepository {
                 .join(qQuiz.word)
                 .where(
                         qQuiz.quizInfo.id.eq(quizInfoId),
-                        qQuiz.quizInfo.user.userId.eq(userId)
+                        qQuiz.quizInfo.user.userId.eq(userId),
+                        createSearchCondition(correct)
                 )
                 .limit(pageable.getPageSize() + 1)
                 .offset(pageable.getOffset())
                 .fetch();
 
         return PageUtil.of(results, pageable);
+    }
+
+    private BooleanExpression createSearchCondition(Boolean correct) {
+        if (correct == null) {
+            return null;
+        }
+
+        int result = correct? 1 : 0;
+        return qQuiz.correct.eq(result);
     }
 
     /**

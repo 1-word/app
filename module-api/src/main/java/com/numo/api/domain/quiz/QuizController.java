@@ -1,14 +1,14 @@
 package com.numo.api.domain.quiz;
 
-import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
-import com.numo.api.global.comm.page.PageResponse;
-import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.domain.quiz.dto.QuizQuestionDto;
 import com.numo.api.domain.quiz.dto.QuizResponseDto;
-import com.numo.api.domain.quiz.dto.QuizSolvedRequestDto;
 import com.numo.api.domain.quiz.dto.QuizSolvedListRequestDto;
-import com.numo.api.security.service.UserDetailsImpl;
+import com.numo.api.domain.quiz.dto.QuizSolvedRequestDto;
+import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
 import com.numo.api.domain.quiz.service.QuizService;
+import com.numo.api.global.comm.page.PageRequestDto;
+import com.numo.api.global.comm.page.PageResponse;
+import com.numo.api.security.service.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +42,9 @@ public class QuizController {
     @GetMapping("/result/{quizInfoId}")
     public ResponseEntity<PageResponse<QuizStatWordDto>> getQuizResultWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                                            @PathVariable("quizInfoId") Long quizInfoId,
-                                                                           PageRequestDto pageDto) {
-        return ResponseEntity.ok(quizService.getQuizResultWord(user.getUserId(), quizInfoId, pageDto));
+                                                                           PageRequestDto pageDto,
+                                                                           @RequestParam(value = "correct", required = false) Boolean correct) {
+        return ResponseEntity.ok(quizService.getQuizResultWord(user.getUserId(), quizInfoId, pageDto, correct));
     }
 
     @Operation(summary = "퀴즈 단건 풀이")
