@@ -1,6 +1,6 @@
 package com.numo.api.domain.quiz;
 
-import com.numo.api.domain.quiz.dto.QuizStatResponseDto;
+import com.numo.api.domain.quiz.dto.stat.QuizStatResponseDto;
 import com.numo.api.domain.quiz.service.QuizStatService;
 import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.api.security.service.UserDetailsImpl;

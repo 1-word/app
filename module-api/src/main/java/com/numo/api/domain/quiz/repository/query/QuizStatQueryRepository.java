@@ -1,6 +1,6 @@
 package com.numo.api.domain.quiz.repository.query;
 
-import com.numo.api.domain.quiz.dto.QuizStatResponseDto;
+import com.numo.api.domain.quiz.dto.stat.QuizStatResponseDto;
 import com.numo.api.global.comm.date.DateCondition;
 import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.domain.quiz.QQuizStat;

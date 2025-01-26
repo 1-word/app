@@ -1,4 +1,4 @@
-package com.numo.api.domain.quiz.dto;
+package com.numo.api.domain.quiz.dto.stat;
 
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.QuizStat;

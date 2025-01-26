@@ -1,5 +1,6 @@
 package com.numo.api.domain.quiz.service;
 
+import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageResponse;
@@ -135,5 +136,19 @@ public class QuizService {
         Slice<QuizResponseDto> quiz = quizQueryRepository.findUnsolvedQuizById(quizInfoId, userId, pageRequest);
 
         return new PageResponse<>(quiz);
+    }
+
+    /**
+     * 퀴즈 결과의 퀴즈 데이터를 조회한다
+     * @param userId 유저 아이디
+     * @param quizInfoId 퀴즈 정보 아이디
+     * @param pageDto 페이징 데이터
+     * @return 퀴즈 결과의 퀴즈 데이터
+     */
+    public PageResponse<QuizStatWordDto> getQuizResultWord(Long userId, Long quizInfoId, PageRequestDto pageDto) {
+        PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
+        Slice<QuizStatWordDto> result = quizQueryRepository.findQuizResultWord(quizInfoId, userId, pageRequest);
+
+        return new PageResponse<>(result);
     }
 }

@@ -1,5 +1,6 @@
 package com.numo.api.domain.quiz;
 
+import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.domain.quiz.dto.QuizQuestionDto;
@@ -35,6 +36,14 @@ public class QuizController {
                                                            @PathVariable("quizInfoId") Long quizInfoId,
                                                            PageRequestDto pageDto) {
         return ResponseEntity.ok(quizService.getQuizInfo(user.getUserId(), quizInfoId, pageDto));
+    }
+
+    @Operation(summary = "퀴즈 결과 단어 조회", description = "퀴즈의 단어 데이터를 조회한다.")
+    @GetMapping("/result/{quizInfoId}")
+    public ResponseEntity<PageResponse<QuizStatWordDto>> getQuizResultWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                           @PathVariable("quizInfoId") Long quizInfoId,
+                                                                           PageRequestDto pageDto) {
+        return ResponseEntity.ok(quizService.getQuizResultWord(user.getUserId(), quizInfoId, pageDto));
     }
 
     @Operation(summary = "퀴즈 단건 풀이")
