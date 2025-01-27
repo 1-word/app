@@ -31,7 +31,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 조회
-GET localhost:8088/api/quiz/{{quizInfoId}}?current=0
+GET localhost:8088/api/quiz/32?current=3
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

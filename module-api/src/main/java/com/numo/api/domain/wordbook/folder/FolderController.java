@@ -1,13 +1,11 @@
 package com.numo.api.domain.wordbook.folder;
 
-import com.numo.domain.word.folder.dto.FolderUpdateDto;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderListReadResponseDto;
 import com.numo.api.domain.wordbook.folder.dto.FolderRequestDto;
 import com.numo.api.domain.wordbook.folder.dto.FolderResponseDto;
-import com.numo.api.security.service.UserDetailsImpl;
+import com.numo.api.domain.wordbook.folder.dto.read.FolderListReadResponseDto;
 import com.numo.api.domain.wordbook.folder.service.FolderService;
-import com.numo.api.domain.wordbook.word.service.WordService;
+import com.numo.api.security.service.UserDetailsImpl;
+import com.numo.domain.word.folder.dto.FolderUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,21 +13,25 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/folders")
 @RestController
 @RequiredArgsConstructor
 public class FolderController {
-    private final WordService wordService;
     private final FolderService folderService;
 
     @Operation(description = "폴더명 리스트를 가져온다.")
     @GetMapping
     public ResponseEntity<List<FolderListReadResponseDto>> getFolderName(@AuthenticationPrincipal UserDetailsImpl user){
-        List<FolderResponseDto> folders = folderService.getFolders(user.getUserId());
-        Map<Long, FolderInWordCountDto> folderInWordCountMap = wordService.getFolderInWordCount(user.getUserId());
-        return ResponseEntity.ok(folderService.getFolders(folders, folderInWordCountMap));
+        return ResponseEntity.ok(folderService.getFolders(user.getUserId(), null));
+    }
+
+    @Operation(summary = "단어 개수 조회", description = "폴더 안의 단어 개수를 조회한다")
+    @GetMapping("/{folderId}")
+    public ResponseEntity<Long> getWordCountInFolder(@AuthenticationPrincipal UserDetailsImpl user,
+                                                     @PathVariable("folderId") Long folderId,
+                                                     @RequestParam(value = "memorization", required = false) Boolean memorization) {
+        return ResponseEntity.ok(folderService.getWordCountInFolder(user.getUserId(), folderId, memorization));
     }
 
     @Operation(description = "폴더를 생성한다.")

@@ -4,7 +4,6 @@ import com.numo.api.domain.dailySentence.dto.DailyWordDto;
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.DailyWordDetailDto;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.global.comm.page.PageUtil;
@@ -16,8 +15,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,9 +23,6 @@ import org.springframework.data.domain.SliceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class WordCustomRepositoryImpl implements WordCustomRepository {
@@ -135,25 +129,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 )
                 .fetch();
         return results;
-    }
-
-    @Override
-    public Map<Long, FolderInWordCountDto> countFolderInWord(Long userId) {
-        Map<Long, FolderInWordCountDto> result = queryFactory.select(Projections.constructor(
-                        FolderInWordCountDto.class,
-                        qWord.folder.folderId,
-                        Expressions.as(Wildcard.count, "count")
-                )).from(qWord)
-                .where(
-                        qWord.folder.folderId.isNotNull(),
-                        qWord.user.userId.eq(userId)
-                )
-                .groupBy(qWord.folder.folderId)
-                .fetch()
-                .stream()
-                .collect(Collectors.toMap(FolderInWordCountDto::folderId, Function.identity()));
-
-        return result;
     }
 
     /**

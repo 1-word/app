@@ -3,12 +3,11 @@ package com.numo.api.domain.wordbook.folder.repository;
 import com.numo.domain.word.folder.Folder;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
-import com.numo.api.domain.wordbook.folder.repository.query.FolderCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface FolderRepository extends JpaRepository<Folder, Integer>, FolderCustomRepository {
+public interface FolderRepository extends JpaRepository<Folder, Integer> {
     Optional<Folder> findByFolderIdAndUser_UserId(Long folderId, Long userId);
     boolean existsByFolderIdAndUser_UserId(Long folderId, Long userId);
 
