@@ -3,6 +3,7 @@ package com.numo.api.domain.quiz.service;
 import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoRequestDto;
 import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoResponseDto;
 import com.numo.api.domain.quiz.repository.QuizInfoRepository;
+import com.numo.api.domain.quiz.repository.QuizRepository;
 import com.numo.domain.quiz.QuizInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class QuizInfoService {
     private final QuizInfoRepository quizInfoRepository;
+    private final QuizRepository quizRepository;
 
     public Long createQuizInfo(Long userId, QuizInfoRequestDto requestDto) {
         QuizInfo quizInfo = requestDto.toEntity(userId);
@@ -41,5 +43,14 @@ public class QuizInfoService {
     public boolean isCompleteQuiz(Long userId, Long quizInfoId) {
         QuizInfo quizInfo = quizInfoRepository.findQuizInfo(quizInfoId, userId);
         return quizInfo.isComplete();
+    }
+
+    public QuizInfoResponseDto getInCompleteQuizInfo(Long userId) {
+        QuizInfo quizInfo = quizInfoRepository.findTopByUser_UserIdAndCompleteOrderByIdDesc(userId, false);
+        if (quizInfo == null) {
+            return QuizInfoResponseDto.builder().build();
+        }
+        Long count = quizRepository.countByQuizInfo_IdAndCorrectIsNull(quizInfo.getId());
+        return QuizInfoResponseDto.of(quizInfo, count.intValue());
     }
 }

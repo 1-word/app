@@ -23,19 +23,27 @@ import java.util.List;
 public class QuizController {
     private final QuizService quizService;
 
-    @Operation(summary = "퀴즈 생성", description = "폴더에 맞는 전체 단어 데이터를 응답")
+    @Operation(summary = "퀴즈 생성", description = "퀴즈 문제를 생성한다. 생성 이후에는 단어 리스트를 리턴")
     @PostMapping("/{quizInfoId}")
     public ResponseEntity<List<QuizQuestionDto>> createQuiz(@AuthenticationPrincipal UserDetailsImpl user,
                                                             @PathVariable("quizInfoId") Long quizInfoId) {
         return ResponseEntity.ok(quizService.createQuiz(user.getUserId(), quizInfoId));
     }
 
+    @Operation(summary = "단어 리스트 조회", description = "단어 리스트를 리턴한다.")
+    @GetMapping("/{folderId}/words")
+    public ResponseEntity<List<QuizQuestionDto>> getAllQuizWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                            @PathVariable("folderId") Long folderId) {
+        return ResponseEntity.ok(quizService.getQuizQuestion(user.getUserId(), folderId));
+    }
+
     @Operation(summary = "퀴즈 조회", description = "퀴즈 문제 데이터 조회")
     @GetMapping("/{quizInfoId}")
     public ResponseEntity<PageResponse<QuizResponseDto>> getQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
-                                                           @PathVariable("quizInfoId") Long quizInfoId,
-                                                           PageRequestDto pageDto) {
-        return ResponseEntity.ok(quizService.getQuizInfo(user.getUserId(), quizInfoId, pageDto));
+                                                                     @PathVariable("quizInfoId") Long quizInfoId,
+                                                                     PageRequestDto pageDto,
+                                                                     @RequestParam(value = "continue") Boolean isContinue) {
+        return ResponseEntity.ok(quizService.getQuizInfo(user.getUserId(), quizInfoId, pageDto, isContinue));
     }
 
     @Operation(summary = "퀴즈 결과 단어 조회", description = "퀴즈의 단어 데이터를 조회한다.")
@@ -62,13 +70,5 @@ public class QuizController {
                                           @RequestBody QuizSolvedListRequestDto requestDto) {
         quizService.solveQuizzes(user.getUserId(), requestDto.datas());
         return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "퀴즈 이어하기")
-    @GetMapping("/continue/{quizInfoId}")
-    public ResponseEntity<PageResponse<QuizResponseDto>> continueQuiz(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                     @PathVariable("quizInfoId") Long quizInfoId,
-                                                                     PageRequestDto pageDto) {
-        return ResponseEntity.ok(quizService.getUnsolvedQuiz(user.getUserId(), quizInfoId, pageDto));
     }
 }

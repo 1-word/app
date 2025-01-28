@@ -29,4 +29,17 @@ public record QuizInfoResponseDto(
                 .updateTime(Timestamped.getTimeString(quizInfo.getUpdateTime()))
                 .build();
     }
+
+    public static QuizInfoResponseDto of(QuizInfo quizInfo, int count) {
+        return QuizInfoResponseDto.builder()
+                .quizInfoId(quizInfo.getId())
+                .folderId(quizInfo.getFolder().getFolderId())
+                .type(quizInfo.getType())
+                .sort(quizInfo.getSort())
+                .memorization(quizInfo.getMemorization())
+                .count(count)
+                .createTime(Timestamped.getTimeString(quizInfo.getCreateTime()))
+                .updateTime(Timestamped.getTimeString(quizInfo.getUpdateTime()))
+                .build();
+    }
 }

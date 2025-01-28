@@ -59,6 +59,16 @@ Authorization: Bearer {{accessToken}}
   }]
 }
 
+### 퀴즈 이어하기 정보 조회
+GET localhost:8088/api/quiz-info/incomplete
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 이어하기 시 단어 리스트 조회
+GET localhost:8088/api/quiz/6/words
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 ### 퀴즈 이어하기
 GET localhost:8088/api/quiz/continue/{{quizInfoId}}?current=0
 Content-Type: application/json

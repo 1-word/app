@@ -35,8 +35,10 @@ public class QuizService {
 
     /**
      * 퀴즈 생성 조건에 따라 퀴즈를 생성한다.
-     * @param userId 유저 아이디
+     *
+     * @param userId     유저 아이디
      * @param quizInfoId 퀴즈 정보 아이디
+     * @return
      */
     public List<QuizQuestionDto> createQuiz(Long userId, Long quizInfoId) {
         if (quizRepository.existsByQuizInfo_Id(quizInfoId)) {
@@ -49,18 +51,16 @@ public class QuizService {
 
         // 퀴즈 생성
         createQuiz(quizInfo.sort(), quizInfoId, folderId, userId, limit);
-
-        // 퀴즈 관련 데이터 조회
-        return getQuizQuestion(folderId, userId);
+        return getQuizQuestion(userId, folderId);
     }
 
     /**
      * 퀴즈 문제를 만들기 위해 단어 데이터 조회
-     * @param folderId 폴더 아이디
      * @param userId 유저 아이디
+     * @param folderId 폴더 아이디
      * @return 퀴즈 문제
      */
-    private List<QuizQuestionDto> getQuizQuestion(Long folderId, Long userId) {
+    public List<QuizQuestionDto> getQuizQuestion(Long userId, Long folderId) {
         return wordQueryRepository.findQuizQuestion(folderId, userId);
     }
 
@@ -82,14 +82,16 @@ public class QuizService {
 
     /**
      * 퀴즈를 가져온다.
-     * @param userId 유저 아이디
+     *
+     * @param userId     유저 아이디
      * @param quizInfoId 퀴즈 정보 아이디
-     * @param pageDto 페이징 데이터
+     * @param pageDto    페이징 데이터
+     * @param isContinue 이어하기 여부
      * @return 해당하는 퀴즈의 퀴즈 데이터
      */
-    public PageResponse<QuizResponseDto> getQuizInfo(Long userId, Long quizInfoId, PageRequestDto pageDto) {
+    public PageResponse<QuizResponseDto> getQuizInfo(Long userId, Long quizInfoId, PageRequestDto pageDto, Boolean isContinue) {
         PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
-        Slice<QuizResponseDto> quiz = quizQueryRepository.findQuizById(quizInfoId, userId, pageRequest, false);
+        Slice<QuizResponseDto> quiz = quizQueryRepository.findQuizById(quizInfoId, userId, pageRequest, isContinue);
 
         return new PageResponse<>(quiz);
     }
@@ -125,26 +127,12 @@ public class QuizService {
     }
 
     /**
-     * 퀴즈 이어 풀기를 위해 안 푼 퀴즈를 가져온다
-     * @param userId 유저 아이디
-     * @param quizInfoId 퀴즈 정보 아이디
-     * @param pageDto 페이징 데이터
-     * @return 안 푼 퀴즈 데이터
-     */
-    public PageResponse<QuizResponseDto> getUnsolvedQuiz(Long userId, Long quizInfoId, PageRequestDto pageDto) {
-        PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
-        Slice<QuizResponseDto> quiz = quizQueryRepository.findUnsolvedQuizById(quizInfoId, userId, pageRequest);
-
-        return new PageResponse<>(quiz);
-    }
-
-    /**
      * 퀴즈 결과의 퀴즈 데이터를 조회한다
      *
      * @param userId     유저 아이디
      * @param quizInfoId 퀴즈 정보 아이디
      * @param pageDto    페이징 데이터
-     * @param search
+     * @param correct 전체, 정답, 오답 필터링 필터링 조회를 위한 boolean
      * @return 퀴즈 결과의 퀴즈 데이터
      */
     public PageResponse<QuizStatWordDto> getQuizResultWord(Long userId, Long quizInfoId, PageRequestDto pageDto, Boolean correct) {
