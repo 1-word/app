@@ -35,3 +35,8 @@ Authorization: Bearer {{accessToken}}
 DELETE localhost:8088/api/folders/{{folderId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 폴더 단건 단어 개수 조회
+GET localhost:8088/api/folders/6?memorization=false
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

@@ -3,7 +3,6 @@ package com.numo.api.domain.wordbook.word.service;
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
 import com.numo.api.domain.wordbook.folder.service.FolderService;
 import com.numo.api.domain.wordbook.sound.repository.SoundRepository;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
@@ -34,7 +33,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class WordService {
@@ -198,10 +200,6 @@ public class WordService {
         Gtts gtts = new Gtts(wordName, lang, savePath);
 
         gttsService.saveAudio(gtts);
-    }
-
-    public Map<Long, FolderInWordCountDto> getFolderInWordCount(Long userId) {
-        return wordRepository.countFolderInWord(userId);
     }
 
     /**

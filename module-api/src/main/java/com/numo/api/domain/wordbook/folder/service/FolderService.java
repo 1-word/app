@@ -1,36 +1,30 @@
 package com.numo.api.domain.wordbook.folder.service;
 
-import com.numo.domain.word.folder.Folder;
-import com.numo.domain.word.folder.dto.FolderUpdateDto;
-import com.numo.api.global.comm.exception.CustomException;
-import com.numo.api.global.comm.exception.ErrorCode;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
-import com.numo.api.domain.wordbook.folder.dto.read.FolderListReadResponseDto;
 import com.numo.api.domain.wordbook.folder.dto.FolderRequestDto;
 import com.numo.api.domain.wordbook.folder.dto.FolderResponseDto;
+import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
+import com.numo.api.domain.wordbook.folder.dto.read.FolderListReadResponseDto;
 import com.numo.api.domain.wordbook.folder.repository.FolderRepository;
+import com.numo.api.domain.wordbook.folder.repository.query.FolderQueryRepository;
+import com.numo.api.global.comm.exception.CustomException;
+import com.numo.api.global.comm.exception.ErrorCode;
+import com.numo.domain.word.folder.Folder;
+import com.numo.domain.word.folder.dto.FolderUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FolderService {
 
     private final FolderRepository folderRepository;
-
-    /**
-     * 폴더 다건 조회
-     * @param userId 유저 아이디
-     * @return 조회한 폴더 데이터
-     */
-    public List<FolderResponseDto> getFolders(Long userId){
-        List<FolderResponseDto> folders = getFolders(userId, null);
-        return folders;
-    }
+    private final FolderQueryRepository folderQueryRepository;
 
     /**
      * 폴더 다건 조회
@@ -38,9 +32,12 @@ public class FolderService {
      * @param folderId 폴더 아이디(Nullable)
      * @return 조회한 폴더 데이터
      */
-    public List<FolderResponseDto> getFolders(Long userId, Long folderId){
-        List<FolderResponseDto> res = folderRepository.getFoldersByUserId(userId, folderId);
-        return res;
+    public List<FolderListReadResponseDto> getFolders(Long userId, Long folderId){
+        List<FolderResponseDto> res = folderQueryRepository.getFoldersByUserId(userId, folderId);
+        List<FolderInWordCountDto> wordCounts = folderQueryRepository.countWordInFolder(userId);
+        Map<Long, FolderInWordCountDto> wordCountMap = wordCounts.stream().collect(Collectors.toMap(FolderInWordCountDto::folderId, Function.identity()));
+
+        return getFolders(res, wordCountMap);
     }
 
     /**
@@ -101,7 +98,7 @@ public class FolderService {
     }
 
     /**
-     * 폴더 삭제
+     * 폴더 삭제O
      * @param userId 유저 아이디
      * @param folderId 폴더 아이디
      */
@@ -120,5 +117,9 @@ public class FolderService {
         } catch (Exception e){
             throw new CustomException(ErrorCode.ASSOCIATED_DATA_EXISTS);
         }
+    }
+
+    public Long getWordCountInFolder(Long userId, Long folderId, Boolean memorization) {
+        return folderQueryRepository.countWordInFolderById(userId, folderId, memorization);
     }
 }

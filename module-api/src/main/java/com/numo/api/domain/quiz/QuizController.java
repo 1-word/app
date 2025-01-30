@@ -1,13 +1,14 @@
 package com.numo.api.domain.quiz;
 
-import com.numo.api.global.comm.page.PageResponse;
-import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.domain.quiz.dto.QuizQuestionDto;
 import com.numo.api.domain.quiz.dto.QuizResponseDto;
-import com.numo.api.domain.quiz.dto.QuizSolvedRequestDto;
 import com.numo.api.domain.quiz.dto.QuizSolvedListRequestDto;
-import com.numo.api.security.service.UserDetailsImpl;
+import com.numo.api.domain.quiz.dto.QuizSolvedRequestDto;
+import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
 import com.numo.api.domain.quiz.service.QuizService;
+import com.numo.api.global.comm.page.PageRequestDto;
+import com.numo.api.global.comm.page.PageResponse;
+import com.numo.api.security.service.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +23,36 @@ import java.util.List;
 public class QuizController {
     private final QuizService quizService;
 
-    @Operation(summary = "퀴즈를 생성한다.", description = "폴더에 맞는 단어 데이터를 응답")
+    @Operation(summary = "퀴즈 생성", description = "퀴즈 문제를 생성한다. 생성 이후에는 단어 리스트를 리턴")
     @PostMapping("/{quizInfoId}")
     public ResponseEntity<List<QuizQuestionDto>> createQuiz(@AuthenticationPrincipal UserDetailsImpl user,
                                                             @PathVariable("quizInfoId") Long quizInfoId) {
         return ResponseEntity.ok(quizService.createQuiz(user.getUserId(), quizInfoId));
     }
 
-    @Operation(summary = "퀴즈를 조회한다.")
+    @Operation(summary = "단어 리스트 조회", description = "단어 리스트를 리턴한다.")
+    @GetMapping("/{folderId}/words")
+    public ResponseEntity<List<QuizQuestionDto>> getAllQuizWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                            @PathVariable("folderId") Long folderId) {
+        return ResponseEntity.ok(quizService.getQuizQuestion(user.getUserId(), folderId));
+    }
+
+    @Operation(summary = "퀴즈 조회", description = "퀴즈 문제 데이터 조회")
     @GetMapping("/{quizInfoId}")
     public ResponseEntity<PageResponse<QuizResponseDto>> getQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
-                                                           @PathVariable("quizInfoId") Long quizInfoId,
-                                                           PageRequestDto pageDto) {
-        return ResponseEntity.ok(quizService.getQuizInfo(user.getUserId(), quizInfoId, pageDto));
+                                                                     @PathVariable("quizInfoId") Long quizInfoId,
+                                                                     PageRequestDto pageDto,
+                                                                     @RequestParam(value = "continue") Boolean isContinue) {
+        return ResponseEntity.ok(quizService.getQuizInfo(user.getUserId(), quizInfoId, pageDto, isContinue));
+    }
+
+    @Operation(summary = "퀴즈 결과 단어 조회", description = "퀴즈의 단어 데이터를 조회한다.")
+    @GetMapping("/result/{quizInfoId}")
+    public ResponseEntity<PageResponse<QuizStatWordDto>> getQuizResultWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                           @PathVariable("quizInfoId") Long quizInfoId,
+                                                                           PageRequestDto pageDto,
+                                                                           @RequestParam(value = "correct", required = false) Boolean correct) {
+        return ResponseEntity.ok(quizService.getQuizResultWord(user.getUserId(), quizInfoId, pageDto, correct));
     }
 
     @Operation(summary = "퀴즈 단건 풀이")
@@ -52,13 +70,5 @@ public class QuizController {
                                           @RequestBody QuizSolvedListRequestDto requestDto) {
         quizService.solveQuizzes(user.getUserId(), requestDto.datas());
         return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "퀴즈를 이어한다.")
-    @GetMapping("/continue/{quizInfoId}")
-    public ResponseEntity<PageResponse<QuizResponseDto>> continueQuiz(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                     @PathVariable("quizInfoId") Long quizInfoId,
-                                                                     PageRequestDto pageDto) {
-        return ResponseEntity.ok(quizService.getUnsolvedQuiz(user.getUserId(), quizInfoId, pageDto));
     }
 }

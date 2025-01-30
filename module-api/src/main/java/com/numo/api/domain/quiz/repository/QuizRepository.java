@@ -24,6 +24,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
         );
     }
 
+    Long countByQuizInfo_IdAndCorrectIsNull(Long quizInfoId);
+
     List<Quiz> findAllByIdIn(List<Long> ids);
 
     @Transactional

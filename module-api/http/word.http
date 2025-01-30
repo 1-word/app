@@ -40,7 +40,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회
-GET localhost:8088/api/word?current=1&readType=update&lastWordId=80
+GET localhost:8088/api/word?current=0&sort=random&seed=U4Sa@2
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
