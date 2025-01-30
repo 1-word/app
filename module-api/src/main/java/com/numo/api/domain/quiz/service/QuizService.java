@@ -13,7 +13,7 @@ import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.domain.quiz.Quiz;
-import com.numo.domain.quiz.type.QuizSort;
+import com.numo.domain.word.type.SortType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -72,7 +72,7 @@ public class QuizService {
      * @param userId 유저 아이디
      * @param limit 퀴즈 개수
      */
-    private void createQuiz(QuizSort sort, Long quizInfoId, Long folderId, Long userId, int limit) {
+    private void createQuiz(SortType sort, Long quizInfoId, Long folderId, Long userId, int limit) {
         switch (sort) {
             case created -> quizRepository.createQuizOrderByCreated(quizInfoId, folderId, userId, limit);
             case updated -> quizRepository.createQuizOrderByUpdated(quizInfoId, folderId, userId, limit);

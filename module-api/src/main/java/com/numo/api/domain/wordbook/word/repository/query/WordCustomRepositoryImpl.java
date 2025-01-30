@@ -10,11 +10,12 @@ import com.numo.api.global.comm.page.PageUtil;
 import com.numo.domain.word.QWord;
 import com.numo.domain.word.detail.QWordDetail;
 import com.numo.domain.word.sound.type.GttsCode;
-import com.numo.domain.word.type.ReadType;
+import com.numo.domain.word.type.SortType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -66,10 +67,10 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         eqFolderId(readDto.folderId()),
                         eqMemorization(readDto.memorization()),
                         eqLanguage(readDto.lang()),
-                        createPageConditionWithReadType(readDto.readType(), lastWordId),
+                        createPageConditionWithReadType(readDto.sort(), lastWordId),
                         likeSearchText(readDto.searchText())
                 )
-                .orderBy(wordSort(readDto.readType()).toArray(OrderSpecifier[]::new))
+                .orderBy(wordSort(readDto.sort(), readDto.seed()).toArray(OrderSpecifier[]::new))
                 // 다음 페이지가 있는지 확인하기 위해 다음 데이터도 함께 조회
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -163,15 +164,16 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
      * @param type 조회 타입
      * @return 조회 타입에 따른 order by 쿼리
      */
-    private List<OrderSpecifier<?>> wordSort(ReadType type) {
+    private List<OrderSpecifier<?>> wordSort(SortType type, String seed) {
         List<OrderSpecifier<?>> orderSpecifierList = new ArrayList<>();
 
-        if (type == ReadType.update) {
+        if (type == SortType.updated) {
             orderSpecifierList.add(new OrderSpecifier<>(Order.DESC, qWord.updateTime));
-        } else if (type == ReadType.current) {
+        } else if (type == SortType.created) {
             orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, qWord.wordId));
-        } else {
-            orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, qWord.wordId));
+        } else if (type == SortType.random) {
+            int value = seed == null? "".hashCode() : seed.hashCode();
+            orderSpecifierList.add(new OrderSpecifier<>(Order.ASC, Expressions.numberTemplate(Double.class, "function('rand', {0})", value)));
         }
 
         return orderSpecifierList;
@@ -183,11 +185,14 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
      * @param lastWordId 마지막으로 조회한 단어 아이디
      * @return 조회 타입에 따른 마지막으로 조회한 아이디의 쿼리
      */
-    private BooleanExpression createPageConditionWithReadType(ReadType type, Long lastWordId) {
+    private BooleanExpression createPageConditionWithReadType(SortType type, Long lastWordId) {
+        if (lastWordId == null) {
+            return null;
+        }
 
-        if (type == ReadType.update) {
+        if (type == SortType.updated) {
             return ltUpdateTime(lastWordId);
-        } else if (type == ReadType.current) {
+        } else if (type == SortType.created) {
             return gtWordId(lastWordId);
         }
 

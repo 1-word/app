@@ -1,15 +1,15 @@
 package com.numo.api.domain.quiz.dto.quizInfo;
 
 import com.numo.domain.quiz.QuizInfo;
-import com.numo.domain.quiz.type.QuizSort;
 import com.numo.domain.quiz.type.QuizType;
 import com.numo.domain.user.User;
 import com.numo.domain.word.folder.Folder;
+import com.numo.domain.word.type.SortType;
 
 public record QuizInfoRequestDto(
         Long folderId,
         QuizType type,
-        QuizSort sort,
+        SortType sort,
         String memorization,
         Integer count
 ) {
