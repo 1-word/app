@@ -25,7 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         String requestURI = request.getRequestURI();
 
-        log.info("requestURI: {}", requestURI);
+        log.debug("requestURI: {}", requestURI);
 
         //유효성 검증
         if(StringUtils.hasText(token) && tokenProvider.validateToken(token)){
@@ -35,10 +35,8 @@ public class JwtFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("Security Context에 '{}'인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
             String id = tokenProvider.parseClaims(token).getId();
-            log.info("login: " + id);
+            log.debug("login: " + id);
         }
-
-        log.info("jwtFilter 실행");
 
         filterChain.doFilter(request, response);
     }
