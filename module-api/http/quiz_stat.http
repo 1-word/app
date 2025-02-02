@@ -1,10 +1,10 @@
 ### 퀴즈 통계 생성
-POST localhost:8088/api/quiz-stat/17
-Content-Type: application/json
+POST localhost:8088/api/quiz-stat/25
+Content-Type: application/jsonR
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 통계 조회
-GET localhost:8088/api/quiz-stat/2
+GET localhost:8088/api/quiz-stat/25
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -14,6 +14,11 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 통계 삭제
-DELETE localhost:8088/api/quiz-stat/4
+DELETE localhost:8088/api/quiz-stat/14
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 결과 단어 조회
+GET localhost:8088/api/quiz/result/1?current=0&correct=false
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

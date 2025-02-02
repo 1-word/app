@@ -5,7 +5,7 @@ Authorization: Bearer {{accessToken}}
 
 {
   "folderId": 6,
-  "type": "multipleChoice",
+  "type": "word",
   "sort": "random",
   "memorization": "",
   "count": 5
@@ -31,7 +31,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 조회
-GET localhost:8088/api/quiz/{{quizInfoId}}?current=0
+GET localhost:8088/api/quiz/32?current=3
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -58,6 +58,16 @@ Authorization: Bearer {{accessToken}}
     "correct": true
   }]
 }
+
+### 퀴즈 이어하기 정보 조회
+GET localhost:8088/api/quiz-info/incomplete
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 퀴즈 이어하기 시 단어 리스트 조회
+GET localhost:8088/api/quiz/6/words
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 이어하기
 GET localhost:8088/api/quiz/continue/{{quizInfoId}}?current=0

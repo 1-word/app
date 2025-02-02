@@ -18,6 +18,7 @@ public class Dictionary {
     private String wordType;
     @Column(columnDefinition="TEXT")
     private String definition;
+    @Column(columnDefinition="TEXT")
     private String mean;
     private String isCrawling;
 

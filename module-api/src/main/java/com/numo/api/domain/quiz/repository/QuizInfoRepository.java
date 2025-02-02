@@ -22,6 +22,8 @@ public interface QuizInfoRepository extends JpaRepository<QuizInfo, Long> {
         );
     }
 
+    QuizInfo findTopByUser_UserIdAndCompleteOrderByIdDesc(Long userId, boolean complete);
+
     @Modifying
     @Transactional
     @Query("delete from Quiz q " +

@@ -1,7 +1,7 @@
 package com.numo.api.domain.wordbook.word.dto.read;
 
 import com.numo.api.domain.wordbook.word.dto.search.SearchWordRequestDto;
-import com.numo.domain.word.type.ReadType;
+import com.numo.domain.word.type.SortType;
 import lombok.Builder;
 
 @Builder
@@ -10,7 +10,8 @@ public record ReadWordRequestDto(
         String searchText,
         String memorization,
         String lang,
-        ReadType readType
+        SortType sort,
+        String seed
 ) {
     public static ReadWordRequestDto of(SearchWordRequestDto requestDto) {
         return of(null, requestDto);
@@ -22,7 +23,8 @@ public record ReadWordRequestDto(
                 .folderId(requestDto.folderId())
                 .memorization(requestDto.memorization())
                 .lang(requestDto.language())
-                .readType(requestDto.readType())
+                .sort(requestDto.sort())
+                .seed(requestDto.seed())
                 .build();
 
     }

@@ -1,7 +1,7 @@
 package com.numo.api.domain.quiz.service;
 
 import com.numo.api.domain.quiz.dto.QuizResultDto;
-import com.numo.api.domain.quiz.dto.QuizStatResponseDto;
+import com.numo.api.domain.quiz.dto.stat.QuizStatResponseDto;
 import com.numo.api.domain.quiz.repository.QuizStatRepository;
 import com.numo.api.domain.quiz.repository.query.QuizStatQueryRepository;
 import com.numo.api.global.comm.date.DateRequestDto;
@@ -61,8 +61,7 @@ public class QuizStatService {
      * @return 퀴즈 통계 데이터
      */
     public QuizStatResponseDto getQuizStat(Long quizStatId, Long userId) {
-        QuizStat quizStat = quizStatRepository.findQuizStatByIdAndUserId(quizStatId, userId);
-        return QuizStatResponseDto.of(quizStat);
+        return quizStatQueryRepository.findQuiz(quizStatId, userId, null);
     }
 
     /**
@@ -72,7 +71,7 @@ public class QuizStatService {
      * @return 퀴즈 통계 리스트
      */
     public List<QuizStatResponseDto> getQuizStatList(Long userId, DateRequestDto dateRequest) {
-        return quizStatQueryRepository.findQuizStatList(userId, dateRequest);
+        return quizStatQueryRepository.findQuizStatList(null, userId, dateRequest);
     }
 
     /**

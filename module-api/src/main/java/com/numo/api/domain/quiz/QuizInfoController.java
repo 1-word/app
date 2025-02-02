@@ -16,21 +16,27 @@ import org.springframework.web.bind.annotation.*;
 public class QuizInfoController {
     private final QuizInfoService quizInfoService;
 
-    @Operation(summary = "퀴즈 정보를 생성한다.")
+    @Operation(summary = "퀴즈 정보 생성")
     @PostMapping
     public ResponseEntity<Long> createQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                            @RequestBody QuizInfoRequestDto requestDto) {
         return ResponseEntity.ok(quizInfoService.createQuizInfo(user.getUserId(), requestDto));
     }
 
-    @Operation(summary = "퀴즈 정보를 조회한다.")
+    @Operation(summary = "최신에 완료하지 못한 퀴즈 정보 조회")
+    @GetMapping("/incomplete")
+    public ResponseEntity<QuizInfoResponseDto> getInCompleteQuizInfo(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(quizInfoService.getInCompleteQuizInfo(user.getUserId()));
+    }
+
+    @Operation(summary = "퀴즈 정보 조회")
     @GetMapping("/{quizInfoId}")
     public ResponseEntity<QuizInfoResponseDto> getQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                            @PathVariable("quizInfoId") Long quizInfoId) {
         return ResponseEntity.ok(quizInfoService.getQuizInfo(user.getUserId(), quizInfoId));
     }
 
-    @Operation(summary = "퀴즈 정보를 삭제한다.", description = "삭제 시 연동된 퀴즈 데이터까지 모두 삭제(통계 포함)")
+    @Operation(summary = "퀴즈 정보 삭제.", description = "삭제 시 연동된 퀴즈 데이터까지 모두 삭제(통계 포함)")
     @DeleteMapping("/{quizInfoId}")
     public ResponseEntity<Void> deleteQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                            @PathVariable("quizInfoId") Long quizInfoId) {

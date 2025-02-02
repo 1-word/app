@@ -24,5 +24,4 @@ public interface WordCustomRepository {
     WordDto findWordByWordId(Long userId, Long wordId);
 
     List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds);
-    Map<Long, FolderInWordCountDto> countFolderInWord(Long userId);
 }
