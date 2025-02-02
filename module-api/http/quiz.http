@@ -5,7 +5,7 @@ Authorization: Bearer {{accessToken}}
 
 {
   "folderId": 6,
-  "type": "multipleChoice",
+  "type": "word",
   "sort": "random",
   "memorization": "",
   "count": 5

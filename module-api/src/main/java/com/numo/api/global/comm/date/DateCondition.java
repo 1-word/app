@@ -7,6 +7,10 @@ import com.querydsl.core.types.dsl.Expressions;
 public class DateCondition {
 
     public static BooleanExpression createDateCondition(QBaseDate qDate, DateRequestDto dateRequest) {
+        if (dateRequest == null) {
+            return null;
+        }
+
         BooleanExpression result = Expressions.asString("1").eq("1");
         Integer year = dateRequest.year();
         Integer month = dateRequest.month();
