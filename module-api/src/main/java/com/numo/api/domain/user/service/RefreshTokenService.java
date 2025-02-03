@@ -14,13 +14,13 @@ public class RefreshTokenService {
     @Transactional
     public void saveOrUpdateToken(Long userId, String refreshToken) {
         refreshTokenRepository.findByUserId(userId)
-                .map(t -> t.updateToken(refreshToken))
-                .orElseGet(() -> refreshTokenRepository.save(
-                        RefreshToken.builder()
-                                .userId(userId)
-                                .token(refreshToken)
-                                .build()
-                ));
+                .ifPresentOrElse(t -> t.updateToken(refreshToken),
+                        () -> refreshTokenRepository.save(
+                                RefreshToken.builder()
+                                        .userId(userId)
+                                        .token(refreshToken)
+                                        .build()
+                        ));
     }
 
     public void deleteToken(Long userId) {
