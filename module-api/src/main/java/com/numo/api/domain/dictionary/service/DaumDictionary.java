@@ -12,24 +12,27 @@ public class DaumDictionary implements DictionaryCrawling {
     private String q = "q=${word}";
 
     String wordXpath = "//*[@id='mArticle']/div[1]/div[2]/div[2]/div/div[1]/strong/a";
-    String defXpath = "//*[@id=\"mArticle\"]/div[1]/div[2]/div[2]/div[1]/ul";
-    String defXpath2 = "//*[@id=\"mArticle\"]/div[1]/div[1]/div[2]/div/ul";
+    String meanXpath = "//*[@id=\"mArticle\"]/div[1]/div[2]/div[2]/div[1]/ul";
+    String meanXpath2 = "//*[@id=\"mArticle\"]/div[1]/div[1]/div[2]/div/ul";
+
+    String patternString = "[0-9]+\\.[\\s가-힣.\\d~!@#$%^&*()_+\\[\\];',/…·]+";
 
     @Override
     public DictionaryCrawlingDto getSearchWord(Document doc, String text) {
         String word = doc.selectXpath(wordXpath).text();
-        String definition = doc.selectXpath(defXpath).text();
-        if (!definitionPatternMatch(definition)) {
-            definition = doc.selectXpath(defXpath2).text();
+        String mean = doc.selectXpath(meanXpath).text();
+        mean = getMeanPattern(mean);
+        if (!meanPatternMatch(mean)) {
+            mean = doc.selectXpath(meanXpath2).text();
         }
 
         List<String> definitions = new ArrayList<>();
-        if (definition.isEmpty()) {
-            definition = null;
+        if (mean.isEmpty()) {
+            mean = null;
         } else {
-            definitions = definitionToList(definition);
+            definitions = meanToList(mean);
         }
-        return new DictionaryCrawlingDto(word, definition, definitions);
+        return new DictionaryCrawlingDto(word, mean, definitions);
     }
 
     @Override
@@ -41,7 +44,15 @@ public class DaumDictionary implements DictionaryCrawling {
         return q.replace("${word}", word);
     }
 
-    private List<String> definitionToList(String definition) {
+    // 뜻이 하나일 때 앞에 숫자가 없어 패턴 매칭 실패하므로 직접 만들어준다.
+    private String getMeanPattern(String mean) {
+       if (!mean.isEmpty() && !meanPatternMatch(mean))  {
+           return "1." + mean;
+       }
+       return mean;
+    }
+
+    private List<String> meanToList(String definition) {
         List<String> result = new ArrayList<>();
         String[] definitions = definition.split("[0-9]+.");
         for (String s: definitions) {
@@ -52,9 +63,8 @@ public class DaumDictionary implements DictionaryCrawling {
         return result;
     }
 
-    private boolean definitionPatternMatch(String definition) {
-        String patternString = "[0-9]+\\.[\\s가-힣.\\d~!@#$%^&*()_+\\[\\]\\;',/…]+";
-        return Pattern.matches(patternString, definition);
+    private boolean meanPatternMatch(String mean) {
+        return Pattern.matches(patternString, mean);
     }
 
 

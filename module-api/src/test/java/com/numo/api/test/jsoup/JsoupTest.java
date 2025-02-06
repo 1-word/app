@@ -24,7 +24,7 @@ public class JsoupTest {
 
     @Test
     void start() throws Exception {
-        String word = "efface";
+        String word = "vandalize";
         String url = "https://dic.daum.net/search.do?q=${word}".replace("${word}", word);
 
         Document doc = JsoupTest.getJsoupConnection(url).get();
@@ -32,7 +32,10 @@ public class JsoupTest {
         System.out.println(doc.title());
 
         String wordXpath = "//*[@id='mArticle']/div[1]/div[2]/div[2]/div/div[1]/strong/a";
-        String defXpath = "//*[@id='mArticle']/div[1]/div[2]/div[2]/div/ul";
+//        String defXpath = "//*[@id='mArticle']/div[1]/div[2]/div[2]/div/ul";
+
+        String defXpath = "//*[@id=\"mArticle\"]/div[1]/div[2]/div[2]/div[1]/ul";
+        String defXpath2 = "//*[@id=\"mArticle\"]/div[1]/div[1]/div[2]/div/ul";
 
 
         //*[@id="mArticle"]/div[1]/div[2]/div[2]/div/ul
@@ -41,10 +44,11 @@ public class JsoupTest {
 
         String result = doc.selectXpath(wordXpath).text();
         String definition = doc.selectXpath(defXpath).text();
+        String definition2 = doc.selectXpath(defXpath).text();
 
         System.out.println(result);
         System.out.println(definition);
-
+        System.out.println(definition2);
         Assertions.assertEquals(word.toLowerCase(), result);
     }
 
