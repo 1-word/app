@@ -1,5 +1,5 @@
 ### 사전 조회
-GET localhost:8088/api/dict/exception
+GET localhost:8088/api/dict/stay in shape
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
