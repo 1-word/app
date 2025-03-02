@@ -1,5 +1,6 @@
 package com.numo.api.security.conf;
 
+import com.numo.api.domain.user.service.RefreshTokenService;
 import com.numo.api.global.conf.PropertyConfig;
 import com.numo.api.security.handle.JwtAccessDeniedHandler;
 import com.numo.api.security.handle.JwtAuthenticationEntryPoint;
@@ -7,7 +8,7 @@ import com.numo.api.security.jwt.JwtFilter;
 import com.numo.api.security.jwt.TokenProvider;
 import com.numo.api.security.oauth2.CommonLoginFailureHandler;
 import com.numo.api.security.oauth2.CommonLoginSuccessHandler;
-import com.numo.api.domain.user.service.RefreshTokenService;
+import com.numo.api.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -53,6 +56,11 @@ public class SecurityConfig {
 
     public CommonLoginFailureHandler commonLoginFailureHandler() {
         return new CommonLoginFailureHandler(propertyConfig);
+    }
+
+    @Bean
+    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
     private JwtAccessDeniedHandler jwtAccessDeniedHandler() {
@@ -88,6 +96,7 @@ public class SecurityConfig {
         });
 
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer
+                .authorizationEndpoint(config -> config.authorizationRequestRepository(authorizationRequestRepository()))
                 .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
                         .baseUri("/oauth2/callback/*"))
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
