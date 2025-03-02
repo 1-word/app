@@ -51,6 +51,7 @@ public class PostQueryRepository {
                 .join(qPost.user)
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
+                .orderBy(qPost.updateTime.desc())
                 .fetch();
 
        return PageUtil.of(posts, page);
