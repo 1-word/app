@@ -1,6 +1,6 @@
 package com.numo.domain.sentence;
 
-import com.numo.domain.word.Word;
+import com.numo.domain.wordbook.word.Word;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

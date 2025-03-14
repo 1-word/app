@@ -1,4 +1,4 @@
-package com.numo.domain.word.type;
+package com.numo.domain.wordbook.type;
 
 public enum SortType {
     created, updated, random

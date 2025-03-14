@@ -1,4 +1,4 @@
-package com.numo.domain.word.sound.type;
+package com.numo.domain.wordbook.sound.type;
 
 import lombok.Getter;
 

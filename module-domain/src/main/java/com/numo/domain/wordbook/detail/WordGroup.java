@@ -1,8 +1,8 @@
-package com.numo.domain.word.detail;
+package com.numo.domain.wordbook.detail;
 
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.user.User;
-import com.numo.domain.word.detail.dto.WordGroupRequestDto;
+import com.numo.domain.wordbook.detail.dto.WordGroupRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

@@ -1,7 +1,7 @@
-package com.numo.domain.word.detail.dto;
+package com.numo.domain.wordbook.detail.dto;
 
 import com.numo.domain.user.User;
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.detail.WordGroup;
 import lombok.Builder;
 
 @Builder

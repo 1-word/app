@@ -1,8 +1,8 @@
-package com.numo.domain.word.detail;
+package com.numo.domain.wordbook.detail;
 
 import com.numo.domain.base.Timestamped;
-import com.numo.domain.word.Word;
-import com.numo.domain.word.detail.dto.UpdateWordDetailDto;
+import com.numo.domain.wordbook.word.Word;
+import com.numo.domain.wordbook.detail.dto.UpdateWordDetailDto;
 import jakarta.persistence.*;
 import lombok.*;
 

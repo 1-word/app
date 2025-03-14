@@ -4,7 +4,7 @@ import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.domain.wordbook.word.repository.WordRepository;
-import com.numo.domain.word.type.SortType;
+import com.numo.domain.wordbook.type.SortType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

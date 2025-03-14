@@ -1,7 +1,7 @@
 package com.numo.api.domain.wordbook.group.repository;
 
-import com.numo.domain.word.detail.QWordGroup;
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.detail.QWordGroup;
+import com.numo.domain.wordbook.detail.WordGroup;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

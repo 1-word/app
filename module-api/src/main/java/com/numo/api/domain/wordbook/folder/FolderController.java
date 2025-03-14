@@ -5,7 +5,7 @@ import com.numo.api.domain.wordbook.folder.dto.FolderResponseDto;
 import com.numo.api.domain.wordbook.folder.dto.read.FolderListReadResponseDto;
 import com.numo.api.domain.wordbook.folder.service.FolderService;
 import com.numo.api.security.service.UserDetailsImpl;
-import com.numo.domain.word.folder.dto.FolderUpdateDto;
+import com.numo.domain.wordbook.folder.dto.FolderUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

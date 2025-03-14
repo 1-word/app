@@ -1,4 +1,4 @@
-package com.numo.domain.word.sound;
+package com.numo.domain.wordbook.sound;
 
 import com.numo.domain.base.Timestamped;
 import lombok.*;

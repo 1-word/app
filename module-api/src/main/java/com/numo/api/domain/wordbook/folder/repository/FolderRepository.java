@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.folder.repository;
 
-import com.numo.domain.word.folder.Folder;
+import com.numo.domain.wordbook.folder.Folder;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import org.springframework.data.jpa.repository.JpaRepository;

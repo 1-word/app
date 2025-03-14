@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.sound.repository;
 
-import com.numo.domain.word.sound.Sound;
+import com.numo.domain.wordbook.sound.Sound;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

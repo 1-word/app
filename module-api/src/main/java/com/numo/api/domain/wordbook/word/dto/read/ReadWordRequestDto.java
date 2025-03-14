@@ -1,7 +1,7 @@
 package com.numo.api.domain.wordbook.word.dto.read;
 
 import com.numo.api.domain.wordbook.word.dto.search.SearchWordRequestDto;
-import com.numo.domain.word.type.SortType;
+import com.numo.domain.wordbook.type.SortType;
 import lombok.Builder;
 
 @Builder

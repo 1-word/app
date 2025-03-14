@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.group;
 
-import com.numo.domain.word.detail.dto.WordGroupRequestDto;
+import com.numo.domain.wordbook.detail.dto.WordGroupRequestDto;
 import com.numo.api.domain.wordbook.group.dto.WordGroupResponseDto;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.api.domain.wordbook.group.service.WordGroupService;

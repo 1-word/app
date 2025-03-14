@@ -1,6 +1,6 @@
-package com.numo.domain.word.dto;
+package com.numo.domain.wordbook.word.dto;
 
-import com.numo.domain.word.detail.dto.UpdateWordDetailDto;
+import com.numo.domain.wordbook.detail.dto.UpdateWordDetailDto;
 import lombok.Builder;
 
 import java.util.List;

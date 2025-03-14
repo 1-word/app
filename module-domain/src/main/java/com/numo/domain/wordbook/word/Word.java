@@ -1,14 +1,14 @@
-package com.numo.domain.word;
+package com.numo.domain.wordbook.word;
 
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.sentence.WordDailySentence;
 import com.numo.domain.user.User;
-import com.numo.domain.word.detail.WordDetail;
-import com.numo.domain.word.detail.dto.UpdateWordDetailDto;
-import com.numo.domain.word.dto.UpdateWordDto;
-import com.numo.domain.word.folder.Folder;
-import com.numo.domain.word.sound.Sound;
-import com.numo.domain.word.sound.type.GttsCode;
+import com.numo.domain.wordbook.detail.WordDetail;
+import com.numo.domain.wordbook.detail.dto.UpdateWordDetailDto;
+import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import com.numo.domain.wordbook.folder.Folder;
+import com.numo.domain.wordbook.sound.Sound;
+import com.numo.domain.wordbook.sound.type.GttsCode;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

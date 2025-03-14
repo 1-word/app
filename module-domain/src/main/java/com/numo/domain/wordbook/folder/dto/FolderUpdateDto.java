@@ -1,4 +1,4 @@
-package com.numo.domain.word.folder.dto;
+package com.numo.domain.wordbook.folder.dto;
 
 import lombok.Builder;
 

@@ -1,4 +1,4 @@
-package com.numo.domain.word.detail.type;
+package com.numo.domain.wordbook.detail.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

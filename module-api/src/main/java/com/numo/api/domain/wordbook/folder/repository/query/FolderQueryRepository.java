@@ -2,8 +2,8 @@ package com.numo.api.domain.wordbook.folder.repository.query;
 
 import com.numo.api.domain.wordbook.folder.dto.FolderResponseDto;
 import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
-import com.numo.domain.word.QWord;
-import com.numo.domain.word.folder.QFolder;
+import com.numo.domain.wordbook.folder.QFolder;
+import com.numo.domain.wordbook.word.QWord;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;

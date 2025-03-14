@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.word.dto;
 
-import com.numo.domain.word.sound.type.GttsCode;
+import com.numo.domain.wordbook.sound.type.GttsCode;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

@@ -1,8 +1,8 @@
 package com.numo.api.domain.wordbook.detail.dto;
 
-import com.numo.domain.word.Word;
-import com.numo.domain.word.detail.WordDetail;
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.word.Word;
+import com.numo.domain.wordbook.detail.WordDetail;
+import com.numo.domain.wordbook.detail.WordGroup;
 import lombok.Builder;
 
 @Builder

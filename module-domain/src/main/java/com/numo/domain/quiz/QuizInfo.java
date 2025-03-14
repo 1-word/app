@@ -3,8 +3,8 @@ package com.numo.domain.quiz;
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.type.QuizType;
 import com.numo.domain.user.User;
-import com.numo.domain.word.folder.Folder;
-import com.numo.domain.word.type.SortType;
+import com.numo.domain.wordbook.folder.Folder;
+import com.numo.domain.wordbook.type.SortType;
 import jakarta.persistence.*;
 import lombok.*;
 

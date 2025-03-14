@@ -1,8 +1,8 @@
-package com.numo.domain.word.folder;
+package com.numo.domain.wordbook.folder;
 
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.user.User;
-import com.numo.domain.word.folder.dto.FolderUpdateDto;
+import com.numo.domain.wordbook.folder.dto.FolderUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
 

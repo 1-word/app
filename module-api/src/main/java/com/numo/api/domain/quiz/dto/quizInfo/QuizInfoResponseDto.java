@@ -3,7 +3,7 @@ package com.numo.api.domain.quiz.dto.quizInfo;
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.QuizInfo;
 import com.numo.domain.quiz.type.QuizType;
-import com.numo.domain.word.type.SortType;
+import com.numo.domain.wordbook.type.SortType;
 import lombok.Builder;
 
 @Builder
