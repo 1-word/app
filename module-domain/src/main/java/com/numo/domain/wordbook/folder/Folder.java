@@ -2,6 +2,7 @@ package com.numo.domain.wordbook.folder;
 
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.user.User;
+import com.numo.domain.wordbook.WordBookRole;
 import com.numo.domain.wordbook.folder.dto.FolderUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +29,15 @@ public class Folder extends Timestamped {
     private String background;
     private String color;
     private String memo;
+
+    @Column(unique = true)
+    private String link;
+
+    @Enumerated(EnumType.STRING)
+    private WordBookRole anyoneBasicRole;
+
+    @Enumerated(EnumType.STRING)
+    private WordBookRole memberBasicRole;
 
     public void update(FolderUpdateDto updateDto) {
         this.folderName = updateDto.folderName();
