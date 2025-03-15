@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+@Deprecated
 public interface FolderRepository extends JpaRepository<Folder, Long> {
     Optional<Folder> findByFolderIdAndUser_UserId(Long folderId, Long userId);
     boolean existsByFolderIdAndUser_UserId(Long folderId, Long userId);

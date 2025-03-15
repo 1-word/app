@@ -4,6 +4,7 @@ import com.numo.domain.wordbook.folder.Folder;
 import lombok.Builder;
 
 @Builder
+@Deprecated
 public record FolderResponseDto(
         Long folderId,
         String nickname,

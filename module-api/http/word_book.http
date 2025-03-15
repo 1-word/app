@@ -1,0 +1,47 @@
+### 단어장 생성
+POST localhost:8088/api/wordBooks
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "name",
+  "memo": "memo",
+  "color": "#fff",
+  "background": "#000"
+}
+
+> {%
+    client.global.set("wordBookId", response.body.id)
+%}
+
+### 단어장 조회
+GET localhost:8088/api/wordBooks
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 수정
+PUT localhost:8088/api/wordBooks/{{wordBookId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "folderNameUpdate",
+  "memo": "memoUpdate",
+  "color": "#ffff",
+  "background": "#0000"
+}
+
+### 단어장 삭제
+DELETE localhost:8088/api/wordBooks/{{wordBookId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 단건 조회
+GET localhost:8088/api/wordBooks/{{wordBookId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 공유 단어장 조회
+GET localhost:8088/api/wordBooks/share
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

@@ -17,6 +17,10 @@ import java.util.List;
 @RequestMapping("/folders")
 @RestController
 @RequiredArgsConstructor
+@Deprecated
+/**
+ * folder -> wordbook으로 변경
+ */
 public class FolderController {
     private final FolderService folderService;
 

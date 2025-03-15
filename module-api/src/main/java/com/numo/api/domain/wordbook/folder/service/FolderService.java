@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Deprecated
 public class FolderService {
 
     private final FolderRepository folderRepository;

@@ -14,6 +14,7 @@ import java.util.Objects;
 @Builder
 @Getter
 @Entity
+@Deprecated
 public class Folder extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

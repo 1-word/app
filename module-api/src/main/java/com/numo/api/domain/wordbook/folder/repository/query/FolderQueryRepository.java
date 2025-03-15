@@ -18,6 +18,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Deprecated
 public class FolderQueryRepository {
     private final JPAQueryFactory queryFactory;
 
@@ -76,7 +77,7 @@ public class FolderQueryRepository {
     public List<FolderResponseDto> getShareFolders(Long userId) {
         List<FolderResponseDto> shareFolder = getFolderSelect()
                 .from(qFolder)
-                .join(qWordBookMember).on(qFolder.folderId.eq(qWordBookMember.wordBook.folderId))
+                .join(qWordBookMember).on(qFolder.folderId.eq(qWordBookMember.wordBook.id))
                 .where(
                         qWordBookMember.user.userId.eq(userId)
                 ).fetch();

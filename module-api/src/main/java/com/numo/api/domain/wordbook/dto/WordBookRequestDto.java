@@ -1,22 +1,21 @@
-package com.numo.api.domain.wordbook.folder.dto;
+package com.numo.api.domain.wordbook.dto;
 
 import com.numo.domain.user.User;
-import com.numo.domain.wordbook.folder.Folder;
+import com.numo.domain.wordbook.WordBook;
 import lombok.Builder;
 
 @Builder
-@Deprecated
-public record FolderRequestDto(
-        String folderName,
+public record WordBookRequestDto(
+        String name,
         String memo,
         String color,
         String background
 ) {
-    public Folder toEntity(Long userId) {
+    public WordBook toEntity(Long userId) {
         User user = User.builder().userId(userId).build();
-        return Folder.builder()
+        return WordBook.builder()
                 .user(user)
-                .folderName(folderName)
+                .name(name)
                 .memo(memo)
                 .color(color)
                 .background(background)
