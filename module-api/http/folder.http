@@ -40,3 +40,8 @@ Authorization: Bearer {{accessToken}}
 GET localhost:8088/api/folders/6?memorization=false
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 공유 단어장 조회
+GET localhost:8088/api/folders/share
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

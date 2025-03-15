@@ -34,10 +34,17 @@ public class FolderService {
      */
     public List<FolderListReadResponseDto> getFolders(Long userId, Long folderId){
         List<FolderResponseDto> res = folderQueryRepository.getFoldersByUserId(userId, folderId);
-        List<FolderInWordCountDto> wordCounts = folderQueryRepository.countWordInFolder(userId);
-        Map<Long, FolderInWordCountDto> wordCountMap = wordCounts.stream().collect(Collectors.toMap(FolderInWordCountDto::folderId, Function.identity()));
+        List<Long> folderIds = res.stream().map(FolderResponseDto::folderId).toList();
+        Map<Long, FolderInWordCountDto> wordCountMap = getFolderInWordCountDtoMap(folderIds);
 
         return getFolders(res, wordCountMap);
+    }
+
+    public List<FolderListReadResponseDto> getShareFolders(Long userId) {
+        List<FolderResponseDto> shareFolders = folderQueryRepository.getShareFolders(userId);
+        List<Long> folderIds = shareFolders.stream().map(FolderResponseDto::folderId).toList();
+        Map<Long, FolderInWordCountDto> wordCountMap = getFolderInWordCountDtoMap(folderIds);
+        return getFolders(shareFolders, wordCountMap);
     }
 
     /**
@@ -52,6 +59,17 @@ public class FolderService {
                         folderResponseDto, getFolderInWordCount(folderResponseDto.folderId(), folderInWordCountMap))
                 ).toList();
         return results;
+    }
+
+    /**
+     * 각 단어장의 단어 수를 조회해 단어장 기준으로 그룹핑
+     * @param folderIds 조회할 단어장 리스트
+     * @return 단어장 고유번호 기준으로 그룹핑된 map
+     */
+    private Map<Long, FolderInWordCountDto> getFolderInWordCountDtoMap(List<Long> folderIds) {
+        List<FolderInWordCountDto> wordCounts = folderQueryRepository.countWordInFolder(folderIds);
+        Map<Long, FolderInWordCountDto> wordCountMap = wordCounts.stream().collect(Collectors.toMap(FolderInWordCountDto::folderId, Function.identity()));
+        return wordCountMap;
     }
 
     /**
@@ -70,6 +88,10 @@ public class FolderService {
 
     public boolean existsFolder(Long folderId, Long userId) {
         return folderRepository.existsByFolderIdAndUser_UserId(folderId, userId);
+    }
+
+    public boolean existsFolder(Long folderId) {
+        return folderRepository.existsByFolderId(folderId);
     }
 
     /**
@@ -121,5 +143,11 @@ public class FolderService {
 
     public Long getWordCountInFolder(Long userId, Long folderId, Boolean memorization) {
         return folderQueryRepository.countWordInFolderById(userId, folderId, memorization);
+    }
+
+    public Folder getFolder(Long id) {
+        return folderRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.DATA_NOT_FOUND)
+        );
     }
 }

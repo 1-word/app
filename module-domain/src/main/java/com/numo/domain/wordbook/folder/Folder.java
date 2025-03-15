@@ -33,6 +33,8 @@ public class Folder extends Timestamped {
     @Column(unique = true)
     private String link;
 
+    private boolean isShared;
+
     @Enumerated(EnumType.STRING)
     private WordBookRole anyoneBasicRole;
 
@@ -46,7 +48,15 @@ public class Folder extends Timestamped {
         this.memo = updateDto.memo();
     }
 
-    private boolean isOwner(Long userId) {
+    public void startSharing() {
+        isShared = true;
+    }
+
+    public void cancelSharing() {
+        isShared = false;
+    }
+
+    public boolean isOwner(Long userId) {
         return Objects.equals(userId, user.getUserId());
     }
 

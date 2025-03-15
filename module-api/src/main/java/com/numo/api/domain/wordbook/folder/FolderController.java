@@ -26,6 +26,12 @@ public class FolderController {
         return ResponseEntity.ok(folderService.getFolders(user.getUserId(), null));
     }
 
+    @Operation(description = "공유 폴더 리스트를 가져온다.")
+    @GetMapping("/share")
+    public ResponseEntity<List<FolderListReadResponseDto>> getShareFolder(@AuthenticationPrincipal UserDetailsImpl user){
+        return ResponseEntity.ok(folderService.getShareFolders(user.getUserId()));
+    }
+
     @Operation(summary = "단어 개수 조회", description = "폴더 안의 단어 개수를 조회한다")
     @GetMapping("/{folderId}")
     public ResponseEntity<Long> getWordCountInFolder(@AuthenticationPrincipal UserDetailsImpl user,

@@ -6,6 +6,7 @@ import lombok.Builder;
 @Builder
 public record FolderResponseDto(
         Long folderId,
+        String nickname,
         String folderName,
         String memo,
         String color,
@@ -14,6 +15,7 @@ public record FolderResponseDto(
     public static FolderResponseDto of(Folder folder) {
         return FolderResponseDto.builder()
                 .folderId(folder.getFolderId())
+                .nickname(folder.getUser().getNickname())
                 .folderName(folder.getFolderName())
                 .memo(folder.getMemo())
                 .color(folder.getColor())

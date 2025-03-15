@@ -19,4 +19,8 @@ public class ShareRoom extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "word_book_id")
     private Folder wordBook;
+
+    public boolean isOwner(Long userId) {
+        return wordBook.isOwner(userId);
+    }
 }
