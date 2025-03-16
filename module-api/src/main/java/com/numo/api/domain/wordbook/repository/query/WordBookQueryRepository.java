@@ -25,7 +25,7 @@ public class WordBookQueryRepository {
      * @return 공유 단어장 리스트
      */
     public List<WordBookResponseDto> findShareWordBooks(Long userId) {
-        List<WordBookResponseDto> shareFolder = getFolderSelect()
+        List<WordBookResponseDto> shareFolder = getWordBookSelect()
                 .from(qWordBook)
                 .join(qWordBookMember).on(qWordBook.id.eq(qWordBookMember.wordBook.id))
                 .where(
@@ -41,7 +41,7 @@ public class WordBookQueryRepository {
      * @return 조회한 폴더 데이터
      */
     public List<WordBookResponseDto> findWordBooksByUserId(Long userId) {
-        List<WordBookResponseDto> results = getFolderSelect()
+        List<WordBookResponseDto> results = getWordBookSelect()
                 .from(qWordBook)
                 .where(
                         qWordBook.user.userId.eq(userId)
@@ -51,9 +51,9 @@ public class WordBookQueryRepository {
     }
 
     /**
-     * 폴더 select
+     * 단어장 select
      */
-    private JPAQuery<WordBookResponseDto> getFolderSelect() {
+    private JPAQuery<WordBookResponseDto> getWordBookSelect() {
         return queryFactory.select(Projections.constructor(
                 WordBookResponseDto.class,
                 qWordBook.id,
@@ -62,9 +62,9 @@ public class WordBookQueryRepository {
                 qWordBook.memo,
                 qWordBook.color,
                 qWordBook.background,
-                qWordBook.totalCount,
-                qWordBook.memorizedCount,
-                qWordBook.unMemorizedCount
+                qWordBook.wordCount.totalCount,
+                qWordBook.wordCount.memorizedCount,
+                qWordBook.wordCount.unMemorizedCount
         ));
     }
 
