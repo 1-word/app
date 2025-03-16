@@ -195,7 +195,7 @@ public class WordService {
      * */
     @Transactional(propagation = Propagation.NEVER)
     public void createSoundFile(String wordName, String gttsType){
-        String lang = GttsCode.valueOf(gttsType).name();
+        String lang = GttsCode.valueOf(gttsType).name().toLowerCase();
         String savePath = path + "/" + wordName + ".mp3";
         Gtts gtts = new Gtts(wordName, lang, savePath);
 

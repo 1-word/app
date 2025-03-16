@@ -43,7 +43,7 @@ public class SoundService {
 
     public void createSoundFile(String wordName, GttsCode gttsType) {
         String savePath = path + "/" + wordName + ".mp3";
-        Gtts gtts = new Gtts(wordName, gttsType.name(), savePath);
+        Gtts gtts = new Gtts(wordName, gttsType.name().toLowerCase(), savePath);
 
         gttsService.saveAudio(gtts);
     }
