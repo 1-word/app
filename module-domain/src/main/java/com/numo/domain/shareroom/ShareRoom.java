@@ -1,7 +1,7 @@
 package com.numo.domain.shareroom;
 
 import com.numo.domain.base.Timestamped;
-import com.numo.domain.wordbook.folder.Folder;
+import com.numo.domain.wordbook.WordBook;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +18,7 @@ public class ShareRoom extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "word_book_id")
-    private Folder wordBook;
+    private WordBook wordBook;
 
     public boolean isOwner(Long userId) {
         return wordBook.isOwner(userId);

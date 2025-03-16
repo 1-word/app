@@ -4,7 +4,10 @@ import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoRequestDto;
 import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoResponseDto;
 import com.numo.api.domain.quiz.repository.QuizInfoRepository;
 import com.numo.api.domain.quiz.repository.QuizRepository;
+import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.domain.quiz.QuizInfo;
+import com.numo.domain.user.User;
+import com.numo.domain.wordbook.WordBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class QuizInfoService {
+    private final WordBookService wordBookService;
     private final QuizInfoRepository quizInfoRepository;
     private final QuizRepository quizRepository;
 
     public Long createQuizInfo(Long userId, QuizInfoRequestDto requestDto) {
-        QuizInfo quizInfo = requestDto.toEntity(userId);
+        User user = new User(userId);
+        WordBook wordBook = wordBookService.findWordBook(requestDto.wordBookId());
+        QuizInfo quizInfo = requestDto.toEntity(user, wordBook);
         return quizInfoRepository.save(quizInfo).getId();
     }
 

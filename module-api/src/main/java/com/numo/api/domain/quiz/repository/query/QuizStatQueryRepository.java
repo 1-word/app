@@ -33,7 +33,7 @@ public class QuizStatQueryRepository {
         return jpaQueryFactory.select(Projections.constructor(
                         QuizStatResponseDto.class,
                         qQuizStat.id,
-                        qQuizStat.quizInfo.folder.folderName,
+                        qQuizStat.quizInfo.wordBook.name,
                         qQuizStat.totalCount,
                         qQuizStat.correctCount,
                         qQuizStat.wrongCount,

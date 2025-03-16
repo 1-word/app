@@ -9,7 +9,9 @@ import lombok.Builder;
 @Builder
 public record QuizInfoResponseDto(
         Long quizInfoId,
+        @Deprecated
         Long folderId,
+        Long wordBookId,
         QuizType type,
         SortType sort,
         String memorization,
@@ -18,22 +20,14 @@ public record QuizInfoResponseDto(
         String updateTime
 ) {
     public static QuizInfoResponseDto of(QuizInfo quizInfo) {
-        return QuizInfoResponseDto.builder()
-                .quizInfoId(quizInfo.getId())
-                .folderId(quizInfo.getFolder().getFolderId())
-                .type(quizInfo.getType())
-                .sort(quizInfo.getSort())
-                .memorization(quizInfo.getMemorization())
-                .count(quizInfo.getCount())
-                .createTime(Timestamped.getTimeString(quizInfo.getCreateTime()))
-                .updateTime(Timestamped.getTimeString(quizInfo.getUpdateTime()))
-                .build();
+        return of(quizInfo, quizInfo.getCount());
     }
 
     public static QuizInfoResponseDto of(QuizInfo quizInfo, int count) {
         return QuizInfoResponseDto.builder()
                 .quizInfoId(quizInfo.getId())
-                .folderId(quizInfo.getFolder().getFolderId())
+                .folderId(quizInfo.getWordBook().getId())
+                .wordBookId(quizInfo.getWordBook().getId())
                 .type(quizInfo.getType())
                 .sort(quizInfo.getSort())
                 .memorization(quizInfo.getMemorization())
