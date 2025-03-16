@@ -10,15 +10,16 @@ import com.numo.domain.wordbook.sound.Sound;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.word.dto.UpdateWordDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
-@Builder
 @Entity
 public class Word extends Timestamped {
     @Id
@@ -56,31 +57,50 @@ public class Word extends Timestamped {
     @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDailySentence> wordDailySentences;
 
+    @Builder
+    public Word(Long wordId, User user, String word, String mean, String read, String memo, Sound sound, String memorization, GttsCode lang, WordBook wordbook, List<WordDetail> wordDetails, List<WordDailySentence> wordDailySentences) {
+        this.wordId = wordId;
+        this.user = user;
+        this.word = word;
+        this.mean = mean;
+        this.read = read;
+        this.memo = memo;
+        this.sound = sound;
+        this.memorization = memorization;
+        this.lang = lang;
+        this.wordbook = wordbook;
+        this.wordDetails = wordDetails;
+        this.wordDailySentences = wordDailySentences;
+        addWordDetails(wordDetails);
+        updateWordBook(wordbook);
+    }
+
     public Word(Long wordId) {
         this.wordId = wordId;
     }
 
+    @Deprecated
     public void setWordDetails() {
         addWordDetails(wordDetails);
     }
 
     public void addWordDetails(List<WordDetail> wordDetails) {
+        if (wordDetails == null) {
+            return;
+        }
+
         for (WordDetail wordDetail : wordDetails) {
-            addWordDetail(wordDetail);
+            if (wordDetail.getWord() != this) {
+                wordDetail.addWord(this);
+            }
         }
     }
 
-    private void addWordDetail(WordDetail wordDetail) {
-        if (wordDetail.getWord() != this) {
-            wordDetail.addWord(this);
-        }
-    }
-
-    public void updateWord(UpdateWordDto dto) {
+    public void updateAllWord(UpdateWordDto dto, String prevMemorization) {
         mean = dto.mean();
         read = dto.read();
-        setWordbook(dto.folderId());
         updateWordDetails(dto.details());
+        updateMemorization(prevMemorization, dto.memorization());
     }
 
     private void updateWordDetails(List<UpdateWordDetailDto> detailsDto) {
@@ -94,7 +114,7 @@ public class Word extends Timestamped {
                 wordDetail.update(detailDto);
             } else {
                 // 원래 있던 데이터보다 많으면 새로운 객체를 만들어야한다.
-                Word word = Word.builder().wordId(wordId).build();
+                Word word = new Word(wordId);
                 wordDetails.add(detailDto.toEntity(word));
             }
             index++;
@@ -118,7 +138,7 @@ public class Word extends Timestamped {
         this.memorization = memorization;
     }
 
-    public void addWordBook(WordBook wordbook) {
+    public void updateWordBook(WordBook wordbook) {
         wordbook.saveWord(memorization);
         this.wordbook = wordbook;
     }

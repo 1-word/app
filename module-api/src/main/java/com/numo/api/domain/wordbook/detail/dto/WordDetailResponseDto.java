@@ -1,5 +1,6 @@
 package com.numo.api.domain.wordbook.detail.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailGroupKey;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailResponseDto;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Builder
 public record WordDetailResponseDto(
+        @JsonIgnore
         Long wordId,
         Long wordDetailId,
         Long wordGroupId,

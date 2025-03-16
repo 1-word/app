@@ -7,7 +7,6 @@ import java.util.List;
 
 @Builder
 public record UpdateWordDto(
-        Long folderId,
         String mean,
         String read,
         String memo,

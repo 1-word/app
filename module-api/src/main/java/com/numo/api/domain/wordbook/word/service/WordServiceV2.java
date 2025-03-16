@@ -4,9 +4,9 @@ import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
 import com.numo.api.domain.wordbook.service.WordBookService;
-import com.numo.api.domain.wordbook.sound.repository.SoundRepository;
+import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
-import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
+import com.numo.api.domain.wordbook.word.dto.WordRequestDtoV2;
 import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordListResponseDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
@@ -14,17 +14,16 @@ import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
 import com.numo.api.domain.wordbook.word.repository.WordRepository;
 import com.numo.api.domain.wordbook.word.service.update.UpdateFactory;
 import com.numo.api.domain.wordbook.word.service.update.UpdateWord;
-import com.numo.api.global.comm.gtts.Gtts;
-import com.numo.api.global.comm.gtts.GttsService;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
-import com.numo.api.global.conf.PropertyConfig;
+import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.sound.Sound;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.type.UpdateType;
 import com.numo.domain.wordbook.word.Word;
 import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -37,25 +36,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class WordServiceV2 {
-
     private final WordRepository wordRepository;
-    private final SoundRepository soundRepository;
     private final WordBookService wordBookService;
-    private final String path;
-    private final GttsService gttsService;
-
-    public WordServiceV2(WordRepository wordRepository,
-                         SoundRepository soundRepository,
-                         WordBookService wordBookService,
-                         PropertyConfig propertyConfig,
-                         GttsService gttsService) {
-        this.wordRepository = wordRepository;
-        this.soundRepository = soundRepository;
-        this.wordBookService = wordBookService;
-        this.path = propertyConfig.getGttsPath();
-        this.gttsService = gttsService;
-    }
+    private final SoundService soundService;
 
     /**
      * 단어 저장
@@ -65,29 +50,15 @@ public class WordServiceV2 {
      * @return 저장한 단어 데이터
      */
     @Transactional
-    public WordResponseDto saveWord(Long userId, String gttsType, WordRequestDto requestDto){
-        Long soundId = null;
-        String wordName = requestDto.word().replaceAll("\\s", "");
-        WordBook wordBook = wordBookService.findWordBook(requestDto.folderId());
-
+    public WordResponseDto saveWord(Long userId, GttsCode gttsType, WordRequestDtoV2 requestDto){
         // 단어 그룹 확인
+        WordBook wordBook = wordBookService.findWordBook(requestDto.wordBookId());
 
         // 발음 파일 생성
-        Sound sound = soundRepository.findByWord(requestDto.word());
+        Sound sound = soundService.createSound(requestDto.word(), gttsType);
+        User user = new User(userId);
 
-        if (sound == null) {
-            createSoundFile(wordName, gttsType);
-            // sound 테이블에 데이터 insert
-            sound = Sound.builder()
-                    .word(wordName)
-                    .build();
-            sound = soundRepository.save(sound);
-        }
-        soundId = sound.getSoundId();
-
-        Word word = requestDto.toEntity(userId, gttsType, soundId);
-        word.setWordDetails();
-        word.addWordBook(wordBook);
+        Word word = requestDto.toEntity(user, sound, wordBook, gttsType);
 
         return WordResponseDto.of(wordRepository.save(word));
     }
@@ -121,7 +92,7 @@ public class WordServiceV2 {
         String memorization = word.getMemorization();
         wordBookService.decrementPreviousWordBookCount(preWordbook.getId(), memorization);
         WordBook wordBook = wordBookService.findWordBook(wordBookId);
-        word.addWordBook(wordBook);
+        word.updateWordBook(wordBook);
     }
 
     /**
@@ -189,17 +160,7 @@ public class WordServiceV2 {
         return wordRepository.findDailyWordBy(userId, words);
     }
 
-    /**
-     * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
-     * @param wordName 단어명
-     * */
-    public void createSoundFile(String wordName, String gttsType){
-        String lang = GttsCode.valueOf(gttsType).getTTS();
-        String savePath = path + "/" + wordName + ".mp3";
-        Gtts gtts = new Gtts(wordName, lang, savePath);
 
-        gttsService.saveAudio(gtts);
-    }
 
     /**
      * word 데이터 삭제

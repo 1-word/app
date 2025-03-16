@@ -92,7 +92,7 @@ public class WordService {
         soundId = sound.getSoundId();
 
         Word word = requestDto.toEntity(userId, gttsType, soundId);
-        word.setWordDetails();
+//        word.setWordDetails();
 
         return WordResponseDto.of(wordRepository.save(word));
     }
@@ -195,7 +195,7 @@ public class WordService {
      * */
     @Transactional(propagation = Propagation.NEVER)
     public void createSoundFile(String wordName, String gttsType){
-        String lang = GttsCode.valueOf(gttsType).getTTS();
+        String lang = GttsCode.valueOf(gttsType).name();
         String savePath = path + "/" + wordName + ".mp3";
         Gtts gtts = new Gtts(wordName, lang, savePath);
 

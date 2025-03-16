@@ -39,6 +39,10 @@ public class User extends Timestamped {
 
     private String serviceType;
 
+    public User(Long userId) {
+        this.userId = userId;
+    }
+
     public void updatePassword(String newPassword){
         this.password = newPassword;
     }

@@ -13,7 +13,7 @@ public record WordDetailRequestDto(
         String content
 ) {
     public WordDetail toEntity() {
-        Word word = Word.builder().wordId(wordId).build();
+        Word word = new Word(wordId);
         WordGroup wordGroup = WordGroup.builder()
                 .wordGroupId(wordGroupId)
                 .build();
