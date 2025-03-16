@@ -29,10 +29,8 @@ public class WordBook extends Timestamped {
     private String color;
     private String memo;
 
-    // todo 조회수 관련 밸류 객체
-    private int totalCount;
-    private int memorizedCount;
-    private int unMemorizedCount;
+    @Embedded
+    private WordCount wordCount;
 
     @Column(unique = true)
     private String link;
@@ -57,9 +55,7 @@ public class WordBook extends Timestamped {
         this.background = background;
         this.color = color;
         this.memo = memo;
-        this.totalCount = totalCount;
-        this.memorizedCount = memorizedCount;
-        this.unMemorizedCount = unMemorizedCount;
+        this.wordCount = new WordCount(totalCount, memorizedCount, unMemorizedCount);
         this.link = link;
         this.isShared = isShared;
         this.anyoneBasicRole = WordBookRole.view;
@@ -95,56 +91,25 @@ public class WordBook extends Timestamped {
     }
 
     public boolean isDeleteAllowed() {
-        return totalCount <= 0;
+        return wordCount.isDeleteAllowed();
     }
 
     /**
      * 단어 삭제 시 count 삭제
      */
     public void deleteCount(String memorization) {
-        WordCountType type = getCountType(memorization);
-        switch (type) {
-            case memorized -> this.memorizedCount--;
-            case unmemorized -> this.unMemorizedCount--;
-            case none -> { return; }
-        }
-        this.totalCount--;
+        wordCount = wordCount.deleteCount(memorization);
     }
 
     public void updateCount(String memorization) {
-        WordCountType countType = getCountType(memorization);
-        switch (countType) {
-            case memorized -> {
-                this.memorizedCount++;
-                this.unMemorizedCount--;
-            }
-            case unmemorized -> {
-                this.unMemorizedCount++;
-                this.memorizedCount--;
-            }
-            case none -> {}
-        }
-    }
-
-    public WordCountType getCountType(String memorization) {
-        return switch (memorization) {
-            case "Y" -> WordCountType.memorized;
-            case "N" -> WordCountType.unmemorized;
-            default -> WordCountType.none;
-        };
+        wordCount = wordCount.updateCount(memorization);
     }
 
     /**
      * 단어 추가 시 count 추가
      */
     public void saveWord(String memorization) {
-        WordCountType type = getCountType(memorization);
-        switch (type) {
-            case memorized -> this.memorizedCount++;
-            case unmemorized -> this.unMemorizedCount++;
-            case none -> { return; }
-        }
-        this.totalCount++;
+        wordCount = wordCount.saveWord(memorization);
     }
 
     public void startSharing() {
@@ -157,6 +122,18 @@ public class WordBook extends Timestamped {
 
     public boolean isOwner(Long userId) {
         return Objects.equals(userId, user.getUserId());
+    }
+
+    public int getTotalCount() {
+        return wordCount.getTotalCount();
+    }
+
+    public int getMemorizedCount() {
+        return wordCount.getTotalCount();
+    }
+
+    public int getUnMemorizedCount() {
+        return wordCount.getTotalCount();
     }
 
 }

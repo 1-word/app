@@ -106,7 +106,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 이동
-PUT localhost:8088/api/v2/word/{{wordId}}/folder/6
+PUT localhost:8088/api/v2/word/{{wordId}}/folder/19
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

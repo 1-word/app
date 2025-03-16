@@ -1,5 +1,5 @@
 package com.numo.domain.wordbook;
 
 public enum WordCountType {
-    memorized, unmemorized, none
+    memorized, unmemorized
 }
