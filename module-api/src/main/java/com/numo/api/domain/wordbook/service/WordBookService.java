@@ -101,7 +101,18 @@ public class WordBookService {
         wordBookRepository.delete(wordBook);
     }
 
-    private WordBook findWordBook(Long id) {
+    /**
+     * 단어를 옮기기 위해 이전 단어장의 단어 수를 업데이트 해준다.
+     * @param preWordBookId
+     * @param memorization
+     */
+    @Transactional
+    public void decrementPreviousWordBookCount(Long preWordBookId, String memorization) {
+        WordBook wordBook = findWordBook(preWordBookId);
+        wordBook.deleteCount(memorization);
+    }
+
+    public WordBook findWordBook(Long id) {
         return wordBookRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.DATA_NOT_FOUND)
         );

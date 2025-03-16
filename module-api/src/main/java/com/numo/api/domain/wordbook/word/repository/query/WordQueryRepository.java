@@ -29,7 +29,7 @@ public class WordQueryRepository {
                         qWord.mean
                 )).from(qWord)
                 .where(
-                        qWord.folder.folderId.eq(folderId),
+                        qWord.wordbook.id.eq(folderId),
                         qWord.user.userId.eq(userId)
                 )
                 .fetch();

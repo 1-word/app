@@ -35,16 +35,16 @@ public class FolderQueryRepository {
     public List<FolderInWordCountDto> countWordInFolder(List<Long> folderIds) {
         List<FolderInWordCountDto> result = queryFactory.select(Projections.constructor(
                         FolderInWordCountDto.class,
-                        qWord.folder.folderId,
+                        qWord.wordbook.id,
                         Expressions.as(Wildcard.count, "count")
                 ))
                 .from(qWord)
-                .join(qWord.folder)
+                .join(qWord.wordbook)
                 .where(
-                        qWord.folder.folderId.isNotNull(),
-                        qWord.folder.folderId.in(folderIds)
+                        qWord.wordbook.id.isNotNull(),
+                        qWord.wordbook.id.in(folderIds)
                 )
-                .groupBy(qWord.folder.folderId)
+                .groupBy(qWord.wordbook.id)
                 .fetch();
 
         return result;
@@ -62,7 +62,7 @@ public class FolderQueryRepository {
         Long result = queryFactory.select(Expressions.as(Wildcard.count, "count"))
                 .from(qWord)
                 .where(
-                        qWord.folder.folderId.eq(folderId),
+                        qWord.wordbook.id.eq(folderId),
                         qWord.user.userId.eq(userId),
                         eqMemorization(memorization)
                 ).fetchOne();

@@ -1,11 +1,11 @@
 package com.numo.api.domain.wordbook.word.dto;
 
-import com.numo.domain.base.Timestamped;
-import com.numo.domain.wordbook.word.Word;
-import com.numo.domain.wordbook.detail.WordDetail;
-import com.numo.domain.wordbook.folder.Folder;
-import com.numo.domain.wordbook.sound.Sound;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
+import com.numo.domain.base.Timestamped;
+import com.numo.domain.wordbook.WordBook;
+import com.numo.domain.wordbook.detail.WordDetail;
+import com.numo.domain.wordbook.sound.Sound;
+import com.numo.domain.wordbook.word.Word;
 import lombok.Builder;
 
 import java.util.List;
@@ -28,10 +28,10 @@ public record WordResponseDto(
         public static WordResponseDto of(Word word) {
                 List<WordDetail> wordDetails = word.getWordDetails();
                 Sound sound = word.getSound();
-                Folder folder = word.getFolder();
+                WordBook wordbook = word.getWordbook();
                 return WordResponseDto.builder()
                         .wordId(word.getWordId())
-                        .folderId(folder.getFolderId())
+                        .folderId(wordbook.getId())
                         .soundPath(sound.getWord())
                         .word(word.getWord())
                         .mean(word.getMean())

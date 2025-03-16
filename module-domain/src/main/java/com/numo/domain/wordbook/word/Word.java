@@ -3,12 +3,12 @@ package com.numo.domain.wordbook.word;
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.sentence.WordDailySentence;
 import com.numo.domain.user.User;
+import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.detail.WordDetail;
 import com.numo.domain.wordbook.detail.dto.UpdateWordDetailDto;
-import com.numo.domain.wordbook.word.dto.UpdateWordDto;
-import com.numo.domain.wordbook.folder.Folder;
 import com.numo.domain.wordbook.sound.Sound;
 import com.numo.domain.wordbook.sound.type.GttsCode;
+import com.numo.domain.wordbook.word.dto.UpdateWordDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -45,9 +45,9 @@ public class Word extends Timestamped {
     @Enumerated(EnumType.STRING)
     private GttsCode lang;   //20230930추가 단어 타입 (영어, 일본어 등)
 
-    @ManyToOne
-    @JoinColumn(name = "folder_id")
-    private Folder folder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "word_book_id")
+    private WordBook wordbook;
 
     @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDetail> wordDetails;
@@ -79,7 +79,7 @@ public class Word extends Timestamped {
     public void updateWord(UpdateWordDto dto) {
         mean = dto.mean();
         read = dto.read();
-        setFolder(dto.folderId());
+        setWordbook(dto.folderId());
         updateWordDetails(dto.details());
     }
 
@@ -117,17 +117,23 @@ public class Word extends Timestamped {
         this.memorization = memorization;
     }
 
-    public void setFolder(Long folderId) {
-        if (folderId == null) {
+    public void addWordBook(WordBook wordbook) {
+        wordbook.saveWord(memorization);
+        this.wordbook = wordbook;
+    }
+
+    @Deprecated
+    public void setWordbook(Long wordBookId) {
+        if (wordBookId == null) {
             return;
         }
-        folder = Folder.builder()
-                .folderId(folderId)
+        wordbook = WordBook.builder()
+                .id(wordBookId)
                 .build();
     }
 
-    public Long getFolderId(){
-        return folder.getFolderId();
+    public Long getWordBookId(){
+        return wordbook.getId();
     }
 
     public Sound getSound() {
@@ -137,11 +143,11 @@ public class Word extends Timestamped {
         return sound;
     }
 
-    public Folder getFolder() {
-        if (folder == null) {
-            return Folder.builder().build();
+    public WordBook getWordbook() {
+        if (wordbook == null) {
+            return WordBook.builder().build();
         }
-        return folder;
+        return wordbook;
     }
 
 }

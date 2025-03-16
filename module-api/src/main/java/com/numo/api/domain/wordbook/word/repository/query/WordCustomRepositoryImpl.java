@@ -47,7 +47,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         List<WordDto> results = queryFactory.select(Projections.constructor(
                         WordDto.class,
                         qWord.wordId,
-                        qWord.folder.folderId,
+                        qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
                         qWord.read,
@@ -59,7 +59,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         qWord.createTime
                 ))
                 .from(qWord)
-                .leftJoin(qWord.folder)
+                .leftJoin(qWord.wordbook)
                 .leftJoin(qWord.sound)
                 .leftJoin(qWord.user)
                 .where(
@@ -89,7 +89,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         return queryFactory.select(Projections.constructor(
                         WordDto.class,
                         qWord.wordId,
-                        qWord.folder.folderId,
+                        qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
                         qWord.read,
@@ -101,7 +101,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         qWord.createTime
                 ))
                 .from(qWord)
-                .leftJoin(qWord.folder)
+                .leftJoin(qWord.wordbook)
                 .leftJoin(qWord.sound)
                 .leftJoin(qWord.user)
                 .where(
@@ -296,7 +296,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         if (folderId == null) {
             return null;
         }
-        return qWord.folder.folderId.eq(folderId);
+        return qWord.wordbook.id.eq(folderId);
     }
 
     /**

@@ -6,7 +6,7 @@ import com.numo.domain.wordbook.word.dto.UpdateWordDto;
 public class UpdateFolder implements UpdateWord {
     @Override
     public Word update(UpdateWordDto dto, Word word) {
-        word.setFolder(dto.folderId());
+        word.setWordbook(dto.folderId());
         return word;
     }
 }

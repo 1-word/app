@@ -29,6 +29,7 @@ public class WordBook extends Timestamped {
     private String color;
     private String memo;
 
+    // todo 조회수 관련 밸류 객체
     private int totalCount;
     private int memorizedCount;
     private int unMemorizedCount;
@@ -38,6 +39,7 @@ public class WordBook extends Timestamped {
 
     private boolean isShared;
 
+    // todo 권한 관련 밸류 객체
     @Enumerated(EnumType.STRING)
     private WordBookRole anyoneBasicRole;
 
@@ -99,21 +101,48 @@ public class WordBook extends Timestamped {
     /**
      * 단어 삭제 시 count 삭제
      */
-    public void deleteWord(WordCountType type) {
+    public void deleteCount(String memorization) {
+        WordCountType type = getCountType(memorization);
         switch (type) {
             case memorized -> this.memorizedCount--;
             case unmemorized -> this.unMemorizedCount--;
+            case none -> { return; }
         }
         this.totalCount--;
+    }
+
+    public void updateCount(String memorization) {
+        WordCountType countType = getCountType(memorization);
+        switch (countType) {
+            case memorized -> {
+                this.memorizedCount++;
+                this.unMemorizedCount--;
+            }
+            case unmemorized -> {
+                this.unMemorizedCount++;
+                this.memorizedCount--;
+            }
+            case none -> {}
+        }
+    }
+
+    public WordCountType getCountType(String memorization) {
+        return switch (memorization) {
+            case "Y" -> WordCountType.memorized;
+            case "N" -> WordCountType.unmemorized;
+            default -> WordCountType.none;
+        };
     }
 
     /**
      * 단어 추가 시 count 추가
      */
-    public void saveWord(WordCountType type) {
+    public void saveWord(String memorization) {
+        WordCountType type = getCountType(memorization);
         switch (type) {
             case memorized -> this.memorizedCount++;
             case unmemorized -> this.unMemorizedCount++;
+            case none -> { return; }
         }
         this.totalCount++;
     }
