@@ -30,9 +30,9 @@ public class ShareRoomQueryRepository {
         List<ShareRoomListDto> shareRooms = jpaQueryFactory.select(Projections.constructor(
                         ShareRoomListDto.class,
                         qShareRoom.id,
-                        qShareRoom.wordBook.folderId,
+                        qShareRoom.wordBook.id,
                         qShareRoom.wordBook.user.nickname,
-                        qShareRoom.wordBook.folderName,
+                        qShareRoom.wordBook.name,
                         qShareRoom.wordBook.background,
                         qShareRoom.wordBook.color
                 )).from(qShareRoom)
@@ -53,7 +53,7 @@ public class ShareRoomQueryRepository {
         List<MyShareRoomListDto> myShareRoom = jpaQueryFactory.select(Projections.constructor(
                         MyShareRoomListDto.class,
                         qShareRoom.id,
-                        qShareRoom.wordBook.folderId,
+                        qShareRoom.wordBook.id,
                         qShareRoom.wordBook.anyoneBasicRole,
                         qShareRoom.wordBook.memberBasicRole
                 )).from(qShareRoom)

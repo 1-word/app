@@ -33,13 +33,13 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Query(value = "insert into quiz (quiz_info_id, word_id) " +
             "select :quizInfoId as quiz_info_id, word_id " +
             "from word " +
-            "where folder_id = :folderId " +
+            "where word_book_id = :wordBookId " +
             "and user_id = :userId " +
             "order by rand() " +
             "limit :limit",
             nativeQuery = true)
     void createQuizOrderByRandom(@Param("quizInfoId") Long quizInfoId,
-                                 @Param("folderId") Long folderId,
+                                 @Param("wordBookId") Long wordBookId,
                                  @Param("userId") Long userId,
                                  @Param("limit") int limit);
 
@@ -48,12 +48,12 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Query(value = "insert into quiz (quiz_info_id, word_id) " +
             "select :quizInfoId as quiz_info_id, word_id " +
             "from word " +
-            "where folder_id = :folderId " +
+            "where word_book_id = :wordBookId " +
             "and user_id = :userId " +
             "limit :limit",
             nativeQuery = true)
     void createQuizOrderByCreated(@Param("quizInfoId") Long quizInfoId,
-                                 @Param("folderId") Long folderId,
+                                 @Param("wordBookId") Long wordBookId,
                                  @Param("userId") Long userId,
                                  @Param("limit") int limit);
 
@@ -62,13 +62,13 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Query(value = "insert into quiz (quiz_info_id, word_id) " +
             "select :quizInfoId as quiz_info_id, word_id " +
             "from word " +
-            "where folder_id = :folderId " +
+            "where word_book_id = :wordBookId " +
             "and user_id = :userId " +
             "order by update_time desc " +
             "limit :limit",
             nativeQuery = true)
     void createQuizOrderByUpdated(@Param("quizInfoId") Long quizInfoId,
-                                  @Param("folderId") Long folderId,
+                                  @Param("wordBookId") Long wordBookId,
                                   @Param("userId") Long userId,
                                   @Param("limit") int limit);
 }

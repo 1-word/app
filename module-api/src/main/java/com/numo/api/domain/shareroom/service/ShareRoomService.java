@@ -4,13 +4,13 @@ import com.numo.api.domain.shareroom.dto.MyShareRoomListDto;
 import com.numo.api.domain.shareroom.dto.ShareRoomListDto;
 import com.numo.api.domain.shareroom.repository.ShareRoomQueryRepository;
 import com.numo.api.domain.shareroom.repository.ShareRoomRepository;
-import com.numo.api.domain.wordbook.folder.service.FolderService;
+import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.domain.shareroom.ShareRoom;
-import com.numo.domain.wordbook.folder.Folder;
+import com.numo.domain.wordbook.WordBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -21,29 +21,29 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ShareRoomService {
-    private final FolderService folderService;
+    private final WordBookService wordBookService;
     private final ShareRoomRepository shareRoomRepository;
     private final ShareRoomQueryRepository shareRoomQueryRepository;
 
     @Transactional
     public Long saveShareRoom(Long userId, Long wordBookId) {
-        if (shareRoomRepository.existsByWordBook_FolderId(wordBookId)) {
+        if (shareRoomRepository.existsByWordBook_Id(wordBookId)) {
             throw new CustomException(ErrorCode.SHARE_ROOM_EXISTS);
         }
 
-        Folder folder = folderService.getFolder(wordBookId);
+        WordBook wordBook = wordBookService.findWordBook(wordBookId);
 
-        if (!folder.isOwner(userId)) {
+        if (!wordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
 
         ShareRoom shareRoom = ShareRoom.builder()
-                .wordBook(folder)
+                .wordBook(wordBook)
                 .build();
 
         Long shareRoomId = shareRoomRepository.save(shareRoom).getId();
 
-        folder.startSharing();
+        wordBook.startSharing();
         return shareRoomId;
     }
 
@@ -65,7 +65,7 @@ public class ShareRoomService {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
         shareRoomRepository.delete(shareRoom);
-        Folder wordBook = shareRoom.getWordBook();
+        WordBook wordBook = shareRoom.getWordBook();
         wordBook.cancelSharing();
     }
 

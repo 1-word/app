@@ -17,5 +17,5 @@ public interface ShareRoomRepository extends JpaRepository<ShareRoom, Long> {
         );
     }
 
-    boolean existsByWordBook_FolderId(Long id);
+    boolean existsByWordBook_Id(Long id);
 }

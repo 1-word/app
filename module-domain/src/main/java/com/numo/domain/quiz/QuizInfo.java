@@ -3,7 +3,7 @@ package com.numo.domain.quiz;
 import com.numo.domain.base.Timestamped;
 import com.numo.domain.quiz.type.QuizType;
 import com.numo.domain.user.User;
-import com.numo.domain.wordbook.folder.Folder;
+import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.type.SortType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,9 +23,9 @@ public class QuizInfo extends Timestamped {
     @JoinColumn(name = "user_id")
     User user;
 
-    @ManyToOne
-    @JoinColumn(name = "folder_id")
-    Folder folder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "word_book_id")
+    WordBook wordBook;
 
     @Column(name = "quiz_type")
     private QuizType type;

@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface QuizInfoRepository extends JpaRepository<QuizInfo, Long> {
-    @EntityGraph(attributePaths = {"folder", "user"})
-    Optional<QuizInfo> findByIdAndUser_UserId(@Param("id") Long id, @Param("userId") Long userId);
+    @EntityGraph(attributePaths = {"wordBook", "user"})
+    Optional<QuizInfo> findByIdAndUser_UserId(Long id, Long userId);
 
     default QuizInfo findQuizInfo(Long id, Long userId) {
         return findByIdAndUser_UserId(id, userId).orElseThrow(
