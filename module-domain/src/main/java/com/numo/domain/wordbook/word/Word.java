@@ -113,7 +113,8 @@ public class Word extends Timestamped {
         this.memo = memo;
     }
 
-    public void updateMemorization(String memorization) {
+    public void updateMemorization(String prevMemorization, String memorization) {
+        wordbook.updateMemorizationCount(prevMemorization, memorization);
         this.memorization = memorization;
     }
 

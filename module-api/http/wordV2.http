@@ -102,7 +102,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "memorization": "N"
+  "memorization": "Y"
 }
 
 ### 단어장 이동

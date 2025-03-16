@@ -22,7 +22,7 @@ public class WordCount {
     /**
      * 단어 삭제 시 count 삭제
      */
-    protected WordCount deleteCount(String memorization) {
+    protected WordCount decrementCount(String memorization) {
         WordCountType type = getCountType(memorization);
         switch (type) {
             case memorized -> this.memorizedCount--;
@@ -36,7 +36,7 @@ public class WordCount {
     /**
      * 단어 암기 여부 수정 시 count 업데이트
      */
-    protected WordCount updateCount(String memorization) {
+    protected WordCount updateCountByMemorizationStatus(String memorization) {
         WordCountType countType = getCountType(memorization);
         switch (countType) {
             case memorized -> {
@@ -54,7 +54,7 @@ public class WordCount {
     /**
      * 단어 추가 시 count 추가
      */
-    protected WordCount saveWord(String memorization) {
+    protected WordCount incrementCount(String memorization) {
         WordCountType type = getCountType(memorization);
         switch (type) {
             case memorized -> this.memorizedCount++;

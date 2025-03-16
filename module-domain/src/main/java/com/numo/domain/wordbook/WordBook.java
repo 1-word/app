@@ -98,18 +98,27 @@ public class WordBook extends Timestamped {
      * 단어 삭제 시 count 삭제
      */
     public void deleteCount(String memorization) {
-        wordCount = wordCount.deleteCount(memorization);
+        wordCount = wordCount.decrementCount(memorization);
     }
 
-    public void updateCount(String memorization) {
-        wordCount = wordCount.updateCount(memorization);
+    /**
+     * 암기 여부가 변경되었을 때 단어 수 업데이트
+     * 변경되지 않았으면 단어 수를 업데이트 하지 않는다.
+     * @param prevMemorization 단어 암기 여부
+     * @param memorization 변경된 단어 암기 여부
+     */
+    public void updateMemorizationCount(String prevMemorization, String memorization) {
+        if (Objects.equals(prevMemorization, memorization)) {
+            return;
+        }
+        wordCount = wordCount.updateCountByMemorizationStatus(memorization);
     }
 
     /**
      * 단어 추가 시 count 추가
      */
     public void saveWord(String memorization) {
-        wordCount = wordCount.saveWord(memorization);
+        wordCount = wordCount.incrementCount(memorization);
     }
 
     public void startSharing() {
