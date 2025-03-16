@@ -90,6 +90,7 @@ public class SecurityConfig {
             authorize.requestMatchers("/oauth2/**", "/login/**").permitAll();
             authorize.requestMatchers("/resources/**").permitAll();
             authorize.requestMatchers(HttpMethod.GET,"/posts/**").permitAll();
+            authorize.requestMatchers(HttpMethod.GET, "/share-rooms").permitAll();
             authorize.requestMatchers("/posts/**").hasRole("ADMIN");
             authorize.requestMatchers("/actuator/**").permitAll();
             authorize.anyRequest().authenticated();

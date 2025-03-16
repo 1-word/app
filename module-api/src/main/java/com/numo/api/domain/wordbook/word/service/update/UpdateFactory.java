@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.word.service.update;
 
-import com.numo.domain.word.type.UpdateType;
+import com.numo.domain.wordbook.type.UpdateType;
 
 public class UpdateFactory {
 

@@ -1,10 +1,11 @@
 package com.numo.api.domain.wordbook.folder.dto;
 
 import com.numo.domain.user.User;
-import com.numo.domain.word.folder.Folder;
+import com.numo.domain.wordbook.folder.Folder;
 import lombok.Builder;
 
 @Builder
+@Deprecated
 public record FolderRequestDto(
         String folderName,
         String memo,

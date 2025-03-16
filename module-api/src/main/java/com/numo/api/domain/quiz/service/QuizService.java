@@ -13,7 +13,7 @@ import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.domain.quiz.Quiz;
-import com.numo.domain.word.type.SortType;
+import com.numo.domain.wordbook.type.SortType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;

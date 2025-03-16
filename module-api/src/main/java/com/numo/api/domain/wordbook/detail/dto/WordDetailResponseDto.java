@@ -1,10 +1,11 @@
 package com.numo.api.domain.wordbook.detail.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailGroupKey;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailResponseDto;
-import com.numo.domain.word.detail.WordDetail;
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.detail.WordDetail;
+import com.numo.domain.wordbook.detail.WordGroup;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Builder
 public record WordDetailResponseDto(
+        @JsonIgnore
         Long wordId,
         Long wordDetailId,
         Long wordGroupId,

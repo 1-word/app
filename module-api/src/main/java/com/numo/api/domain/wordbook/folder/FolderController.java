@@ -5,7 +5,7 @@ import com.numo.api.domain.wordbook.folder.dto.FolderResponseDto;
 import com.numo.api.domain.wordbook.folder.dto.read.FolderListReadResponseDto;
 import com.numo.api.domain.wordbook.folder.service.FolderService;
 import com.numo.api.security.service.UserDetailsImpl;
-import com.numo.domain.word.folder.dto.FolderUpdateDto;
+import com.numo.domain.wordbook.folder.dto.FolderUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,10 @@ import java.util.List;
 @RequestMapping("/folders")
 @RestController
 @RequiredArgsConstructor
+@Deprecated
+/**
+ * folder -> wordbook으로 변경
+ */
 public class FolderController {
     private final FolderService folderService;
 
@@ -24,6 +28,12 @@ public class FolderController {
     @GetMapping
     public ResponseEntity<List<FolderListReadResponseDto>> getFolderName(@AuthenticationPrincipal UserDetailsImpl user){
         return ResponseEntity.ok(folderService.getFolders(user.getUserId(), null));
+    }
+
+    @Operation(description = "공유 폴더 리스트를 가져온다.")
+    @GetMapping("/share")
+    public ResponseEntity<List<FolderListReadResponseDto>> getShareFolder(@AuthenticationPrincipal UserDetailsImpl user){
+        return ResponseEntity.ok(folderService.getShareFolders(user.getUserId()));
     }
 
     @Operation(summary = "단어 개수 조회", description = "폴더 안의 단어 개수를 조회한다")

@@ -1,6 +1,6 @@
 package com.numo.api.domain.wordbook.group.repository;
 
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.detail.WordGroup;
 
 import java.util.List;
 import java.util.Optional;

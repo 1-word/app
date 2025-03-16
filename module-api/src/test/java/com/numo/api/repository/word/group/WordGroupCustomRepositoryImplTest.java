@@ -3,7 +3,7 @@ package com.numo.api.repository.word.group;
 import com.numo.api.domain.wordbook.group.repository.WordGroupRepository;
 import com.numo.api.domain.wordbook.group.dto.ReadWordGroupResponseDto;
 import com.numo.api.domain.wordbook.group.dto.WordGroupResponseDto;
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.detail.WordGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

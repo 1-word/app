@@ -45,6 +45,7 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<CommonResult> methodArgumentNotValidException(HttpServletRequest request, BindException e) {
+        e.printStackTrace();
         BindingResult bindingResult = e.getBindingResult();
         FieldError fieldError = bindingResult.getFieldError();
         String errorMessage = fieldError.getDefaultMessage();

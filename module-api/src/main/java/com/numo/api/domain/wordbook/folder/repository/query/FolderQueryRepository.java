@@ -2,12 +2,14 @@ package com.numo.api.domain.wordbook.folder.repository.query;
 
 import com.numo.api.domain.wordbook.folder.dto.FolderResponseDto;
 import com.numo.api.domain.wordbook.folder.dto.read.FolderInWordCountDto;
-import com.numo.domain.word.QWord;
-import com.numo.domain.word.folder.QFolder;
+import com.numo.domain.wordbook.QWordBookMember;
+import com.numo.domain.wordbook.folder.QFolder;
+import com.numo.domain.wordbook.word.QWord;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,30 +18,33 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Deprecated
 public class FolderQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     QFolder qFolder = QFolder.folder;
+    QWordBookMember qWordBookMember = QWordBookMember.wordBookMember;
     QWord qWord = QWord.word1;
 
     /**
      * 모든 폴더의 안에 있는 단어 개수 조회
      *
-     * @param userId 유저 아이디
+     * @param folderId 단어장
      * @return 폴더 안에 있는 단어 개수
      */
-    public List<FolderInWordCountDto> countWordInFolder(Long userId) {
+    public List<FolderInWordCountDto> countWordInFolder(List<Long> folderIds) {
         List<FolderInWordCountDto> result = queryFactory.select(Projections.constructor(
                         FolderInWordCountDto.class,
-                        qWord.folder.folderId,
+                        qWord.wordbook.id,
                         Expressions.as(Wildcard.count, "count")
                 ))
                 .from(qWord)
+                .join(qWord.wordbook)
                 .where(
-                        qWord.folder.folderId.isNotNull(),
-                        qWord.user.userId.eq(userId)
+                        qWord.wordbook.id.isNotNull(),
+                        qWord.wordbook.id.in(folderIds)
                 )
-                .groupBy(qWord.folder.folderId)
+                .groupBy(qWord.wordbook.id)
                 .fetch();
 
         return result;
@@ -57,11 +62,26 @@ public class FolderQueryRepository {
         Long result = queryFactory.select(Expressions.as(Wildcard.count, "count"))
                 .from(qWord)
                 .where(
-                        qWord.folder.folderId.eq(folderId),
+                        qWord.wordbook.id.eq(folderId),
                         qWord.user.userId.eq(userId),
                         eqMemorization(memorization)
                 ).fetchOne();
         return result;
+    }
+
+    /**
+     * 공유 단어장 조회
+     * @param userId 유저 아이디
+     * @return 공유 단어장 리스트
+     */
+    public List<FolderResponseDto> getShareFolders(Long userId) {
+        List<FolderResponseDto> shareFolder = getFolderSelect()
+                .from(qFolder)
+                .join(qWordBookMember).on(qFolder.folderId.eq(qWordBookMember.wordBook.id))
+                .where(
+                        qWordBookMember.user.userId.eq(userId)
+                ).fetch();
+        return shareFolder;
     }
 
     /**
@@ -72,14 +92,7 @@ public class FolderQueryRepository {
      * @return 조회한 폴더 데이터
      */
     public List<FolderResponseDto> getFoldersByUserId(Long userId, Long folderId) {
-        List<FolderResponseDto> results = queryFactory.select(Projections.constructor(
-                        FolderResponseDto.class,
-                        qFolder.folderId,
-                        qFolder.folderName,
-                        qFolder.memo,
-                        qFolder.color,
-                        qFolder.background
-                ))
+        List<FolderResponseDto> results = getFolderSelect()
                 .from(qFolder)
                 .where(
                         qFolder.user.userId.eq(userId),
@@ -87,6 +100,21 @@ public class FolderQueryRepository {
                 )
                 .fetch();
         return results;
+    }
+
+    /**
+     * 폴더 select
+     */
+    private JPAQuery<FolderResponseDto> getFolderSelect() {
+        return queryFactory.select(Projections.constructor(
+                FolderResponseDto.class,
+                qFolder.folderId,
+                qFolder.user.nickname,
+                qFolder.folderName,
+                qFolder.memo,
+                qFolder.color,
+                qFolder.background
+        ));
     }
 
     private BooleanExpression eqMemorization(Boolean memorization) {

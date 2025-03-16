@@ -1,7 +1,7 @@
 package com.numo.api.domain.wordbook.word;
 
-import com.numo.domain.word.dto.UpdateWordDto;
-import com.numo.domain.word.type.UpdateType;
+import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import com.numo.domain.wordbook.type.UpdateType;
 import com.numo.api.domain.wordbook.word.aop.WordAspect;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.domain.wordbook.word.dto.WordRequestDto;

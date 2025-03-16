@@ -7,10 +7,10 @@ import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.global.comm.page.PageUtil;
-import com.numo.domain.word.QWord;
-import com.numo.domain.word.detail.QWordDetail;
-import com.numo.domain.word.sound.type.GttsCode;
-import com.numo.domain.word.type.SortType;
+import com.numo.domain.wordbook.detail.QWordDetail;
+import com.numo.domain.wordbook.sound.type.GttsCode;
+import com.numo.domain.wordbook.type.SortType;
+import com.numo.domain.wordbook.word.QWord;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -47,7 +47,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         List<WordDto> results = queryFactory.select(Projections.constructor(
                         WordDto.class,
                         qWord.wordId,
-                        qWord.folder.folderId,
+                        qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
                         qWord.read,
@@ -59,7 +59,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         qWord.createTime
                 ))
                 .from(qWord)
-                .leftJoin(qWord.folder)
+                .leftJoin(qWord.wordbook)
                 .leftJoin(qWord.sound)
                 .leftJoin(qWord.user)
                 .where(
@@ -89,7 +89,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         return queryFactory.select(Projections.constructor(
                         WordDto.class,
                         qWord.wordId,
-                        qWord.folder.folderId,
+                        qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
                         qWord.read,
@@ -101,7 +101,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         qWord.createTime
                 ))
                 .from(qWord)
-                .leftJoin(qWord.folder)
+                .leftJoin(qWord.wordbook)
                 .leftJoin(qWord.sound)
                 .leftJoin(qWord.user)
                 .where(
@@ -296,7 +296,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         if (folderId == null) {
             return null;
         }
-        return qWord.folder.folderId.eq(folderId);
+        return qWord.wordbook.id.eq(folderId);
     }
 
     /**

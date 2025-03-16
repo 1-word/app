@@ -3,7 +3,7 @@ package com.numo.api.domain.dailySentence;
 import com.numo.domain.sentence.DailySentence;
 import com.numo.domain.sentence.dto.CreateWordDailySentenceDto;
 import com.numo.domain.sentence.dto.DailySentenceRequestDto;
-import com.numo.domain.word.Word;
+import com.numo.domain.wordbook.word.Word;
 import com.numo.api.domain.dailySentence.dto.DailySentenceDto;
 import com.numo.api.domain.dailySentence.dto.DailyWordDto;
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;

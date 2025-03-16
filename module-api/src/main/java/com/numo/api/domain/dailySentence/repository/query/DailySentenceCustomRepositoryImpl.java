@@ -65,8 +65,8 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                         qWordDailySentence.word.wordId,
                         qWordDailySentence.word.word,
                         qWordDailySentence.word.mean,
-                        qWordDailySentence.word.folder.folderId,
-                        qWordDailySentence.word.folder.folderName
+                        qWordDailySentence.word.wordbook.id,
+                        qWordDailySentence.word.wordbook.id
                 ))
                 .from(qWordDailySentence)
                 .leftJoin(qWordDailySentence.word)

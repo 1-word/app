@@ -1,7 +1,7 @@
 package com.numo.api.domain.wordbook.word.repository.query;
 
 import com.numo.api.domain.quiz.dto.QuizQuestionDto;
-import com.numo.domain.word.QWord;
+import com.numo.domain.wordbook.word.QWord;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class WordQueryRepository {
                         qWord.mean
                 )).from(qWord)
                 .where(
-                        qWord.folder.folderId.eq(folderId),
+                        qWord.wordbook.id.eq(folderId),
                         qWord.user.userId.eq(userId)
                 )
                 .fetch();

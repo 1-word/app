@@ -21,11 +21,11 @@ import com.numo.api.global.comm.gtts.GttsService;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.conf.PropertyConfig;
-import com.numo.domain.word.Word;
-import com.numo.domain.word.dto.UpdateWordDto;
-import com.numo.domain.word.sound.Sound;
-import com.numo.domain.word.sound.type.GttsCode;
-import com.numo.domain.word.type.UpdateType;
+import com.numo.domain.wordbook.word.Word;
+import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import com.numo.domain.wordbook.sound.Sound;
+import com.numo.domain.wordbook.sound.type.GttsCode;
+import com.numo.domain.wordbook.type.UpdateType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -92,7 +92,7 @@ public class WordService {
         soundId = sound.getSoundId();
 
         Word word = requestDto.toEntity(userId, gttsType, soundId);
-        word.setWordDetails();
+//        word.setWordDetails();
 
         return WordResponseDto.of(wordRepository.save(word));
     }
@@ -120,7 +120,7 @@ public class WordService {
             throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         }
 
-        word.setFolder(folderId);
+        word.setWordbook(folderId);
     }
 
     /**
@@ -195,7 +195,7 @@ public class WordService {
      * */
     @Transactional(propagation = Propagation.NEVER)
     public void createSoundFile(String wordName, String gttsType){
-        String lang = GttsCode.valueOf(gttsType).getTTS();
+        String lang = GttsCode.valueOf(gttsType).name();
         String savePath = path + "/" + wordName + ".mp3";
         Gtts gtts = new Gtts(wordName, lang, savePath);
 

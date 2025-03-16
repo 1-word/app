@@ -1,7 +1,7 @@
 package com.numo.api.domain.wordbook.group.service;
 
-import com.numo.domain.word.detail.WordGroup;
-import com.numo.domain.word.detail.dto.WordGroupRequestDto;
+import com.numo.domain.wordbook.detail.WordGroup;
+import com.numo.domain.wordbook.detail.dto.WordGroupRequestDto;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.domain.wordbook.group.dto.ReadWordGroupResponseDto;

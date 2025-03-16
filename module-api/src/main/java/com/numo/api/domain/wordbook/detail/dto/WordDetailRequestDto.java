@@ -1,8 +1,8 @@
 package com.numo.api.domain.wordbook.detail.dto;
 
-import com.numo.domain.word.Word;
-import com.numo.domain.word.detail.WordDetail;
-import com.numo.domain.word.detail.WordGroup;
+import com.numo.domain.wordbook.word.Word;
+import com.numo.domain.wordbook.detail.WordDetail;
+import com.numo.domain.wordbook.detail.WordGroup;
 import lombok.Builder;
 
 @Builder
@@ -13,7 +13,7 @@ public record WordDetailRequestDto(
         String content
 ) {
     public WordDetail toEntity() {
-        Word word = Word.builder().wordId(wordId).build();
+        Word word = new Word(wordId);
         WordGroup wordGroup = WordGroup.builder()
                 .wordGroupId(wordGroupId)
                 .build();

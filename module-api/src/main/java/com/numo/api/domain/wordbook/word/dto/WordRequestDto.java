@@ -1,12 +1,12 @@
 package com.numo.api.domain.wordbook.word.dto;
 
-import com.numo.domain.user.User;
-import com.numo.domain.word.Word;
-import com.numo.domain.word.detail.WordDetail;
-import com.numo.domain.word.folder.Folder;
-import com.numo.domain.word.sound.Sound;
-import com.numo.domain.word.sound.type.GttsCode;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailRequestDto;
+import com.numo.domain.user.User;
+import com.numo.domain.wordbook.WordBook;
+import com.numo.domain.wordbook.detail.WordDetail;
+import com.numo.domain.wordbook.sound.Sound;
+import com.numo.domain.wordbook.sound.type.GttsCode;
+import com.numo.domain.wordbook.word.Word;
 import lombok.Builder;
 
 import java.util.List;
@@ -24,11 +24,11 @@ public record WordRequestDto(
 
     public Word toEntity(Long userId, String gttsType) {
         User user = User.builder().userId(userId).build();
-        Folder folder = Folder.builder().folderId(folderId).build();
+        WordBook folder = WordBook.builder().id(folderId).build();
         List<WordDetail> wordDetails = details.stream().map(WordDetailRequestDto::toEntity).toList();
         return Word.builder()
                 .user(user)
-                .folder(folder)
+                .wordbook(folder)
                 .wordDetails(wordDetails)
                 .word(word)
                 .mean(mean)
@@ -41,9 +41,9 @@ public record WordRequestDto(
 
     public Word toEntity(Long userId, String gttsType, Long soundId) {
         User user = User.builder().userId(userId).build();
-        Folder folder = null;
+        WordBook folder = null;
         if (folderId != null) {
-            folder = Folder.builder().folderId(folderId).build();
+            folder = WordBook.builder().id(folderId).build();
         }
         Sound sound = null;
         if (soundId != null) {
@@ -52,7 +52,7 @@ public record WordRequestDto(
         List<WordDetail> wordDetails = details.stream().map(WordDetailRequestDto::toEntity).toList();
         return Word.builder()
                 .user(user)
-                .folder(folder)
+                .wordbook(folder)
                 .wordDetails(wordDetails)
                 .word(word)
                 .mean(mean)

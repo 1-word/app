@@ -1,0 +1,117 @@
+### 단어 저장
+POST localhost:8088/api/v2/words/EN
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "wordBookId": 6,
+  "word": "Bearer",
+  "mean": "mean",
+  "read": "read",
+  "memo": "memo",
+  "memorization": "N",
+  "details": [{
+    "wordGroupId": 24,
+    "title": "title1",
+    "content": "content1"
+  }, {
+    "wordGroupId": 1,
+    "title": "title2",
+    "content": "content2"
+  }, {
+    "wordGroupId": 3,
+    "title": "title3",
+    "content": "content3"
+  }]
+}
+
+> {%
+    client.global.set("wordId", response.body.wordId)
+%}
+
+### 해당 단어 조회
+GET localhost:8088/api/v2/words/89
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 조회
+GET localhost:8088/api/v2/words?current=1&lastWordId=62
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 조회
+GET localhost:8088/api/v2/words?current=0&sort=random&seed=U4Sa@2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 검색
+GET localhost:8088/api/v2/words/search/word?current=0
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 조회 - 암기 여부
+GET localhost:8088/api/v2/words?current=1&memorization=N
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 조회 - 언어
+GET localhost:8088/api/v2/words?current=1&lang=EN
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어 수정
+PUT localhost:8088/api/v2/words/{{wordId}}/all
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "mean": "meanUpdate",
+  "read": "readUpdate",
+  "memo": "memoUpdate",
+  "memorization": "Y",
+  "details": [{
+    "wordDetailId": 18,
+    "wordGroupId": 1,
+    "title": "title1Update",
+    "content": "content1Update"
+  }, {
+    "wordDetailId": 23,
+    "wordGroupId": 1,
+    "title": "title2Update",
+    "content": "content2Update"
+  }, {
+    "wordDetailId": 24,
+    "wordGroupId": 1,
+    "title": "title3Update",
+    "content": "content3Update"
+  }]
+}
+
+### 단어 수정 - 메모
+PUT localhost:8088/api/v2/words/{{wordId}}/memo
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "memo": "memoUpdate1"
+}
+
+### 단어 수정 - 암기 여부
+PUT localhost:8088/api/v2/words/{{wordId}}/memorization
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "memorization": "N"
+}
+
+### 단어장 이동
+PUT localhost:8088/api/v2/words/{{wordId}}/wordbook/19
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 단어 삭제
+DELETE localhost:8088/api/v2/words/{{wordId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
