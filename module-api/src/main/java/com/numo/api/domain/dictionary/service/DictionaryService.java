@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,29 +25,20 @@ public class DictionaryService {
     }
 
     public DictionaryDto searchWord(String searchText) {
-        Optional<Dictionary> dictWord = dictionaryRepository.findByWord(searchText);
-        // 해당하는 데이터가 없으면
-        if (dictWord.isEmpty()) {
-            Dictionary crawlingWord = getCrawlingWord(searchText);
-            return DictionaryDto.of(dictionaryRepository.save(crawlingWord));
-        }
+        DictionaryDto dictionaryDto = DictionaryDto.builder()
+                .word(searchText)
+                .build();
 
-        // 뜻 데이터가 없다면 크롤링해와서 넣어준다.
-        Dictionary dictionary = dictWord.get();
-        if (dictionary.checkCrawling()) {
-            Dictionary crawlingWord = getCrawlingWord(searchText);
-            dictionary.updateMean(crawlingWord.getMean());
-            return DictionaryDto.of(dictionaryRepository.save(dictionary));
-        }
+        DictionaryDto dictionary = save(dictionaryDto);
 
-        return DictionaryDto.of(dictionary);
+        return dictionary;
     }
 
     private Dictionary getCrawlingWord(String searchText) {
         DictionaryCrawlingDto dictionaryCrawlingDto = dictionaryCrawlingService.searchWord(searchText);
         String mean = String.join(",", dictionaryCrawlingDto.definitions());
         Dictionary saveDict = Dictionary.builder()
-                .word(searchText)
+                .word(dictionaryCrawlingDto.word())
                 .mean(mean)
                 .isCrawling("Y")
                 .build();
@@ -73,22 +63,27 @@ public class DictionaryService {
     }
 
     public DictionaryDto save(DictionaryDto dictionaryDto) {
-        // 사전 데이터베이스에 해당하는 단어가 등록이 되어있으면 저장하지 않는다.
-        if (dictionaryRepository.existsByWord(dictionaryDto.word())) {
-            return null;
+        String searchText = dictionaryDto.word();
+        Optional<Dictionary> dictWord = dictionaryRepository.findByWord(searchText);
+        if (dictWord.isPresent()) {
+            Dictionary dictionary = dictWord.get();
+            if (dictionary.checkCrawling()) {
+                return DictionaryDto.of(dictionary);
+            }
+            // 데이터는 있으나 크롤링한 내역이 없으면
+            Dictionary crawlingWord = getCrawlingWord(searchText);
+            dictionary.updateMean(crawlingWord.getMean());
+            return DictionaryDto.of(dictionaryRepository.save(dictionary));
         }
 
-        DictionaryCrawlingDto resultDto = dictionaryCrawlingService.searchWord(dictionaryDto.word());
-
-        // 실제 사전에 등록이 되어있지 않으면 사전 데이터베이스에 저장하지 않는다.
-        if (!Objects.equals(resultDto.word().toLowerCase(), dictionaryDto.word().toLowerCase())) {
-            return null;
+        // 크롤링한 적이 없다면
+        Dictionary crawlingWord = getCrawlingWord(searchText);
+        // 사전에 등록된 데이터가 아니면 데이터를 저장하지 않는다.
+        if (!crawlingWord.isRealWord(searchText)) {
+            return DictionaryDto.of(crawlingWord);
         }
 
-        String mean = String.join(",", resultDto.definitions());
-
-        Dictionary dictionary = dictionaryDto.toEntity(mean, "Y");
-        return DictionaryDto.of(dictionaryRepository.save(dictionary));
+        return DictionaryDto.of(dictionaryRepository.save(crawlingWord));
     }
 
     public List<DictionaryDto> searchWordListDB(String searchText) {

@@ -28,7 +28,7 @@ public class DictionaryCrawlingService {
             Document doc = JsoupUtil.get(url);
             return doc;
         } catch (Exception e) {
-            throw new IllegalArgumentException("잘못된 url 입니다.");
+            throw new IllegalArgumentException("잘못된 url 입니다." + url);
         }
     }
 
