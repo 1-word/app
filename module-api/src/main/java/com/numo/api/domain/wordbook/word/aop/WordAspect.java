@@ -34,7 +34,10 @@ public class WordAspect {
                 .word(res.word())
                 .build();
 
-        dictionaryService.save(dictionaryDto);
-        dictionaryCacheService.save("dict", res.word());
+        DictionaryDto dict = dictionaryService.save(dictionaryDto);
+        // 캐시 저장소에도 이미 사전 데이터베이스에 있거나, 제대로된 단어 데이터가 아니면 저장하지 않음
+        if (!dict.mean().isEmpty()) {
+            dictionaryCacheService.save("dict", res.word());
+        }
     }
 }
