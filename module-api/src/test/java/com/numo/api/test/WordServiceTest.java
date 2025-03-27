@@ -39,7 +39,7 @@
 //        Pageable pageable = PageRequest.of(0, 20);
 //        Long userId = 1L;
 //        ReadWordRequestDto readDto = ReadWordRequestDto.builder()
-//                .folderId(1L)
+//                .wordBookId(1L)
 //                .build();
 //        Slice<Word> result = wordRepository.findByPageWord(pageable, userId, readDto);
 //        List<WordResponseDto> res = result.getContent().stream().map(WordResponseDto::new).collect(Collectors.toList());

@@ -29,4 +29,8 @@ public class Quiz {
     public void setCorrect(boolean correct) {
         this.correct = correct? 1 : 0;
     }
+
+    public boolean isOwner(Long userId) {
+        return quizInfo.isOwner(userId);
+    }
 }

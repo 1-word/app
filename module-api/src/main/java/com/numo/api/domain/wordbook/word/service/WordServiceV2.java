@@ -16,6 +16,7 @@ import com.numo.api.domain.wordbook.word.service.update.UpdateFactory;
 import com.numo.api.domain.wordbook.word.service.update.UpdateWord;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
+import com.numo.api.global.comm.page.PageResponse;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.sound.Sound;
@@ -102,7 +103,7 @@ public class WordServiceV2 {
      * @param readDto {@link ReadWordListResponseDto}<br>
      * @return 단어 데이터
      */
-    public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
+    public PageResponse<ReadWordResponseDto> getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
         Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
         Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastId(), readDto);
@@ -115,12 +116,12 @@ public class WordServiceV2 {
         int pageNumber = wordsWithPage.getNumber();
         boolean hasNext = wordsWithPage.hasNext();
 
-        List<ReadWordResponseDto> dto = words.stream().map(
+        List<ReadWordResponseDto> res = words.stream().map(
                 word -> ReadWordResponseDto.of(word, findDetailWords(word.wordId(), detailGroups))).toList();
 
         PageDto pageResponse = new PageDto(pageNumber, hasNext, getLastWordId(wordIds));
 
-        return new ReadWordListResponseDto(dto, pageResponse);
+        return new PageResponse<>(pageResponse, res);
     }
 
     public ReadWordResponseDto getWord(Long userId, Long wordId) {

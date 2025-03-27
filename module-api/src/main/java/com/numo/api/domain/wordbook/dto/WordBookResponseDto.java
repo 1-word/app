@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record WordBookResponseDto(
-    Long id,
+    Long wordBookId,
     String nickname,
     String name,
     String memo,
@@ -17,7 +17,7 @@ public record WordBookResponseDto(
 ) {
     public static WordBookResponseDto of(WordBook wordBook) {
         return WordBookResponseDto.builder()
-                .id(wordBook.getId())
+                .wordBookId(wordBook.getId())
                 .nickname(wordBook.getUser().getNickname())
                 .name(wordBook.getName())
                 .memo(wordBook.getMemo())

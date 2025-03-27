@@ -10,7 +10,9 @@ import java.util.List;
 @Builder
 public record ReadWordResponseDto(
         Long wordId,
+        @Deprecated
         Long folderId,
+        Long wordBookId,
         String word,
         String mean,
         String read,
@@ -25,6 +27,7 @@ public record ReadWordResponseDto(
                 return ReadWordResponseDto.builder()
                         .wordId(word.wordId())
                         .folderId(word.folderId())
+                        .wordBookId(word.wordBookId())
                         .soundPath(word.soundPath())
                         .word(word.word())
                         .mean(word.mean())

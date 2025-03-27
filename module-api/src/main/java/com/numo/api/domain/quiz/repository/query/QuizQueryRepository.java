@@ -69,8 +69,6 @@ public class QuizQueryRepository {
                         qQuiz.word.mean
                 ))
                 .from(qQuiz)
-                .join(qQuiz.quizInfo)
-                .join(qQuiz.word)
                 .where(
                         qQuiz.quizInfo.id.eq(quizInfoId),
                         qQuiz.quizInfo.user.userId.eq(userId),

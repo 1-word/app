@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 @Builder
 public record WordDto(
         Long wordId,
+        @Deprecated
         Long folderId,
+        Long wordBookId,
         String word,
         String mean,
         String read,
@@ -18,5 +20,8 @@ public record WordDto(
         GttsCode lang,
         LocalDateTime updateTime,
         LocalDateTime createTime
-        ) {
+) {
+    public WordDto {
+        folderId = wordBookId;
+    }
 }

@@ -17,11 +17,11 @@ public class WordQueryRepository {
 
     /**
      * 퀴즈 문제를 만들기 위해 단어 데이터를 조회한다.
-     * @param folderId 폴더 아이디
+     * @param wordBookId 폴더 아이디
      * @param userId 유저 아이디
      * @return 퀴즈 문제 데이터
      */
-    public List<QuizQuestionDto> findQuizQuestion(Long folderId, Long userId) {
+    public List<QuizQuestionDto> findQuizQuestion(Long wordBookId, Long userId) {
         return jpaQueryFactory.select(Projections.constructor(
                         QuizQuestionDto.class,
                         qWord.wordId,
@@ -29,7 +29,7 @@ public class WordQueryRepository {
                         qWord.mean
                 )).from(qWord)
                 .where(
-                        qWord.wordbook.id.eq(folderId),
+                        qWord.wordbook.id.eq(wordBookId),
                         qWord.user.userId.eq(userId)
                 )
                 .fetch();
