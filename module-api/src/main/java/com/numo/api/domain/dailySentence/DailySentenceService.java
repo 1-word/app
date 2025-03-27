@@ -187,10 +187,11 @@ public class DailySentenceService {
      * @param sentence 문장
      * @return 연관 단어에 태그가 추가된 문장 문자열
      */
-    private String addTag(List<String> words, String sentence) {
+    public String addTag(List<String> words, String sentence) {
         String result = sentence;
+        List<String> uniqueWords = new HashSet<>(words).stream().toList();
 
-        for (String word : words) {
+        for (String word : uniqueWords) {
             // -로 붙어있는 문자열은 같은 단어로 취급하지 않고 전체가 동일해야 한다.
             String regex = "(?<!-)\\b" + Pattern.quote(word) + "\\b(?!-)";
             Pattern pattern = Pattern.compile(regex);
