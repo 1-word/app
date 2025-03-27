@@ -2,12 +2,12 @@ package com.numo.api.domain.wordbook.word;
 
 import com.numo.api.domain.wordbook.word.dto.WordRequestDtoV2;
 import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
-import com.numo.api.domain.wordbook.word.dto.read.ReadWordListResponseDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
 import com.numo.api.domain.wordbook.word.dto.search.SearchWordRequestDto;
 import com.numo.api.domain.wordbook.word.service.WordServiceV2;
 import com.numo.api.global.comm.page.PageRequestDto;
+import com.numo.api.global.comm.page.PageResponse;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.type.UpdateType;
@@ -28,7 +28,7 @@ public class WordControllerV2 {
 
     @Operation(summary = "단어 검색", description = "단어를 검색한다.")
     @GetMapping(value = "/search/{text}")
-    public ResponseEntity<ReadWordListResponseDto> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
+    public ResponseEntity<PageResponse<ReadWordResponseDto>> getSearchWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                                  @PathVariable("text") String searchText,
                                                                  PageRequestDto page,
                                                                  SearchWordRequestDto requestDto) {
@@ -38,9 +38,9 @@ public class WordControllerV2 {
 
     @Operation(summary = "단어 조회", description = "단어를 조회한다.")
     @GetMapping
-    public ResponseEntity<ReadWordListResponseDto> getWords(@AuthenticationPrincipal UserDetailsImpl user,
-                                                            PageRequestDto page,
-                                                            ReadWordRequestDto readDto) {
+    public ResponseEntity<PageResponse<ReadWordResponseDto>> getWords(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                    PageRequestDto page,
+                                                                    ReadWordRequestDto readDto) {
         return ResponseEntity.ok(wordService.getWord(user.getUserId(), page, readDto));
     }
 

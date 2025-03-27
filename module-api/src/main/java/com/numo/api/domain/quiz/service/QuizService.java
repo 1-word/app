@@ -57,11 +57,11 @@ public class QuizService {
     /**
      * 퀴즈 문제를 만들기 위해 단어 데이터 조회
      * @param userId 유저 아이디
-     * @param folderId 폴더 아이디
+     * @param wordBookId 폴더 아이디
      * @return 퀴즈 문제
      */
-    public List<QuizQuestionDto> getQuizQuestion(Long userId, Long folderId) {
-        return wordQueryRepository.findQuizQuestion(folderId, userId);
+    public List<QuizQuestionDto> getQuizQuestion(Long userId, Long wordBookId) {
+        return wordQueryRepository.findQuizQuestion(wordBookId, userId);
     }
 
     /**
@@ -89,7 +89,7 @@ public class QuizService {
      * @param isContinue 이어하기 여부
      * @return 해당하는 퀴즈의 퀴즈 데이터
      */
-    public PageResponse<QuizResponseDto> getQuizInfo(Long userId, Long quizInfoId, PageRequestDto pageDto, Boolean isContinue) {
+    public PageResponse<QuizResponseDto> getQuizInfo(Long userId, Long quizInfoId, PageRequestDto pageDto, boolean isContinue) {
         PageRequest pageRequest = PageRequest.of(pageDto.current(), pageSize);
         Slice<QuizResponseDto> quiz = quizQueryRepository.findQuizById(quizInfoId, userId, pageRequest, isContinue);
 
@@ -105,6 +105,9 @@ public class QuizService {
     @Transactional
     public void solveQuiz(Long userId, Long quizId, QuizSolvedRequestDto requestDto) {
         Quiz quiz = quizRepository.findQuizBy(quizId);
+        if (!quiz.isOwner(userId)) {
+            throw new CustomException(ErrorCode.NOT_OWNER);
+        }
         quiz.setCorrect(requestDto.correct());
     }
 
@@ -113,7 +116,7 @@ public class QuizService {
      * @param userId 유저 아이디
      * @param requestDto 퀴즈 맞춤 여부
      */
-    @Transactional
+    @Transactional(rollbackFor = CustomException.class)
     public void solveQuizzes(Long userId, List<QuizSolvedRequestDto> requestDto) {
         List<Long> quizIds = requestDto.stream().map(QuizSolvedRequestDto::quizId).toList();
         List<Quiz> quizzes = quizRepository.findAllByIdIn(quizIds);
@@ -121,6 +124,9 @@ public class QuizService {
         Map<Long, Boolean> requestMap = requestDto.stream().collect(Collectors.toMap(QuizSolvedRequestDto::quizId, QuizSolvedRequestDto::correct));
 
         for (Quiz quiz : quizzes) {
+            if (!quiz.isOwner(userId)) {
+                throw new CustomException(ErrorCode.NOT_OWNER);
+            }
             Boolean correct = requestMap.get(quiz.getId());
             quiz.setCorrect(correct);
         }

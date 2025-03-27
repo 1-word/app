@@ -20,7 +20,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +47,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         WordDto.class,
                         qWord.wordId,
                         qWord.wordbook.id,
+                        qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
                         qWord.read,
@@ -64,7 +64,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .leftJoin(qWord.user)
                 .where(
                         qWord.user.userId.eq(userId),
-                        eqFolderId(readDto.folderId()),
+                        eqFolderId(readDto.wordBookId()),
                         eqMemorization(readDto.memorization()),
                         eqLanguage(readDto.lang()),
                         createPageConditionWithReadType(readDto.sort(), lastWordId),
@@ -89,6 +89,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         return queryFactory.select(Projections.constructor(
                         WordDto.class,
                         qWord.wordId,
+                        qWord.wordbook.id,
                         qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
@@ -268,23 +269,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
 //                                .or(qWordDetail.memo.like(searchText))
                 )
                 .fetch();
-    }
-
-    /**
-     * 다음 페이지가 있는지 확인하여 페이지 데이터 추가 후 리턴한다.
-     * @param pageable 페이지 변수
-     * @param results DB에서 return한 데이터
-     * @return page 데이터를 포함한 데이터
-     */
-    private Slice<WordDto> checkLastPage(Pageable pageable, List<WordDto> results){
-        boolean hasNext = false;
-        // page의 크기보다 데이터의 크기가 크다면, 다음 페이지가 존재한다.
-        if (results.size() > pageable.getPageSize()){
-            // 추가로 조회된 데이터는 삭제한다.
-            results.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(results, pageable, hasNext);
     }
 
     /**

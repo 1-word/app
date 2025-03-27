@@ -8,6 +8,8 @@ import com.numo.domain.wordbook.type.SortType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -44,5 +46,9 @@ public class QuizInfo extends Timestamped {
 
     public void quizComplete() {
         this.complete = true;
+    }
+
+    public boolean isOwner(Long userId) {
+        return Objects.equals(user.getUserId(), userId);
     }
 }

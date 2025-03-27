@@ -30,13 +30,18 @@ POST localhost:8088/api/quiz/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+### 퀴즈 단어 리스트 조회
+GET localhost:8088/api/quiz/6/words
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 ### 퀴즈 조회
-GET localhost:8088/api/quiz/{{quizInfoId}}?current=3
+GET localhost:8088/api/quiz/{{quizInfoId}}?continue=false&current=0
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 단건 풀이
-PUT localhost:8088/api/quiz/1
+PUT localhost:8088/api/quiz/433
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -51,7 +56,7 @@ Authorization: Bearer {{accessToken}}
 
 {
   "datas": [{
-    "quizId": 1,
+    "quizId": 433,
     "correct": false
   }, {
     "quizId": 2,

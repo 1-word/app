@@ -9,15 +9,17 @@ import java.time.LocalDateTime;
 @Builder
 public record QuizStatResponseDto(
         Long quizStatId,
+        @Deprecated
         String folderName,
+        String wordBookName,
         int totalCount,
         int correctCount,
         int wrongCount,
         String createTime,
         String updateTime
 ) {
-    public QuizStatResponseDto(Long quizStatId, String folderName, int totalCount, int correctCount, int wrongCount, LocalDateTime createTime, LocalDateTime updateTime) {
-        this(quizStatId, folderName, totalCount, correctCount, wrongCount, Timestamped.getFormatTime(createTime, "yyyy-MM-dd hh:mm:ss"), Timestamped.getFormatTime(updateTime, "yyyy-MM-dd hh:mm:ss"));
+    public QuizStatResponseDto(Long quizStatId, String wordBookName, int totalCount, int correctCount, int wrongCount, LocalDateTime createTime, LocalDateTime updateTime) {
+        this(quizStatId, wordBookName, wordBookName, totalCount, correctCount, wrongCount, Timestamped.getFormatTime(createTime, "yyyy-MM-dd hh:mm:ss"), Timestamped.getFormatTime(updateTime, "yyyy-MM-dd hh:mm:ss"));
     }
 
     public static QuizStatResponseDto of(QuizStat quizStat) {

@@ -31,10 +31,10 @@ public class QuizController {
     }
 
     @Operation(summary = "단어 리스트 조회", description = "단어 리스트를 리턴한다.")
-    @GetMapping("/{folderId}/words")
+    @GetMapping("/{wordBookId}/words")
     public ResponseEntity<List<QuizQuestionDto>> getAllQuizWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                            @PathVariable("folderId") Long folderId) {
-        return ResponseEntity.ok(quizService.getQuizQuestion(user.getUserId(), folderId));
+                                                            @PathVariable("wordBookId") Long wordBookId) {
+        return ResponseEntity.ok(quizService.getQuizQuestion(user.getUserId(), wordBookId));
     }
 
     @Operation(summary = "퀴즈 조회", description = "퀴즈 문제 데이터 조회")
@@ -42,7 +42,7 @@ public class QuizController {
     public ResponseEntity<PageResponse<QuizResponseDto>> getQuizInfo(@AuthenticationPrincipal UserDetailsImpl user,
                                                                      @PathVariable("quizInfoId") Long quizInfoId,
                                                                      PageRequestDto pageDto,
-                                                                     @RequestParam(value = "continue") Boolean isContinue) {
+                                                                     @RequestParam(value = "continue") boolean isContinue) {
         return ResponseEntity.ok(quizService.getQuizInfo(user.getUserId(), quizInfoId, pageDto, isContinue));
     }
 

@@ -16,7 +16,9 @@ public record QuizInfoRequestDto(
         Integer count
 ) {
     public QuizInfoRequestDto {
-        wordBookId = folderId;
+        if (folderId != null) {
+            wordBookId = folderId;
+        }
     }
 
     public QuizInfo toEntity(User user, WordBook wordBook) {

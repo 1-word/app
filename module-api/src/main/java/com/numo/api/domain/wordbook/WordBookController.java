@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/wordBooks")
+@RequestMapping("/wordbooks")
 @RestController
 @RequiredArgsConstructor
 public class WordBookController {

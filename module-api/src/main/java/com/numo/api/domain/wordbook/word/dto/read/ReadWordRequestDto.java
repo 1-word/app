@@ -6,13 +6,21 @@ import lombok.Builder;
 
 @Builder
 public record ReadWordRequestDto(
+        @Deprecated
         Long folderId,
+        Long wordBookId,
         String searchText,
         String memorization,
         String lang,
         SortType sort,
         String seed
 ) {
+    public ReadWordRequestDto {
+        if (folderId != null) {
+            wordBookId = folderId();
+        }
+    }
+
     public static ReadWordRequestDto of(SearchWordRequestDto requestDto) {
         return of(null, requestDto);
     }
@@ -20,7 +28,7 @@ public record ReadWordRequestDto(
     public static ReadWordRequestDto of(String searchText, SearchWordRequestDto requestDto) {
         return ReadWordRequestDto.builder()
                 .searchText(searchText)
-                .folderId(requestDto.folderId())
+                .wordBookId(requestDto.wordBookId())
                 .memorization(requestDto.memorization())
                 .lang(requestDto.language())
                 .sort(requestDto.sort())
