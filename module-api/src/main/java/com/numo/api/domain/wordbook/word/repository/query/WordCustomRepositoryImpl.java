@@ -47,7 +47,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                         WordDto.class,
                         qWord.wordId,
                         qWord.wordbook.id,
-                        qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
                         qWord.read,
@@ -64,7 +63,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .leftJoin(qWord.user)
                 .where(
                         qWord.user.userId.eq(userId),
-                        eqFolderId(readDto.wordBookId()),
+                        eqWordBookId(readDto.wordBookId()),
                         eqMemorization(readDto.memorization()),
                         eqLanguage(readDto.lang()),
                         createPageConditionWithReadType(readDto.sort(), lastWordId),
@@ -89,7 +88,6 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
         return queryFactory.select(Projections.constructor(
                         WordDto.class,
                         qWord.wordId,
-                        qWord.wordbook.id,
                         qWord.wordbook.id,
                         qWord.word,
                         qWord.mean,
@@ -272,15 +270,15 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
     }
 
     /**
-     * 폴더 아이디 확인 후 해당하는 쿼리 작성
-     * @param folderId 폴더 아이디, 폴더가 아닌 전체 데이터를 확인할 경우 -1
-     * @return 폴더 아이디가 있는 경우에만 폴더 검색하는 쿼리 리턴
+     * 해당 단어장의 단어 조회 조건문
+     * @param wordBookId 단어장 아이디
+     * @return 해당 단어장의 단어 조회 쿼리 리턴
      */
-    private BooleanExpression eqFolderId(Long folderId){
-        if (folderId == null) {
+    private BooleanExpression eqWordBookId(Long wordBookId){
+        if (wordBookId == null) {
             return null;
         }
-        return qWord.wordbook.id.eq(folderId);
+        return qWord.wordbook.id.eq(wordBookId);
     }
 
     /**

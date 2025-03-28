@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public record WordResponseDto(
         Long wordId,
-        Long folderId,
+        Long wordBookId,
         String word,
         String mean,
         String read,
@@ -31,7 +31,6 @@ public record WordResponseDto(
                 WordBook wordbook = word.getWordbook();
                 return WordResponseDto.builder()
                         .wordId(word.getWordId())
-                        .folderId(wordbook.getId())
                         .soundPath(sound.getWord())
                         .word(word.getWord())
                         .mean(word.getMean())

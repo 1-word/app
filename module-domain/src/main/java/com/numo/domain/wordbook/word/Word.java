@@ -79,11 +79,6 @@ public class Word extends Timestamped {
         this.wordId = wordId;
     }
 
-    @Deprecated
-    public void setWordDetails() {
-        addWordDetails(wordDetails);
-    }
-
     public void addWordDetails(List<WordDetail> wordDetails) {
         if (wordDetails == null) {
             return;
@@ -141,16 +136,6 @@ public class Word extends Timestamped {
     public void updateWordBook(WordBook wordbook) {
         wordbook.saveWord(memorization);
         this.wordbook = wordbook;
-    }
-
-    @Deprecated
-    public void setWordbook(Long wordBookId) {
-        if (wordBookId == null) {
-            return;
-        }
-        wordbook = WordBook.builder()
-                .id(wordBookId)
-                .build();
     }
 
     public Long getWordBookId(){

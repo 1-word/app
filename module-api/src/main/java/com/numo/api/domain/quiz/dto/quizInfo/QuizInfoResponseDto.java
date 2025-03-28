@@ -9,8 +9,6 @@ import lombok.Builder;
 @Builder
 public record QuizInfoResponseDto(
         Long quizInfoId,
-        @Deprecated
-        Long folderId,
         Long wordBookId,
         QuizType type,
         SortType sort,
@@ -26,7 +24,6 @@ public record QuizInfoResponseDto(
     public static QuizInfoResponseDto of(QuizInfo quizInfo, int count) {
         return QuizInfoResponseDto.builder()
                 .quizInfoId(quizInfo.getId())
-                .folderId(quizInfo.getWordBook().getId())
                 .wordBookId(quizInfo.getWordBook().getId())
                 .type(quizInfo.getType())
                 .sort(quizInfo.getSort())

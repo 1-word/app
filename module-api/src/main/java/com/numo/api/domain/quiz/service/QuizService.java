@@ -46,12 +46,12 @@ public class QuizService {
         }
 
         QuizInfoResponseDto quizInfo = quizInfoService.getQuizInfo(userId, quizInfoId);
-        Long folderId = quizInfo.folderId();
+        Long wordBookId = quizInfo.wordBookId();
         int limit = quizInfo.count();
 
         // 퀴즈 생성
-        createQuiz(quizInfo.sort(), quizInfoId, folderId, userId, limit);
-        return getQuizQuestion(userId, folderId);
+        createQuiz(quizInfo.sort(), quizInfoId, wordBookId, userId, limit);
+        return getQuizQuestion(userId, wordBookId);
     }
 
     /**
@@ -68,15 +68,15 @@ public class QuizService {
      * 퀴즈 생성 조건에 따라 퀴즈를 생성한다.
      * @param sort 퀴즈 생성 조건
      * @param quizInfoId 퀴즈 정보 아이디
-     * @param folderId 폴더 아이디
+     * @param wordBookId 폴더 아이디
      * @param userId 유저 아이디
      * @param limit 퀴즈 개수
      */
-    private void createQuiz(SortType sort, Long quizInfoId, Long folderId, Long userId, int limit) {
+    private void createQuiz(SortType sort, Long quizInfoId, Long wordBookId, Long userId, int limit) {
         switch (sort) {
-            case created -> quizRepository.createQuizOrderByCreated(quizInfoId, folderId, userId, limit);
-            case updated -> quizRepository.createQuizOrderByUpdated(quizInfoId, folderId, userId, limit);
-            case random -> quizRepository.createQuizOrderByRandom(quizInfoId, folderId, userId, limit);
+            case created -> quizRepository.createQuizOrderByCreated(quizInfoId, wordBookId, userId, limit);
+            case updated -> quizRepository.createQuizOrderByUpdated(quizInfoId, wordBookId, userId, limit);
+            case random -> quizRepository.createQuizOrderByRandom(quizInfoId, wordBookId, userId, limit);
         }
     }
 
