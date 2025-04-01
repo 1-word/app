@@ -18,11 +18,11 @@ class QuizRepositoryTest {
     @Rollback(value = false)
     void createQuizOrderByRandom() {
         Long quizInfoId = 1L;
-        Long folderId = 6L;
+        Long wordBookId = 6L;
         Long userId = 2L;
         int limit = 20;
 
-        quizRepository.createQuizOrderByRandom(quizInfoId, folderId, userId, limit);
+        quizRepository.createQuizOrderByRandom(quizInfoId, wordBookId, userId, limit);
     }
 
 }

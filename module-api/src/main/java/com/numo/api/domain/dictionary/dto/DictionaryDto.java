@@ -9,12 +9,22 @@ public record DictionaryDto(
         String word,
         String wordType,
         String definition,
-        String mean
+        String mean,
+        boolean isRealWord
 ) {
+    public DictionaryDto(Long dictId, String word, String wordType, String definition, String mean) {
+        this(dictId, word, wordType, definition, mean, true);
+    }
+
     public static DictionaryDto of(Dictionary dictionary) {
+        return of(dictionary, false);
+    }
+
+    public static DictionaryDto of(Dictionary dictionary, boolean isRealWord) {
         return DictionaryDto.builder()
                 .word(dictionary.getWord())
                 .mean(dictionary.getMean())
+                .isRealWord(isRealWord)
                 .build();
     }
 

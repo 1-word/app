@@ -7,20 +7,12 @@ import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.type.SortType;
 
 public record QuizInfoRequestDto(
-        @Deprecated
-        Long folderId,
         Long wordBookId,
         QuizType type,
         SortType sort,
         String memorization,
         Integer count
 ) {
-    public QuizInfoRequestDto {
-        if (folderId != null) {
-            wordBookId = folderId;
-        }
-    }
-
     public QuizInfo toEntity(User user, WordBook wordBook) {
         return QuizInfo.builder()
                 .user(user)

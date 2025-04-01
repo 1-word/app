@@ -14,7 +14,7 @@ on:
 jobs:
   # OS 환경
   build:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -87,6 +87,6 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: 'cd /data/container/WordApp && docker-compose pull app && docker-compose up -d app'
+          script: 'cd /data/vocabox && docker-compose pull app && docker-compose up -d app'

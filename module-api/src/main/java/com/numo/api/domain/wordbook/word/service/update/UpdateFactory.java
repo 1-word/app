@@ -8,7 +8,6 @@ public class UpdateFactory {
         return switch (type) {
             case all ->  new UpdateAll();
             case memo -> new UpdateMemo();
-            case folder -> new UpdateFolder();
             case memorization -> new UpdateMemorization();
         };
     }

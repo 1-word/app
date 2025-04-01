@@ -3,8 +3,8 @@ package com.numo.api.domain.wordbook.word.service;
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
-import com.numo.api.domain.wordbook.folder.service.FolderService;
-import com.numo.api.domain.wordbook.sound.repository.SoundRepository;
+import com.numo.api.domain.wordbook.service.WordBookService;
+import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
 import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
@@ -14,23 +14,21 @@ import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
 import com.numo.api.domain.wordbook.word.repository.WordRepository;
 import com.numo.api.domain.wordbook.word.service.update.UpdateFactory;
 import com.numo.api.domain.wordbook.word.service.update.UpdateWord;
-import com.numo.api.global.comm.exception.CustomException;
-import com.numo.api.global.comm.exception.ErrorCode;
-import com.numo.api.global.comm.gtts.Gtts;
-import com.numo.api.global.comm.gtts.GttsService;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
-import com.numo.api.global.conf.PropertyConfig;
-import com.numo.domain.wordbook.word.Word;
-import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import com.numo.api.global.comm.page.PageResponse;
+import com.numo.domain.user.User;
+import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.sound.Sound;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.type.UpdateType;
+import com.numo.domain.wordbook.word.Word;
+import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -39,25 +37,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class WordService {
-
     private final WordRepository wordRepository;
-    private final SoundRepository soundRepository;
-    private final FolderService folderService;
-    private final String path;
-    private final GttsService gttsService;
-
-    public WordService(WordRepository wordRepository,
-                       SoundRepository soundRepository,
-                       FolderService folderService,
-                       PropertyConfig propertyConfig,
-                       GttsService gttsService) {
-        this.wordRepository = wordRepository;
-        this.soundRepository = soundRepository;
-        this.folderService = folderService;
-        this.path = propertyConfig.getGttsPath();
-        this.gttsService = gttsService;
-    }
+    private final WordBookService wordBookService;
+    private final SoundService soundService;
 
     /**
      * 단어 저장
@@ -67,32 +51,15 @@ public class WordService {
      * @return 저장한 단어 데이터
      */
     @Transactional
-    public WordResponseDto saveWord(Long userId, String gttsType, WordRequestDto requestDto){
-        Long soundId = null;
-        String wordName = requestDto.word().replaceAll("\\s", "");
-
-        // 폴더 확인
-        if (requestDto.folderId() != null && !folderService.existsFolder(requestDto.folderId(), userId)) {
-            throw new CustomException(ErrorCode.FOLDER_NOT_FOUND);
-        }
-
+    public WordResponseDto saveWord(Long userId, GttsCode gttsType, WordRequestDto requestDto){
         // 단어 그룹 확인
+        WordBook wordBook = wordBookService.findWordBook(requestDto.wordBookId());
 
         // 발음 파일 생성
-        Sound sound = soundRepository.findByWord(requestDto.word());
+        Sound sound = soundService.createSound(requestDto.word(), gttsType);
+        User user = new User(userId);
 
-        if (sound == null) {
-            createSoundFile(wordName, gttsType);
-            // sound 테이블에 데이터 insert
-            sound = Sound.builder()
-                    .word(wordName)
-                    .build();
-            sound = soundRepository.save(sound);
-        }
-        soundId = sound.getSoundId();
-
-        Word word = requestDto.toEntity(userId, gttsType, soundId);
-//        word.setWordDetails();
+        Word word = requestDto.toEntity(user, sound, wordBook, gttsType);
 
         return WordResponseDto.of(wordRepository.save(word));
     }
@@ -113,25 +80,30 @@ public class WordService {
         return WordResponseDto.of(wordRepository.save(updatedWord));
     }
 
+    /**
+     * 단어장을 옮긴다.
+     * @param userId 유저
+     * @param wordId 옮길 단어
+     * @param wordBookId 옮길 단어장
+     */
     @Transactional
-    public void moveFolder(Long userId, Long wordId, Long folderId) {
+    public void moveWordBook(Long userId, Long wordId, Long wordBookId) {
         Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
-        if (!folderService.existsFolder(folderId, userId)) {
-            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
-        }
-
-        word.setWordbook(folderId);
+        WordBook preWordbook = word.getWordbook();
+        String memorization = word.getMemorization();
+        wordBookService.decrementPreviousWordBookCount(preWordbook.getId(), memorization);
+        WordBook wordBook = wordBookService.findWordBook(wordBookId);
+        word.updateWordBook(wordBook);
     }
 
     /**
      * 단어를 조회 한다.
-     *
      * 검색, 조회 모두 해당함
      * @param userId 로그인한 유저 아이디<br>
      * @param readDto {@link ReadWordListResponseDto}<br>
      * @return 단어 데이터
      */
-    public ReadWordListResponseDto getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
+    public PageResponse<ReadWordResponseDto> getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
         Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
         Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastId(), readDto);
@@ -144,12 +116,12 @@ public class WordService {
         int pageNumber = wordsWithPage.getNumber();
         boolean hasNext = wordsWithPage.hasNext();
 
-        List<ReadWordResponseDto> dto = words.stream().map(
+        List<ReadWordResponseDto> res = words.stream().map(
                 word -> ReadWordResponseDto.of(word, findDetailWords(word.wordId(), detailGroups))).toList();
 
         PageDto pageResponse = new PageDto(pageNumber, hasNext, getLastWordId(wordIds));
 
-        return new ReadWordListResponseDto(dto, pageResponse);
+        return new PageResponse<>(pageResponse, res);
     }
 
     public ReadWordResponseDto getWord(Long userId, Long wordId) {
@@ -189,24 +161,14 @@ public class WordService {
         return wordRepository.findDailyWordBy(userId, words);
     }
 
-    /**
-     * 해당하는 단어의 음성파일이 없으면 파일 생성 및 데이터베이스에 해당하는 파일명을 저장한다.
-     * @param wordName 단어명
-     * */
-    @Transactional(propagation = Propagation.NEVER)
-    public void createSoundFile(String wordName, String gttsType){
-        String lang = GttsCode.valueOf(gttsType).name().toLowerCase();
-        String savePath = path + "/" + wordName + ".mp3";
-        Gtts gtts = new Gtts(wordName, lang, savePath);
 
-        gttsService.saveAudio(gtts);
-    }
 
     /**
      * word 데이터 삭제
     * */
     public void removeWord(Long userId, Long wordId){
         Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
+        word.getWordbook().deleteCount(word.getMemorization());
         wordRepository.delete(word);
     }
 

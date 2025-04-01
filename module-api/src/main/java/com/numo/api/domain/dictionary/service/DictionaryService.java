@@ -80,7 +80,7 @@ public class DictionaryService {
         Dictionary crawlingWord = getCrawlingWord(searchText);
         // 사전에 등록된 데이터가 아니면 데이터를 저장하지 않는다.
         if (!crawlingWord.isRealWord(searchText)) {
-            return DictionaryDto.of(crawlingWord);
+            return DictionaryDto.of(crawlingWord, false);
         }
 
         return DictionaryDto.of(dictionaryRepository.save(crawlingWord));

@@ -8,7 +8,7 @@ public record ReadDailyWordDto(
         Long wordId,
         String word,
         String mean,
-        Long folderId,
-        String folderName
+        Long wordBookId,
+        String wordBookName
 ) {
 }
