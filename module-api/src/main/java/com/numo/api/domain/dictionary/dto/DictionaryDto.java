@@ -10,7 +10,7 @@ public record DictionaryDto(
         String wordType,
         String definition,
         String mean,
-        boolean isRealWord
+        boolean isSavedToCache
 ) {
     public DictionaryDto(Long dictId, String word, String wordType, String definition, String mean) {
         this(dictId, word, wordType, definition, mean, true);
@@ -20,11 +20,11 @@ public record DictionaryDto(
         return of(dictionary, false);
     }
 
-    public static DictionaryDto of(Dictionary dictionary, boolean isRealWord) {
+    public static DictionaryDto of(Dictionary dictionary, boolean isSavedToCache) {
         return DictionaryDto.builder()
                 .word(dictionary.getWord())
                 .mean(dictionary.getMean())
-                .isRealWord(isRealWord)
+                .isSavedToCache(isSavedToCache)
                 .build();
     }
 

@@ -39,8 +39,8 @@ public class WordAspect {
 
         DictionaryDto dict = dictionaryService.save(dictionaryDto);
         // 캐시 저장소에도 이미 사전 데이터베이스에 있거나, 제대로된 단어 데이터가 아니면 저장하지 않음
-        System.out.println("dict: " + dict.isRealWord());
-        if (dict.isRealWord()) {
+        log.debug("isSavedToCache: " + dict.isSavedToCache());
+        if (dict.isSavedToCache()) {
             dictionaryCacheService.save("dict", res.word());
         }
     }
