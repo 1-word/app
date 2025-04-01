@@ -14,9 +14,10 @@ public class AsyncConfig {
     public Executor asyncExecutor1() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(20);
+        executor.setMaxPoolSize(10);
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("exec1-");
+        executor.setQueueCapacity(5);
         executor.initialize();
         return executor;
     }
