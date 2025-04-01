@@ -1,5 +1,6 @@
 package com.numo.api.domain.dailySentence;
 
+import com.numo.api.domain.wordbook.word.service.WordService;
 import com.numo.domain.sentence.DailySentence;
 import com.numo.domain.sentence.dto.CreateWordDailySentenceDto;
 import com.numo.domain.sentence.dto.DailySentenceRequestDto;
@@ -13,7 +14,6 @@ import com.numo.api.global.comm.date.DateRequestDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.DailyWordDetailDto;
 import com.numo.api.domain.dailySentence.dto.wordDailySentence.WordDailySentenceDto;
 import com.numo.api.domain.dailySentence.repository.DailySentenceRepository;
-import com.numo.api.domain.wordbook.word.service.WordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
