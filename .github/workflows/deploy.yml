@@ -89,4 +89,4 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: 'cd /data/vocabox && docker-compose pull app && docker-compose up -d app'
+          script: 'cd /data/vocabox && docker compose pull app && docker compose up -d app'
