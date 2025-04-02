@@ -24,6 +24,8 @@ server:
   servlet:
     context-path: /api
   tomcat:
+    mbeanregistry:
+      enabled: true
     uri-encoding: UTF-8
   port: 8088
 jwt:
@@ -61,3 +63,4 @@ management:
     web:
       exposure:
         include: "*"
+
