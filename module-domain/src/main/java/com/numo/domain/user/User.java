@@ -33,7 +33,7 @@ public class User extends Timestamped {
     private String profileImagePath;
     private LocalDateTime withdrawDate;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userId", updatable = false)
     private Set<Authority> authorities;
 
