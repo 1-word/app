@@ -54,6 +54,8 @@ public enum ErrorCode {
     QUIZ_STAT_EXISTS(5052, "해당하는 퀴즈 통계가 이미 있습니다. 삭제 후 시도해주세요.", "해당하는 퀴즈 통계가 존재합니다."),
 
     SHARE_ROOM_EXISTS(6000, "이미 공유된 단어장입니다", "해당하는 단어장은 이미 공유된 단어장입니다."),
+    WORD_BOOK_MEMBER_EXISTS(6050, "이미 해당하는 단어장의 멤버입니다.", "이미 해당하는 단어장의 멤버입니다."),
+    WORD_BOOK_MEMBER_NOT_FOUND(6051, "해당하는 단어장의 멤버가 없습니다.", "해당하는 단어장의 멤버가 없습니다."),
     ;
 
     private final int code;
