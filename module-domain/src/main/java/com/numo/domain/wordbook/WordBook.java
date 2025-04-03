@@ -62,28 +62,11 @@ public class WordBook extends Timestamped {
         this.memberBasicRole = WordBookRole.view;
     }
 
-    public boolean hasReadPermission(Long userId) {
-        if (isOwner(userId)) {
-            return true;
-        }
-
-        for (WordBookMember wordBookMember : wordBookMembers) {
-            if (wordBookMember.isMember(userId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean update(Long userId, WordBookUpdateDto updateDto) {
-        if (!isOwner(userId)) {
-            return false;
-        }
+    public void update(WordBookUpdateDto updateDto) {
         this.name = updateDto.name();
         this.color = updateDto.color();
         this.background = updateDto.background();
         this.memo = updateDto.memo();
-        return true;
     }
 
     public void removeMember() {
@@ -144,5 +127,4 @@ public class WordBook extends Timestamped {
     public int getUnMemorizedCount() {
         return wordCount.getTotalCount();
     }
-
 }

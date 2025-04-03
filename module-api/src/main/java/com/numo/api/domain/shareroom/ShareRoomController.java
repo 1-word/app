@@ -23,7 +23,7 @@ public class ShareRoomController {
     private final ShareRoomService shareRoomService;
 
     @Operation(summary = "쉐어룸 공개")
-    @PostMapping("/wordBook/{wordBookId}")
+    @PostMapping("/wordbook/{wordBookId}")
     public ResponseEntity<Long> saveShareRoom(@AuthenticationPrincipal UserDetailsImpl user,
                                           @PathVariable("wordBookId") Long wordBookId) {
         return ResponseEntity.ok(shareRoomService.saveShareRoom(user.getUserId(), wordBookId));

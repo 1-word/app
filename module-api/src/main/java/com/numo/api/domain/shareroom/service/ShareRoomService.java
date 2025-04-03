@@ -50,7 +50,10 @@ public class ShareRoomService {
     public PageResponse<ShareRoomListDto> getShareRooms(PageRequestDto pageDto) {
         Slice<ShareRoomListDto> shareRooms = shareRoomQueryRepository.getShareRooms(pageDto.lastId(), pageDto.to());
         List<ShareRoomListDto> content = shareRooms.getContent();
-        Long lastId = content.get(content.size() - 1).id();
+        Long lastId = null;
+        if (!content.isEmpty()) {
+            lastId = content.get(content.size() - 1).id();
+        }
         return new PageResponse<>(shareRooms, lastId);
     }
 

@@ -1,5 +1,5 @@
 ### 게시글 작성
-POST localhost:8088/api/share-rooms/wordBook/6
+POST localhost:8088/api/share-rooms/wordbook/6
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -17,6 +17,6 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어장 공유 취소
-DELETE localhost:8088/api/share-rooms/5
+DELETE localhost:8088/api/share-rooms/6
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

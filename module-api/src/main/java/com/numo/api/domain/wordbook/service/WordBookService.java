@@ -1,12 +1,15 @@
 package com.numo.api.domain.wordbook.service;
 
+import com.numo.api.domain.wordbook.dto.WordBookMemberResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
+import com.numo.api.domain.wordbook.dto.WordBookRoleRequestDto;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.wordbook.WordBook;
+import com.numo.domain.wordbook.WordBookRole;
 import com.numo.domain.wordbook.dto.WordBookUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WordBookService {
 
+    private final WordBookMemberService wordBookMemberService;
     private final WordBookRepository wordBookRepository;
     private final WordBookQueryRepository wordBookQueryRepository;
 
@@ -48,9 +52,7 @@ public class WordBookService {
      */
     public WordBookResponseDto getWordBook(Long userId, Long wordBookId) {
         WordBook wordBook = findWordBook(wordBookId);
-        if (!wordBook.hasReadPermission(userId)) {
-            throw new CustomException(ErrorCode.UNRECOGNIZED_ROLE);
-        }
+        wordBookMemberService.checkPermission(userId, wordBook, WordBookRole.view);
         return WordBookResponseDto.of(wordBook);
     }
 
@@ -75,9 +77,8 @@ public class WordBookService {
     @Transactional
     public WordBookResponseDto updateWordBook(Long userId, Long wordBookId, WordBookUpdateDto WordBookDto){
         WordBook wordBook = findWordBook(wordBookId);
-        if (!wordBook.update(userId, WordBookDto)) {
-            throw new CustomException(ErrorCode.NOT_OWNER);
-        }
+        wordBookMemberService.checkPermission(userId, wordBook, WordBookRole.admin);
+        wordBook.update(WordBookDto);
         return WordBookResponseDto.of(wordBook);
     }
 
@@ -116,5 +117,24 @@ public class WordBookService {
         return wordBookRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.DATA_NOT_FOUND)
         );
+    }
+
+    public void addWordBookMember(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
+        WordBook wordBook = findWordBook(wordBookId);
+        wordBookMemberService.addWordBookMember(userId, wordBook, roleDto);
+    }
+
+    public void updateWordBookMemberRole(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
+        wordBookMemberService.updateWordBookMemberRole(userId, wordBookId, roleDto);
+    }
+
+    public List<WordBookMemberResponseDto> getWordBookMembers(Long userId, Long wordBookId) {
+        WordBook wordBook = findWordBook(wordBookId);
+        return wordBookMemberService.getWordBookMembers(userId, wordBook);
+    }
+
+    public void deleteWordBookMemberRole(Long userId, Long wordBookId, Long memberId) {
+        WordBook wordBook = findWordBook(wordBookId);
+        wordBookMemberService.deleteWordBookMemberRole(userId, wordBook, memberId);
     }
 }

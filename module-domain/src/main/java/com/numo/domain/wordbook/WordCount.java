@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Embeddable
@@ -77,5 +79,18 @@ public class WordCount {
             case "N" -> WordCountType.unmemorized;
             default -> throw new IllegalStateException("Unexpected value: " + memorization);
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WordCount wordCount = (WordCount) o;
+        return totalCount == wordCount.totalCount && memorizedCount == wordCount.memorizedCount && unMemorizedCount == wordCount.unMemorizedCount;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(totalCount, memorizedCount, unMemorizedCount);
     }
 }

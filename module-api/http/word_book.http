@@ -1,5 +1,5 @@
 ### 단어장 생성
-POST localhost:8088/api/wordBooks
+POST localhost:8088/api/wordbooks
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -15,12 +15,12 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 단어장 조회
-GET localhost:8088/api/wordBooks
+GET localhost:8088/api/wordbooks
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어장 수정
-PUT localhost:8088/api/wordBooks/{{wordBookId}}
+PUT localhost:8088/api/wordbooks/{{wordBookId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -32,16 +32,46 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 삭제
-DELETE localhost:8088/api/wordBooks/{{wordBookId}}
+DELETE localhost:8088/api/wordbooks/{{wordBookId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어장 단건 조회
-GET localhost:8088/api/wordBooks/{{wordBookId}}
+GET localhost:8088/api/wordbooks/{{wordBookId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 공유 단어장 조회
-GET localhost:8088/api/wordBooks/share
+GET localhost:8088/api/wordbooks/share
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 권한 추가
+POST localhost:8088/api/wordbooks/6/members/role
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": 9,
+  "role": "view"
+}
+
+### 단어장 권한 조회
+GET localhost:8088/api/wordbooks/6/members
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 권한 변경 
+PUT localhost:8088/api/wordbooks/6/members/role
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": 13,
+  "role": "admin"
+}
+
+### 단어장 권한 삭제
+DELETE localhost:8088/api/wordbooks/6/members/12
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
