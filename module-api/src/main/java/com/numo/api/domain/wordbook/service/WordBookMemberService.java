@@ -1,6 +1,5 @@
 package com.numo.api.domain.wordbook.service;
 
-import com.numo.api.domain.wordbook.aop.WordBookAccess;
 import com.numo.api.domain.wordbook.dto.WordBookMemberResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRoleRequestDto;
 import com.numo.api.domain.wordbook.repository.WordBookMemberRepository;
@@ -27,7 +26,6 @@ public class WordBookMemberService {
      * @param roleDto 수정할 권한 정보
      */
     @Transactional
-    @WordBookAccess
     public void updateWordBookMemberRole(Long wordBookId, WordBookRoleRequestDto roleDto) {
         WordBookMember updateMember = wordBookMemberRepository.findMemberByWordBookIdAndUserId(wordBookId, roleDto.userId());
         updateMember.setRole(roleDto.role());
@@ -38,7 +36,6 @@ public class WordBookMemberService {
      * @param wordBookId 단어장
      * @param roleDto 추가할 권한 정보
      */
-    @WordBookAccess
     public void addWordBookMember(Long wordBookId, WordBookRoleRequestDto roleDto) {
         if (wordBookMemberRepository.existsByWordBook_IdAndUser_UserId(wordBookId, roleDto.userId())) {
             throw new CustomException(ErrorCode.WORD_BOOK_MEMBER_EXISTS);
@@ -56,7 +53,6 @@ public class WordBookMemberService {
      * @param wordBookId 단어장
      * @return 단어장 멤버 리스트
      */
-    @WordBookAccess
     public List<WordBookMemberResponseDto> getWordBookMembers(Long wordBookId) {
         return wordBookMemberRepository.findMemberByWordBook(wordBookId);
     }
@@ -65,7 +61,6 @@ public class WordBookMemberService {
      * 단어장의 멤버 삭제
      * @param wordBookMemberId 멤버
      */
-    @WordBookAccess
     public void deleteWordBookMemberRole(Long wordBookMemberId) {
         WordBookMember member = wordBookMemberRepository.findMemberById( wordBookMemberId);
         wordBookMemberRepository.delete(member);

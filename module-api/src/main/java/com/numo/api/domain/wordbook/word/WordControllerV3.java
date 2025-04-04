@@ -79,7 +79,6 @@ public class WordControllerV3 {
 
     @Operation(summary = "단어장 이동", description = "해당하는 단어의 단어장을 이동한다.")
     @PutMapping("/{wordId}/move")
-    @WordBookAccess
     public ResponseEntity<Void> moveWordBook(@PathVariable("wordBookId") Long wordBookId,
                                              @AuthenticationPrincipal UserDetailsImpl user,
                                              @PathVariable("wordId") Long wordId,
