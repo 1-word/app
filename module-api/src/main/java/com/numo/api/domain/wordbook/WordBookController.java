@@ -63,38 +63,4 @@ public class WordBookController {
         wordBookService.removeWordBook(user.getUserId(), wordBookId);
         return ResponseEntity.noContent().build();
     }
-
-    @Operation(description = "단어장의 권한을 조회한다")
-    @GetMapping(value = "/{wordBookId}/members")
-    public ResponseEntity<List<WordBookMemberResponseDto>> getWordBookMembers(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                              @PathVariable("wordBookId") Long wordBookId) {
-        return ResponseEntity.ok(wordBookService.getWordBookMembers(user.getUserId(), wordBookId));
-    }
-
-    @Operation(description = "단어장의 권한을 추가한다")
-    @PostMapping(value = "/{wordBookId}/members/role")
-    public ResponseEntity<Void> createWordBookUserRole(@AuthenticationPrincipal UserDetailsImpl user,
-                                                       @PathVariable("wordBookId") Long wordBookId,
-                                                       @RequestBody WordBookRoleRequestDto roleDto) {
-        wordBookService.addWordBookMember(user.getUserId(), wordBookId, roleDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Operation(description = "단어장의 권한을 변경한다.")
-    @PutMapping(value = "/{wordBookId}/members/role")
-    public ResponseEntity<Void> updateWordBookMemberRole(@AuthenticationPrincipal UserDetailsImpl user,
-                                                   @PathVariable("wordBookId") Long wordBookId,
-                                                   @RequestBody WordBookRoleRequestDto roleDto) {
-        wordBookService.updateWordBookMemberRole(user.getUserId(), wordBookId, roleDto);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(description = "단어장의 권한을 삭제한다.")
-    @DeleteMapping(value = "/{wordBookId}/members/{memberId}")
-    public ResponseEntity<Void> deleteWordBookMemberRole(@AuthenticationPrincipal UserDetailsImpl user,
-                                                         @PathVariable("wordBookId") Long wordBookId,
-                                                         @PathVariable("memberId") Long memberId) {
-        wordBookService.deleteWordBookMemberRole(user.getUserId(), wordBookId, memberId);
-        return ResponseEntity.noContent().build();
-    }
 }

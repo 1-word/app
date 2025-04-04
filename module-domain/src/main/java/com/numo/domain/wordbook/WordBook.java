@@ -62,6 +62,10 @@ public class WordBook extends Timestamped {
         this.memberBasicRole = WordBookRole.view;
     }
 
+    public WordBook(Long id) {
+        this.id = id;
+    }
+
     public void update(WordBookUpdateDto updateDto) {
         this.name = updateDto.name();
         this.color = updateDto.color();

@@ -1,15 +1,12 @@
 package com.numo.api.domain.wordbook.service;
 
-import com.numo.api.domain.wordbook.dto.WordBookMemberResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookRoleRequestDto;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.wordbook.WordBook;
-import com.numo.domain.wordbook.WordBookRole;
 import com.numo.domain.wordbook.dto.WordBookUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,7 +49,6 @@ public class WordBookService {
      */
     public WordBookResponseDto getWordBook(Long userId, Long wordBookId) {
         WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.checkPermission(userId, wordBook, WordBookRole.view);
         return WordBookResponseDto.of(wordBook);
     }
 
@@ -77,7 +73,6 @@ public class WordBookService {
     @Transactional
     public WordBookResponseDto updateWordBook(Long userId, Long wordBookId, WordBookUpdateDto WordBookDto){
         WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.checkPermission(userId, wordBook, WordBookRole.admin);
         wordBook.update(WordBookDto);
         return WordBookResponseDto.of(wordBook);
     }
@@ -119,22 +114,11 @@ public class WordBookService {
         );
     }
 
-    public void addWordBookMember(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
+    public boolean isOwner(Long userId, Long wordBookId) {
         WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.addWordBookMember(userId, wordBook, roleDto);
-    }
-
-    public void updateWordBookMemberRole(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
-        wordBookMemberService.updateWordBookMemberRole(userId, wordBookId, roleDto);
-    }
-
-    public List<WordBookMemberResponseDto> getWordBookMembers(Long userId, Long wordBookId) {
-        WordBook wordBook = findWordBook(wordBookId);
-        return wordBookMemberService.getWordBookMembers(userId, wordBook);
-    }
-
-    public void deleteWordBookMemberRole(Long userId, Long wordBookId, Long memberId) {
-        WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.deleteWordBookMemberRole(userId, wordBook, memberId);
+        if (!wordBook.isOwner(userId)) {
+            return false;
+        }
+        return true;
     }
 }
