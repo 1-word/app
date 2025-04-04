@@ -14,7 +14,7 @@ import java.util.List;
 
 @Builder
 public record WordRequestDto(
-        @NotNull
+        @Deprecated
         Long wordBookId,
         @NotNull
         String word,

@@ -10,16 +10,10 @@ import org.springframework.data.domain.Slice;
 import java.util.List;
 
 public interface WordCustomRepository {
-    /**
-     * 해당하는 유저의 단어 데이터 조회, 폴더 아이디와 마지막 단어 아이디가 없는지 확인 후 동적으로 쿼리 생성
-     *
-     * @param pageable 페이징 값, default 20
-     * @param readDto  <br>
-     */
-    Slice<WordDto> findWordBy(Pageable pageable, Long userId, Long lastWordId, ReadWordRequestDto readDto);
+    Slice<WordDto> findWordBy(Long wordBookId, Pageable pageable, Long lastWordId, ReadWordRequestDto readDto);
     DailyWordListDto findDailyWordBy(Long userId, List<String> words);
 
-    WordDto findWordByWordId(Long userId, Long wordId);
+    WordDto findWordByWordId(Long wordId);
 
-    List<WordDetailResponseDto> findWordDetailByIds(List<Long> wordIds);
+    List<WordDetailResponseDto> findWordDetailByWordIds(List<Long> wordIds);
 }

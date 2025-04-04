@@ -120,6 +120,36 @@ public class WordBook extends Timestamped {
         return Objects.equals(userId, user.getUserId());
     }
 
+    /**
+     * 소유자 확인 및 사용자 권한 확인
+     * 공유된 단어장이 아니라면 소유자만 접근 가능
+     * @param targetRole 체크할 권한
+     * @return 권한 여부
+     */
+    public boolean hasPermission(Long userId, WordBookRole targetRole) {
+        if (isOwner(userId)) {
+            return true;
+        }
+        return verifyAnyOnePermission(targetRole);
+    }
+
+    /**
+     * 멤버가 아닌 사용자 권한 체크
+     * 공유된 단어장이 아니라면 소유자만 접근 가능
+     * @param targetRole 체크할 권한
+     * @return 권한 여부
+     */
+    private boolean verifyAnyOnePermission(WordBookRole targetRole) {
+        if (!isShared) {
+            return false;
+        }
+        return switch (targetRole) {
+            case view -> anyoneBasicRole.hasViewPermission();
+            case edit -> anyoneBasicRole.hasEditPermission();
+            case admin -> anyoneBasicRole.hasAdminPermission();
+        };
+    }
+
     public int getTotalCount() {
         return wordCount.getTotalCount();
     }

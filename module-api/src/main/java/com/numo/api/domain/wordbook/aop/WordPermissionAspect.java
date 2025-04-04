@@ -19,13 +19,22 @@ public class WordPermissionAspect {
     private final WordBookService wordBookService;
     private final WordBookMemberService wordBookMemberService;
 
+    /**
+     * 단어장의 권한을 체크한다.
+     * 반드시 첫 번째 매개변수가 wordBookId 이어야 실행된다.
+     *
+     * 전체 사용자 권한을 체크하고 그 다음에 멤버 권한을 체크한다.
+     * 만약 전체 사용자 권한이 멤버 권한보다 높다면, 전체 사용자 권한을 따라간다.
+     * @param annotation
+     * @param wordBookId 단어장
+     */
     @Before("@annotation(annotation) && args(wordBookId, ..)")
     public void checkPermission(WordBookAccess annotation, Long wordBookId) {
         Long userId = getSessionUser();
-        WordBookRole role = annotation.value();
+        WordBookRole targetRole = annotation.value();
 
-        if (!wordBookService.isOwner(userId, wordBookId)) {
-            wordBookMemberService.checkPermission(userId, wordBookId, role);
+        if (!wordBookService.hasPermission(userId, wordBookId, targetRole)) {
+            wordBookMemberService.checkPermission(userId, wordBookId, targetRole);
         }
     }
 

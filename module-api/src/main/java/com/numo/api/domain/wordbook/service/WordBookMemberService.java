@@ -51,36 +51,44 @@ public class WordBookMemberService {
         wordBookMemberRepository.save(newMember);
     }
 
+    /**
+     * 단어장의 멤버 조회
+     * @param wordBookId 단어장
+     * @return 단어장 멤버 리스트
+     */
     @WordBookAccess
     public List<WordBookMemberResponseDto> getWordBookMembers(Long wordBookId) {
         return wordBookMemberRepository.findMemberByWordBook(wordBookId);
     }
 
+    /**
+     * 단어장의 멤버 삭제
+     * @param wordBookMemberId 멤버
+     */
     @WordBookAccess
-    public void deleteWordBookMemberRole(Long wordBookId, Long memberId) {
-        WordBookMember member = wordBookMemberRepository.findMemberById(memberId);
+    public void deleteWordBookMemberRole(Long wordBookMemberId) {
+        WordBookMember member = wordBookMemberRepository.findMemberById( wordBookMemberId);
         wordBookMemberRepository.delete(member);
     }
 
     /**
-     * 단어장의 권한 체크
-     * @param userId 체크할 유저(로그인한 유저)
+     * 단어장 멤버 권한 확인
+     * @param userId 확인할 유저(로그인한 유저)
      */
-    public void checkPermission(Long userId, Long wordBookId, WordBookRole role) {
-        // 단어장 소유자이면 추가로 멤버를 찾지 않음
+    public void checkPermission(Long userId, Long wordBookId, WordBookRole targetRole) {
         WordBookMember member = wordBookMemberRepository.findByWordBook_IdAndUser_UserId(wordBookId, userId).orElseThrow(
                 () -> new CustomException(ErrorCode.UNRECOGNIZED_ROLE)
         );
-        if (!checkPermission(userId, role, member)) {
+        if (!checkPermission(member, targetRole)) {
             throw new CustomException(ErrorCode.UNRECOGNIZED_ROLE);
         }
     }
 
-    private boolean checkPermission(Long userId, WordBookRole role, WordBookMember member) {
-        return switch (role) {
-            case view -> member.hasReadPermission(userId);
-            case edit -> member.hasWritePermission(userId);
-            case admin -> member.hasAdminPermission(userId);
+    private boolean checkPermission(WordBookMember member, WordBookRole targetRole) {
+        return switch (targetRole) {
+            case view -> member.hasReadPermission();
+            case edit -> member.hasWritePermission();
+            case admin -> member.hasAdminPermission();
         };
     }
 }

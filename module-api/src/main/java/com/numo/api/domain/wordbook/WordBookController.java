@@ -1,15 +1,12 @@
 package com.numo.api.domain.wordbook;
 
-import com.numo.api.domain.wordbook.dto.WordBookMemberResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookRoleRequestDto;
 import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.domain.wordbook.dto.WordBookUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +35,7 @@ public class WordBookController {
     @GetMapping("/{wordBookId}")
     public ResponseEntity<WordBookResponseDto> getWordBook(@AuthenticationPrincipal UserDetailsImpl user,
                                                            @PathVariable("wordBookId") Long wordBookId){
-        return ResponseEntity.ok(wordBookService.getWordBook(user.getUserId(), wordBookId));
+        return ResponseEntity.ok(wordBookService.getWordBook(wordBookId));
     }
 
     @Operation(description = "단어장을 생성한다.")
@@ -53,7 +50,7 @@ public class WordBookController {
     public ResponseEntity<WordBookResponseDto> updateFolder(@AuthenticationPrincipal UserDetailsImpl user,
                                                             @PathVariable("wordBookId") Long wordBookId,
                                                             @RequestBody WordBookUpdateDto folderDto){
-        return ResponseEntity.ok(wordBookService.updateWordBook(user.getUserId(), wordBookId, folderDto));
+        return ResponseEntity.ok(wordBookService.updateWordBook(wordBookId, folderDto));
     }
 
     @Operation(description = "단어장을 삭제한다.")

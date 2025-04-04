@@ -46,9 +46,8 @@ public class WordController {
 
     @Operation(summary = "단어 단건 조회", description = "해당하는 단어를 조회한다.")
     @GetMapping("/{wordId}")
-    public ResponseEntity<ReadWordResponseDto> getWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                       @PathVariable("wordId") Long wordId) {
-        return ResponseEntity.ok(wordService.getWord(user.getUserId(), wordId));
+    public ResponseEntity<ReadWordResponseDto> getWord(@PathVariable("wordId") Long wordId) {
+        return ResponseEntity.ok(wordService.getWord(wordId));
     }
 
     @Operation(summary = "단어 저장", description = "단어를 저장한다.")
@@ -56,31 +55,30 @@ public class WordController {
     public ResponseEntity<WordResponseDto> saveWord(@AuthenticationPrincipal UserDetailsImpl user,
                                                     @PathVariable("gttsType") GttsCode gttsType,
                                                     @Valid @RequestBody WordRequestDto dto) {
-        return ResponseEntity.ok(wordService.saveWord(user.getUserId(), gttsType, dto));
+        return ResponseEntity.ok(wordService.saveWord(user.getUserId(), dto.wordBookId(), gttsType, dto));
     }
 
     @Operation(summary = "단어 수정", description = "타입에 맞는 단어를 수정한다.")
     @PutMapping(value = "/{wordId}/{type}")
-    public ResponseEntity<WordResponseDto> updateWord(@AuthenticationPrincipal UserDetailsImpl user,
-                                                      @PathVariable("type") UpdateType type,
+    public ResponseEntity<WordResponseDto> updateWord(@PathVariable("type") UpdateType type,
                                                       @PathVariable("wordId") Long wordId,
                                                       @RequestBody UpdateWordDto dto) {
-        return ResponseEntity.ok(wordService.updateWord(user.getUserId(), wordId, dto, type));
+        return ResponseEntity.ok(wordService.updateWord(wordId, dto, type));
     }
 
     @Operation(summary = "단어장 이동", description = "해당하는 단어의 단어장을 이동한다.")
     @PutMapping("/{wordId}/wordbook/{wordBookId}")
     public ResponseEntity<Void> moveWordBook(@AuthenticationPrincipal UserDetailsImpl user,
-                                           @PathVariable("wordId") Long wordId,
-                                           @PathVariable("wordBookId") Long wordBookId) {
+                                             @PathVariable("wordId") Long wordId,
+                                             @PathVariable("wordBookId") Long wordBookId) {
         wordService.moveWordBook(user.getUserId(), wordId, wordBookId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "단어 삭제", description = "단어를 삭제한다.")
     @DeleteMapping(value = "/{wordId}")
-    public ResponseEntity<Void> removeWord(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("wordId") Long wordId) {
-        wordService.removeWord(user.getUserId(), wordId);
+    public ResponseEntity<Void> removeWord(@PathVariable("wordId") Long wordId) {
+        wordService.removeWord(wordId);
         return ResponseEntity.noContent().build();
     }
 

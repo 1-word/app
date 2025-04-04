@@ -8,12 +8,13 @@ import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
 import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
-import com.numo.api.domain.wordbook.word.dto.read.ReadWordListResponseDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
 import com.numo.api.domain.wordbook.word.repository.WordRepository;
 import com.numo.api.domain.wordbook.word.service.update.UpdateFactory;
 import com.numo.api.domain.wordbook.word.service.update.UpdateWord;
+import com.numo.api.global.comm.exception.CustomException;
+import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
@@ -45,15 +46,16 @@ public class WordService {
 
     /**
      * 단어 저장
-      * @param userId 유저 아이디
+     * @param userId 유저 아이디
+     * @param wordBookId 단어장
      * @param gttsType 발음 타입
      * @param requestDto 저장할 단어 데이터
      * @return 저장한 단어 데이터
      */
     @Transactional
-    public WordResponseDto saveWord(Long userId, GttsCode gttsType, WordRequestDto requestDto){
-        // 단어 그룹 확인
-        WordBook wordBook = wordBookService.findWordBook(requestDto.wordBookId());
+    public WordResponseDto saveWord(Long userId, Long wordBookId, GttsCode gttsType, WordRequestDto requestDto){
+        // 단어장 확인
+        WordBook wordBook = wordBookService.findWordBook(wordBookId);
 
         // 발음 파일 생성
         Sound sound = soundService.createSound(requestDto.word(), gttsType);
@@ -66,51 +68,52 @@ public class WordService {
 
     /**
      * 단어 수정
-     * @param userId 로그인한 유저 아이디
      * @param wordId 수정할 단어 아이디
      * @param dto 수정 데이터
      * @param type 수정 타입
      * @return 수정한 단어 데이터
      */
-    @Transactional
-    public WordResponseDto updateWord(Long userId, Long wordId, UpdateWordDto dto, UpdateType type) {
+    public WordResponseDto updateWord(Long wordId, UpdateWordDto dto, UpdateType type) {
         UpdateWord updateWord = UpdateFactory.create(type);
-        Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
+        Word word = wordRepository.findByWordId(wordId);
         Word updatedWord = updateWord.update(dto, word);
         return WordResponseDto.of(wordRepository.save(updatedWord));
     }
 
     /**
      * 단어장을 옮긴다.
-     * @param userId 유저
+     * 소유자만 단어의 단어장 이동 가능
+     * @param targetWordBookId 옮길 단어장
      * @param wordId 옮길 단어
-     * @param wordBookId 옮길 단어장
      */
     @Transactional
-    public void moveWordBook(Long userId, Long wordId, Long wordBookId) {
-        Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
+    public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
+        Word word = wordRepository.findByWordId(wordId);
         WordBook preWordbook = word.getWordbook();
+        WordBook targetWordBook = wordBookService.findWordBook(targetWordBookId);
+        if (!targetWordBook.isOwner(userId)) {
+            throw new CustomException(ErrorCode.NOT_OWNER);
+        }
         String memorization = word.getMemorization();
         wordBookService.decrementPreviousWordBookCount(preWordbook.getId(), memorization);
-        WordBook wordBook = wordBookService.findWordBook(wordBookId);
-        word.updateWordBook(wordBook);
+        word.updateWordBook(targetWordBook);
     }
 
     /**
      * 단어를 조회 한다.
      * 검색, 조회 모두 해당함
-     * @param userId 로그인한 유저 아이디<br>
-     * @param readDto {@link ReadWordListResponseDto}<br>
+     * @param wordBookId 단어장
+     * @param readDto 조회 조건
      * @return 단어 데이터
      */
-    public PageResponse<ReadWordResponseDto> getWord(Long userId, PageRequestDto pageDto, ReadWordRequestDto readDto){
+    public PageResponse<ReadWordResponseDto> getWord(Long wordBookId, PageRequestDto pageDto, ReadWordRequestDto readDto){
         Pageable pageable = PageRequest.of(pageDto.current(), 30);
 
-        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(pageable, userId, pageDto.lastId(), readDto);
+        Slice<WordDto> wordsWithPage = wordRepository.findWordBy(wordBookId, pageable, pageDto.lastId(), readDto);
         List<WordDto> words = wordsWithPage.getContent();
 
         List<Long> wordIds = words.stream().map(WordDto::wordId).toList();
-        List<WordDetailResponseDto> wordDetails = wordRepository.findWordDetailByIds(wordIds);
+        List<WordDetailResponseDto> wordDetails = wordRepository.findWordDetailByWordIds(wordIds);
         List<ReadWordDetailListResponseDto> detailGroups = WordDetailResponseDto.grouping(wordDetails);
 
         int pageNumber = wordsWithPage.getNumber();
@@ -124,9 +127,9 @@ public class WordService {
         return new PageResponse<>(pageResponse, res);
     }
 
-    public ReadWordResponseDto getWord(Long userId, Long wordId) {
-        WordDto wordDto = wordRepository.findWordByWordId(userId, wordId);
-        List<WordDetailResponseDto> wordDetails = wordRepository.findWordDetailByIds(List.of(wordId));
+    public ReadWordResponseDto getWord(Long wordId) {
+        WordDto wordDto = wordRepository.findWordByWordId(wordId);
+        List<WordDetailResponseDto> wordDetails = wordRepository.findWordDetailByWordIds(List.of(wordId));
         List<ReadWordDetailListResponseDto> detailGroups = WordDetailResponseDto.grouping(wordDetails);
         return ReadWordResponseDto.of(wordDto, detailGroups);
     }
@@ -161,13 +164,11 @@ public class WordService {
         return wordRepository.findDailyWordBy(userId, words);
     }
 
-
-
     /**
      * word 데이터 삭제
     * */
-    public void removeWord(Long userId, Long wordId){
-        Word word = wordRepository.findByUserIdAndWordId(userId, wordId);
+    public void removeWord(Long wordId){
+        Word word = wordRepository.findByWordId(wordId);
         word.getWordbook().deleteCount(word.getMemorization());
         wordRepository.delete(word);
     }
