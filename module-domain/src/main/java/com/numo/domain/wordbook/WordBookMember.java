@@ -26,24 +26,16 @@ public class WordBookMember extends Timestamped {
     @Enumerated(EnumType.STRING)
     private WordBookRole role;
 
-    public boolean hasReadPermission(Long userId) {
-        return checkRole(WordBookRole.view, userId);
+    public boolean hasReadPermission() {
+        return role.hasViewPermission();
     }
 
-    public boolean hasWritePermission(Long userId) {
-        return checkRole(WordBookRole.edit, userId);
+    public boolean hasWritePermission() {
+        return role.hasEditPermission();
     }
 
-    public boolean hasAdminPermission(Long userId) {
-        return checkRole(WordBookRole.admin, userId);
-    }
-
-    private boolean checkRole(WordBookRole role, Long userId) {
-        return switch (role) {
-            case view -> this.role.hasViewPermission();
-            case edit -> this.role.hasEditPermission();
-            case admin -> this.role.hasAdminPermission();
-        };
+    public boolean hasAdminPermission() {
+        return role.hasAdminPermission();
     }
 
     public void setRole(WordBookRole role) {

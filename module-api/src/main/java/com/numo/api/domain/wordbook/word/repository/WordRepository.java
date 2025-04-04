@@ -13,11 +13,17 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface WordRepository extends JpaRepository<Word, Integer>, WordCustomRepository {
+public interface WordRepository extends JpaRepository<Word, Long>, WordCustomRepository {
     Optional<Word> findByUser_UserIdAndWordId(Long userId, Long wordId);
 
     default Word findByUserIdAndWordId(Long userId, Long wordId) {
         return findByUser_UserIdAndWordId(userId, wordId).orElseThrow(
+                () -> new CustomException(ErrorCode.DATA_NOT_FOUND)
+        );
+    }
+
+    default Word findByWordId(Long wordId) {
+        return findById(wordId).orElseThrow(
                 () -> new CustomException(ErrorCode.DATA_NOT_FOUND)
         );
     }

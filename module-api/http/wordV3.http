@@ -1,5 +1,7 @@
+@wordBookId = 6
+
 ### 단어 저장
-POST localhost:8088/api/v2/words/EN
+POST localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/EN
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -30,37 +32,37 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 해당 단어 조회
-GET localhost:8088/api/v2/words/89
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/89
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회
-GET localhost:8088/api/v2/words?current=1&lastWordId=62&wordBookId=6
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words?current=1&lastWordId=62
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 단어 조회
-GET localhost:8088/api/v2/words?current=0&sort=random&seed=U4Sa@2
+### 단어 랜덤 조회
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words?current=0&sort=random&seed=U4Sa@2
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 검색
-GET localhost:8088/api/v2/words/search/word?current=0
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/search/rasdf?current=0
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회 - 암기 여부
-GET localhost:8088/api/v2/words?current=1&memorization=N
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words?current=1&memorization=N
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회 - 언어
-GET localhost:8088/api/v2/words?current=1&lang=EN
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words?current=1&lang=EN
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 수정
-PUT localhost:8088/api/v2/words/{{wordId}}/all
+PUT localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}/all
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -88,7 +90,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어 수정 - 메모
-PUT localhost:8088/api/v2/words/{{wordId}}/memo
+PUT localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}/memo
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -97,7 +99,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어 수정 - 암기 여부
-PUT localhost:8088/api/v2/words/{{wordId}}/memorization
+PUT localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}/memorization
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -106,12 +108,16 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 이동
-PUT localhost:8088/api/v2/words/{{wordId}}/wordbook/19
+PUT localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}/move
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+{
+  "targetWordBookId": 19
+}
+
 
 ### 단어 삭제
-DELETE localhost:8088/api/v2/words/{{wordId}}
+DELETE localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

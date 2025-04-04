@@ -30,14 +30,13 @@ class WordRepositoryImplTest {
     @Test
     void findWordBy() {
         PageRequest page = PageRequest.of(0, 10);
-        Long userId = 2L;
         Long lastWordId = null;
         ReadWordRequestDto req = ReadWordRequestDto.builder()
                 .sort(SortType.random)
                 .seed(null)
                 .build();
 
-        Slice<WordDto> word = wordRepository.findWordBy(page, userId, lastWordId, req);
+        Slice<WordDto> word = wordRepository.findWordBy(1L, page, lastWordId, req);
         System.out.println(word.getContent().get(0));
     }
 }

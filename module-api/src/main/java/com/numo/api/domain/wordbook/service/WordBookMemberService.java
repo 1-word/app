@@ -22,68 +22,68 @@ public class WordBookMemberService {
 
     /**
      * 해당 단어장에 권한이 있는 사용자만 권한 수정
-     * @param userId 로그인한 유저
      * @param wordBookId 단어장
      * @param roleDto 수정할 권한 정보
      */
     @Transactional
-    public void updateWordBookMemberRole(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
+    public void updateWordBookMemberRole(Long wordBookId, WordBookRoleRequestDto roleDto) {
         WordBookMember updateMember = wordBookMemberRepository.findMemberByWordBookIdAndUserId(wordBookId, roleDto.userId());
-        WordBook wordBook = updateMember.getWordBook();
-        checkPermission(userId, wordBook, WordBookRole.admin);
         updateMember.setRole(roleDto.role());
     }
 
     /**
      * 해당 단어장에 권한 추가
-     * @param userId 로그인한 유저
-     * @param wordBook 단어장
+     * @param wordBookId 단어장
      * @param roleDto 추가할 권한 정보
      */
-    public void addWordBookMember(Long userId, WordBook wordBook, WordBookRoleRequestDto roleDto) {
-        if (wordBookMemberRepository.existsByWordBook_IdAndUser_UserId(wordBook.getId(), roleDto.userId())) {
+    public void addWordBookMember(Long wordBookId, WordBookRoleRequestDto roleDto) {
+        if (wordBookMemberRepository.existsByWordBook_IdAndUser_UserId(wordBookId, roleDto.userId())) {
             throw new CustomException(ErrorCode.WORD_BOOK_MEMBER_EXISTS);
         }
-        checkPermission(userId, wordBook, WordBookRole.admin);
         WordBookMember newMember = WordBookMember.builder()
                 .user(new User(roleDto.userId()))
+                .wordBook(new WordBook(wordBookId))
                 .role(roleDto.role())
-                .wordBook(wordBook).build();
+                .build();
         wordBookMemberRepository.save(newMember);
     }
 
-    public List<WordBookMemberResponseDto> getWordBookMembers(Long userId, WordBook wordBook) {
-        checkPermission(userId, wordBook, WordBookRole.admin);
-        return wordBookMemberRepository.findMemberByWordBook(wordBook.getId());
+    /**
+     * 단어장의 멤버 조회
+     * @param wordBookId 단어장
+     * @return 단어장 멤버 리스트
+     */
+    public List<WordBookMemberResponseDto> getWordBookMembers(Long wordBookId) {
+        return wordBookMemberRepository.findMemberByWordBook(wordBookId);
     }
 
     /**
-     * 단어장의 권한 체크
-     * @param userId 체크할 유저(로그인한 유저)
-     * @param wordBook 단어장
+     * 단어장의 멤버 삭제
+     * @param wordBookMemberId 멤버
      */
-    public void checkPermission(Long userId, WordBook wordBook, WordBookRole role) {
-        // 단어장 소유자이면 추가로 멤버를 찾지 않음
-        if (!wordBook.isOwner(userId)) {
-            WordBookMember member = wordBookMemberRepository.findByWordBook_IdAndUser_UserId(wordBook.getId(), userId).orElseThrow(
-                    () -> new CustomException(ErrorCode.UNRECOGNIZED_ROLE)
-            );
-            if (!checkPermission(userId, role, member)) {
-                throw new CustomException(ErrorCode.UNRECOGNIZED_ROLE);
-            }
+    public void deleteWordBookMemberRole(Long wordBookMemberId) {
+        WordBookMember member = wordBookMemberRepository.findMemberById( wordBookMemberId);
+        wordBookMemberRepository.delete(member);
+    }
+
+    /**
+     * 단어장 멤버 권한 확인
+     * @param userId 확인할 유저(로그인한 유저)
+     */
+    public void checkPermission(Long userId, Long wordBookId, WordBookRole targetRole) {
+        WordBookMember member = wordBookMemberRepository.findByWordBook_IdAndUser_UserId(wordBookId, userId).orElseThrow(
+                () -> new CustomException(ErrorCode.UNRECOGNIZED_ROLE)
+        );
+        if (!checkPermission(member, targetRole)) {
+            throw new CustomException(ErrorCode.UNRECOGNIZED_ROLE);
         }
     }
 
-    private boolean checkPermission(Long userId, WordBookRole role, WordBookMember member) {
-        return switch (role) {
-            case view -> member.hasReadPermission(userId);
-            case edit -> member.hasWritePermission(userId);
-            case admin -> member.hasAdminPermission(userId);
+    private boolean checkPermission(WordBookMember member, WordBookRole targetRole) {
+        return switch (targetRole) {
+            case view -> member.hasReadPermission();
+            case edit -> member.hasWritePermission();
+            case admin -> member.hasAdminPermission();
         };
-    }
-
-    public void deleteWordBookMemberRole(Long userId, WordBook wordBook, Long memberId) {
-        checkPermission(userId, wordBook, WordBookRole.admin);
-        wordBookMemberRepository.findMemberById(memberId);
     }
 }

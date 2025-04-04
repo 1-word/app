@@ -1,9 +1,7 @@
 package com.numo.api.domain.wordbook.service;
 
-import com.numo.api.domain.wordbook.dto.WordBookMemberResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookRoleRequestDto;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
 import com.numo.api.global.comm.exception.CustomException;
@@ -21,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WordBookService {
 
-    private final WordBookMemberService wordBookMemberService;
     private final WordBookRepository wordBookRepository;
     private final WordBookQueryRepository wordBookQueryRepository;
 
@@ -45,14 +42,11 @@ public class WordBookService {
 
     /**
      * 단어장 단건 조회
-     * 읽기 권한이 있는 멤버, 소유자만 조회 가능
-     * @param userId 유저 아이디
      * @param wordBookId 단어장 아이디
      * @return 조회한 단어장 단건 데이터
      */
-    public WordBookResponseDto getWordBook(Long userId, Long wordBookId) {
+    public WordBookResponseDto getWordBook(Long wordBookId) {
         WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.checkPermission(userId, wordBook, WordBookRole.view);
         return WordBookResponseDto.of(wordBook);
     }
 
@@ -69,15 +63,13 @@ public class WordBookService {
 
     /**
      * 단어장 수정
-     * @param userId 유저 아이디
      * @param wordBookId 단어장 아이디
      * @param WordBookDto 단어장 데이터
      * @return 수정된 단어장 데이터
      */
     @Transactional
-    public WordBookResponseDto updateWordBook(Long userId, Long wordBookId, WordBookUpdateDto WordBookDto){
+    public WordBookResponseDto updateWordBook(Long wordBookId, WordBookUpdateDto WordBookDto){
         WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.checkPermission(userId, wordBook, WordBookRole.admin);
         wordBook.update(WordBookDto);
         return WordBookResponseDto.of(wordBook);
     }
@@ -119,22 +111,15 @@ public class WordBookService {
         );
     }
 
-    public void addWordBookMember(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
+    /**
+     * 단어장 권한 체크
+     * @param userId 유저
+     * @param wordBookId 단어장
+     * @param targetRole 체크할 권한
+     * @return 권한 여부
+     */
+    public boolean hasPermission(Long userId, Long wordBookId, WordBookRole targetRole) {
         WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.addWordBookMember(userId, wordBook, roleDto);
-    }
-
-    public void updateWordBookMemberRole(Long userId, Long wordBookId, WordBookRoleRequestDto roleDto) {
-        wordBookMemberService.updateWordBookMemberRole(userId, wordBookId, roleDto);
-    }
-
-    public List<WordBookMemberResponseDto> getWordBookMembers(Long userId, Long wordBookId) {
-        WordBook wordBook = findWordBook(wordBookId);
-        return wordBookMemberService.getWordBookMembers(userId, wordBook);
-    }
-
-    public void deleteWordBookMemberRole(Long userId, Long wordBookId, Long memberId) {
-        WordBook wordBook = findWordBook(wordBookId);
-        wordBookMemberService.deleteWordBookMemberRole(userId, wordBook, memberId);
+        return wordBook.hasPermission(userId, targetRole);
     }
 }

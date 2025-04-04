@@ -17,15 +17,15 @@ public enum WordBookRole {
     private final boolean canAll;
 
     // 권한을 확인하는 함수들
-    public boolean hasViewPermission() {
+    boolean hasViewPermission() {
         return canView;
     }
 
-    public boolean hasEditPermission() {
+    boolean hasEditPermission() {
         return canEdit;
     }
 
-    public boolean hasAdminPermission() {
+    boolean hasAdminPermission() {
         return canAll;
     }
 }

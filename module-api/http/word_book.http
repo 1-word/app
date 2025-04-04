@@ -46,22 +46,22 @@ GET localhost:8088/api/wordbooks/share
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 단어장 권한 추가
-POST localhost:8088/api/wordbooks/6/members/role
+### 단어장 멤버 추가
+POST localhost:8088/api/wordbooks/6/members
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "userId": 9,
+  "userId": 13,
   "role": "view"
 }
 
-### 단어장 권한 조회
+### 단어장 멤버 조회
 GET localhost:8088/api/wordbooks/6/members
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 단어장 권한 변경 
+### 단어장 멤버 권한 변경
 PUT localhost:8088/api/wordbooks/6/members/role
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
@@ -71,7 +71,7 @@ Authorization: Bearer {{accessToken}}
   "role": "admin"
 }
 
-### 단어장 권한 삭제
-DELETE localhost:8088/api/wordbooks/6/members/12
+### 단어장 멤버 삭제
+DELETE localhost:8088/api/wordbooks/6/members/16
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
