@@ -1,9 +1,11 @@
 package com.numo.api.domain.wordbook;
 
+import com.numo.api.domain.wordbook.aop.WordBookAccess;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
 import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.api.security.service.UserDetailsImpl;
+import com.numo.domain.wordbook.WordBookRole;
 import com.numo.domain.wordbook.dto.WordBookUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +35,8 @@ public class WordBookController {
 
     @Operation(description = "단어장 정보를 가져온다.")
     @GetMapping("/{wordBookId}")
-    public ResponseEntity<WordBookResponseDto> getWordBook(@AuthenticationPrincipal UserDetailsImpl user,
-                                                           @PathVariable("wordBookId") Long wordBookId){
+    @WordBookAccess(WordBookRole.view)
+    public ResponseEntity<WordBookResponseDto> getWordBook(@PathVariable("wordBookId") Long wordBookId){
         return ResponseEntity.ok(wordBookService.getWordBook(wordBookId));
     }
 
@@ -47,8 +49,8 @@ public class WordBookController {
 
     @Operation(description = "단어장을 변경한다.")
     @PutMapping (value = "/{wordBookId}")
-    public ResponseEntity<WordBookResponseDto> updateFolder(@AuthenticationPrincipal UserDetailsImpl user,
-                                                            @PathVariable("wordBookId") Long wordBookId,
+    @WordBookAccess(WordBookRole.edit)
+    public ResponseEntity<WordBookResponseDto> updateFolder(@PathVariable("wordBookId") Long wordBookId,
                                                             @RequestBody WordBookUpdateDto folderDto){
         return ResponseEntity.ok(wordBookService.updateWordBook(wordBookId, folderDto));
     }
