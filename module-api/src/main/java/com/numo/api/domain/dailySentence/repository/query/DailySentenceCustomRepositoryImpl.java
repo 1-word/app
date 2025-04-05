@@ -96,6 +96,7 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
         return queryFactory.selectDistinct(Projections.constructor(
                         WordDailySentenceDto.class,
                         qWordDailySentence.word.wordId,
+                        qWordDailySentence.word.wordbook.id,
                         qWordDailySentence.matchedWord
                 )).from(qWordDailySentence)
                 .where(
