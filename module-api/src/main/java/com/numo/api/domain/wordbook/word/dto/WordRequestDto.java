@@ -33,7 +33,7 @@ public record WordRequestDto(
         return Word.builder()
                 .user(user)
                 .sound(sound)
-                .wordbook(wordBook)
+                .wordBook(wordBook)
                 .wordDetails(wordDetails)
                 .word(word)
                 .mean(mean)

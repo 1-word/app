@@ -28,6 +28,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     List<Quiz> findAllByIdIn(List<Long> ids);
 
+    @Modifying
+    void deleteByWord_WordId(Long wordId);
+
     @Transactional
     @Modifying
     @Query(value = "insert into quiz (quiz_info_id, word_id) " +

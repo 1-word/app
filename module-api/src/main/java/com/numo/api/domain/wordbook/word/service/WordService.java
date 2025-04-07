@@ -1,6 +1,7 @@
 package com.numo.api.domain.wordbook.word.service;
 
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
+import com.numo.api.domain.quiz.service.QuizService;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
 import com.numo.api.domain.wordbook.service.WordBookService;
@@ -43,6 +44,7 @@ public class WordService {
     private final WordRepository wordRepository;
     private final WordBookService wordBookService;
     private final SoundService soundService;
+    private final QuizService quizService;
 
     /**
      * 단어 저장
@@ -89,7 +91,7 @@ public class WordService {
     @Transactional
     public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
         Word word = wordRepository.findByWordId(wordId);
-        WordBook preWordbook = word.getWordbook();
+        WordBook preWordbook = word.getWordBook();
         WordBook targetWordBook = wordBookService.findWordBook(targetWordBookId);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
@@ -168,12 +170,46 @@ public class WordService {
      * word 데이터 삭제
     * */
     public void removeWord(Long wordId){
-        Word word = wordRepository.findByWordId(wordId);
-        word.getWordbook().deleteCount(word.getMemorization());
+        Word words = wordRepository.findByWordId(wordId);
+        removeWord(words);
+    }
+
+    public void removeWordByWordBook(Long wordBookId) {
+        List<Word> words = wordRepository.findByWordBook_id(wordBookId);
+        words.forEach(this::removeWord);
+    }
+
+    private void removeWord(Word word){
+        quizService.deleteByWordId(word.getWordId());
+        word.getWordBook().deleteCount(word.getMemorization());
         wordRepository.delete(word);
+    }
+
+    /**
+     * 해당 단어장의 단어를 복사한다.
+     *
+     * @param userId 유저
+     * @param wordBookId 복사할 단어장
+     * @param targetWordBookId 복사 대상 단어장
+     */
+    @Transactional
+    public void copyWord(Long userId, Long wordBookId, Long targetWordBookId) {
+        WordBook targetWordBook = wordBookService.findWordBook(targetWordBookId);
+        if (!targetWordBook.isOwner(userId)) {
+            throw new CustomException(ErrorCode.NOT_OWNER);
+        }
+        List<Word> copyWords = wordRepository.findByWordBook_id(wordBookId);
+
+        List<Word> targetWords = copyWords.stream()
+                .map(copyWord -> copyWord.copyWithWordBook(userId, targetWordBookId))
+                .toList();
+        wordRepository.saveAll(targetWords);
+        // 단어장 동기화
+        targetWordBook.updateCount(0, copyWords.size());
     }
 
     private Long getLastWordId(List<Long> wordIds) {
         return !wordIds.isEmpty()? wordIds.get(wordIds.size() - 1) : null;
     }
+
 }

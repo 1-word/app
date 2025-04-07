@@ -77,16 +77,14 @@ public class WordBookService {
     /**
      * 단어장 삭제
      * 본인 단어장이 아니거나 단어장에 단어가 있으면 삭제 실패
-     * @param userId 유저 아이디
-     * @param wordBookId 폴더 아이디
+     *
+     * @param wordBookId  폴더 아이디
+     * @param removeWords 단어 삭제 여부
      */
-    public void removeWordBook(Long userId, Long wordBookId) {
+    public void removeWordBook(Long wordBookId, boolean removeWords) {
         WordBook wordBook = findWordBook(wordBookId);
-        if (!wordBook.isOwner(userId)) {
-            throw new CustomException(ErrorCode.NOT_OWNER);
-        }
 
-        if(!wordBook.isDeleteAllowed()) {
+        if (!removeWords && !wordBook.isDeleteAllowed()) {
             throw new CustomException(ErrorCode.ASSOCIATED_DATA_EXISTS);
         }
 
@@ -122,4 +120,5 @@ public class WordBookService {
         WordBook wordBook = findWordBook(wordBookId);
         return wordBook.hasPermission(userId, targetRole);
     }
+
 }

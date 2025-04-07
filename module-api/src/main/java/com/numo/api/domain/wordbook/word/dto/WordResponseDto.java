@@ -28,7 +28,7 @@ public record WordResponseDto(
         public static WordResponseDto of(Word word) {
                 List<WordDetail> wordDetails = word.getWordDetails();
                 Sound sound = word.getSound();
-                WordBook wordbook = word.getWordbook();
+                WordBook wordbook = word.getWordBook();
                 return WordResponseDto.builder()
                         .wordId(word.getWordId())
                         .soundPath(sound.getWord())

@@ -121,3 +121,12 @@ Authorization: Bearer {{accessToken}}
 DELETE localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 단어 복사
+POST localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/copy
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "targetWordBookId": 28
+}

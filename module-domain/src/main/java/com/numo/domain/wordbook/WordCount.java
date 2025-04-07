@@ -21,6 +21,13 @@ public class WordCount {
         this.unMemorizedCount = unMemorizedCount;
     }
 
+    protected WordCount updateCount(int memorizedCount, int unMemorizedCount) {
+        this.memorizedCount += memorizedCount;
+        this.unMemorizedCount += unMemorizedCount;
+        totalCount += memorizedCount + unMemorizedCount;
+        return new WordCount(totalCount, this.memorizedCount, this.unMemorizedCount);
+    }
+
     /**
      * 단어 삭제 시 count 삭제
      */
