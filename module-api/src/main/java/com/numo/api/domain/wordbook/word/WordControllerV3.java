@@ -96,4 +96,13 @@ public class WordControllerV3 {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "단어장 복사", description = "해당 단어장의 단어를 복사한다.")
+    @PostMapping(value = "/copy")
+    @WordBookAccess(WordBookRole.view)
+    public ResponseEntity<Void> copyWord(@PathVariable("wordBookId") Long wordBookId,
+                                         @AuthenticationPrincipal UserDetailsImpl user,
+                                         @RequestBody WordMoveDto wordMoveDto) {
+        wordService.copyWord(user.getUserId(), wordBookId, wordMoveDto.targetWordBookId());
+        return ResponseEntity.noContent().build();
+    }
 }

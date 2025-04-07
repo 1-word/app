@@ -4,6 +4,7 @@ import com.numo.api.domain.wordbook.aop.WordBookAccess;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
 import com.numo.api.domain.wordbook.service.WordBookService;
+import com.numo.api.domain.wordbook.word.WordBookFacade;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.domain.wordbook.WordBookRole;
 import com.numo.domain.wordbook.dto.WordBookUpdateDto;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class WordBookController {
+    private final WordBookFacade wordBookFacade;
     private final WordBookService wordBookService;
 
     @Operation(description = "단어장 리스트를 가져온다.")
@@ -57,9 +59,15 @@ public class WordBookController {
 
     @Operation(description = "단어장을 삭제한다.")
     @DeleteMapping(value="/{wordBookId}")
-    public ResponseEntity<Integer> removeWordBook(@AuthenticationPrincipal UserDetailsImpl user,
-                                                  @PathVariable("wordBookId") Long wordBookId){
-        wordBookService.removeWordBook(user.getUserId(), wordBookId);
+    @WordBookAccess(WordBookRole.admin)
+    public ResponseEntity<Integer> removeWordBook(@PathVariable("wordBookId") Long wordBookId,
+                                                  @AuthenticationPrincipal UserDetailsImpl user,
+                                                  @RequestParam(value = "removeWords", required = false) Boolean removeWords){
+        if (removeWords == null) {
+            removeWords = false;
+        }
+        wordBookFacade.removeWordBook(user.getUserId(), wordBookId, removeWords);
         return ResponseEntity.noContent().build();
     }
+
 }

@@ -31,8 +31,16 @@ Authorization: Bearer {{accessToken}}
   "background": "#0000"
 }
 
+###
+@wordBookId = 28
+
 ### 단어장 삭제
 DELETE localhost:8088/api/wordbooks/{{wordBookId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 삭제 - 연관 데이터 삭제
+DELETE localhost:8088/api/wordbooks/{{wordBookId}}?removeWords=true
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

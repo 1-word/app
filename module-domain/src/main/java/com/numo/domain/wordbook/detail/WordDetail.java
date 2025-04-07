@@ -1,8 +1,8 @@
 package com.numo.domain.wordbook.detail;
 
 import com.numo.domain.base.Timestamped;
-import com.numo.domain.wordbook.word.Word;
 import com.numo.domain.wordbook.detail.dto.UpdateWordDetailDto;
+import com.numo.domain.wordbook.word.Word;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,4 +39,5 @@ public class WordDetail extends Timestamped {
                 .wordGroupId(detailDto.wordGroupId())
                 .build();
     }
+
 }

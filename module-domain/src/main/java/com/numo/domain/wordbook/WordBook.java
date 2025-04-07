@@ -88,6 +88,10 @@ public class WordBook extends Timestamped {
         wordCount = wordCount.decrementCount(memorization);
     }
 
+    public void updateCount(int memorizedCount, int unMemorizedCount) {
+        wordCount = wordCount.updateCount(memorizedCount, unMemorizedCount);
+    }
+
     /**
      * 암기 여부가 변경되었을 때 단어 수 업데이트
      * 변경되지 않았으면 단어 수를 업데이트 하지 않는다.

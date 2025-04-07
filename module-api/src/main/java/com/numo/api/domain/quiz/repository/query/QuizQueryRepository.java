@@ -29,6 +29,7 @@ public class QuizQueryRepository {
                         QuizStatWordDto.class,
                         qQuiz.id,
                         qQuiz.word.wordId,
+                        qQuiz.word.wordBook.id,
                         qQuiz.word.word,
                         qQuiz.word.read,
                         qQuiz.word.mean,

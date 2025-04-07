@@ -65,8 +65,8 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
                         qWordDailySentence.word.wordId,
                         qWordDailySentence.word.word,
                         qWordDailySentence.word.mean,
-                        qWordDailySentence.word.wordbook.id,
-                        qWordDailySentence.word.wordbook.name
+                        qWordDailySentence.word.wordBook.id,
+                        qWordDailySentence.word.wordBook.name
                 ))
                 .from(qWordDailySentence)
                 .leftJoin(qWordDailySentence.word)
@@ -96,6 +96,7 @@ public class DailySentenceCustomRepositoryImpl implements DailySentenceCustomRep
         return queryFactory.selectDistinct(Projections.constructor(
                         WordDailySentenceDto.class,
                         qWordDailySentence.word.wordId,
+                        qWordDailySentence.word.wordBook.id,
                         qWordDailySentence.matchedWord
                 )).from(qWordDailySentence)
                 .where(
