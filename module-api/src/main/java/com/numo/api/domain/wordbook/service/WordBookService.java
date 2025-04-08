@@ -4,6 +4,7 @@ import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
+import com.numo.api.domain.wordbook.word.repository.WordRepository;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.wordbook.WordBook;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WordBookService {
 
+    private final WordRepository wordRepository;
     private final WordBookRepository wordBookRepository;
     private final WordBookQueryRepository wordBookQueryRepository;
 

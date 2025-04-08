@@ -15,7 +15,7 @@ public class WordBookFacade {
     @Transactional
     public void removeWordBook(Long userId, Long wordBookId, boolean removeWords) {
         if (removeWords) {
-            wordService.removeWordByWordBook(wordBookId);
+            wordService.removeWordsByWordBook(wordBookId);
         }
         wordBookService.removeWordBook(wordBookId, removeWords);
     }

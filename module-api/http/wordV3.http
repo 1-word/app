@@ -1,4 +1,4 @@
-@wordBookId = 6
+@wordBookId = 35
 
 ### 단어 저장
 POST localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/EN
@@ -6,7 +6,6 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "wordBookId": 6,
   "word": "Bearer",
   "mean": "mean",
   "read": "read",
@@ -128,5 +127,5 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "targetWordBookId": 28
+  "targetWordBookId": 34
 }

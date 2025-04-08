@@ -1,9 +1,11 @@
 package com.numo.api.domain.wordbook.word.service;
 
 import com.numo.api.domain.dailySentence.dto.DailyWordListDto;
-import com.numo.api.domain.quiz.service.QuizService;
+import com.numo.api.domain.dailySentence.repository.WordDailySentenceRepository;
+import com.numo.api.domain.quiz.repository.QuizRepository;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
+import com.numo.api.domain.wordbook.detail.repository.WordDetailRepository;
 import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
@@ -42,9 +44,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class WordService {
     private final WordRepository wordRepository;
+    private final WordDetailRepository wordDetailRepository;
+    private final WordDailySentenceRepository wordDailySentenceRepository;
+    private final QuizRepository quizRepository;
     private final WordBookService wordBookService;
     private final SoundService soundService;
-    private final QuizService quizService;
 
     /**
      * 단어 저장
@@ -167,25 +171,6 @@ public class WordService {
     }
 
     /**
-     * word 데이터 삭제
-    * */
-    public void removeWord(Long wordId){
-        Word words = wordRepository.findByWordId(wordId);
-        removeWord(words);
-    }
-
-    public void removeWordByWordBook(Long wordBookId) {
-        List<Word> words = wordRepository.findByWordBook_id(wordBookId);
-        words.forEach(this::removeWord);
-    }
-
-    private void removeWord(Word word){
-        quizService.deleteByWordId(word.getWordId());
-        word.getWordBook().deleteCount(word.getMemorization());
-        wordRepository.delete(word);
-    }
-
-    /**
      * 해당 단어장의 단어를 복사한다.
      *
      * @param userId 유저
@@ -206,6 +191,41 @@ public class WordService {
         wordRepository.saveAll(targetWords);
         // 단어장 동기화
         targetWordBook.updateCount(0, copyWords.size());
+    }
+
+    /**
+     * 단어 데이터 단건 삭제
+     * @param wordId 단어
+     */
+    @Transactional
+    public void removeWord(Long wordId){
+        Word word = wordRepository.findByWordId(wordId);
+        removeRelation(List.of(word));
+        wordRepository.delete(word);
+    }
+
+    /**
+     * 단어장의 단어 데이터 삭제
+     * @param wordBookId 단어장
+     */
+    @Transactional
+    public void removeWordsByWordBook(Long wordBookId) {
+        List<Word> words = wordRepository.findByWordBook_id(wordBookId);
+        removeRelation(words);
+        wordRepository.deleteByWordBook_id(wordBookId);
+    }
+
+    /**
+     * 단어를 삭제한다
+     * 연관 관계에 있는 모든 데이터를 삭제한다.
+     * @param words 삭제할 단어 리스트
+     */
+    private void removeRelation(List<Word> words){
+        List<Long> wordIds = words.stream().map(Word::getWordId).toList();
+        quizRepository.deleteByWord_WordIdIn(wordIds);
+        wordDailySentenceRepository.deleteByWord_WordIdIn(wordIds);
+        wordDetailRepository.deleteByWord_WordIdIn(wordIds);
+        // todo 삭제 이후 오늘의 내 문장 태그 업데이트 필요
     }
 
     private Long getLastWordId(List<Long> wordIds) {
