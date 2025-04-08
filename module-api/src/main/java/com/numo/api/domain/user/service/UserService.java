@@ -1,5 +1,7 @@
 package com.numo.api.domain.user.service;
 
+import com.numo.api.domain.user.dto.SearchUserDto;
+import com.numo.api.domain.user.repository.query.UserQueryRepository;
 import com.numo.domain.auth.VerificationCode;
 import com.numo.domain.user.Authority;
 import com.numo.domain.user.Role;
@@ -18,12 +20,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserQueryRepository userQueryRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
 
@@ -201,5 +205,9 @@ public class UserService {
 
     private User findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
+    }
+
+    public List<SearchUserDto> searchUsers(String searchText) {
+        return userQueryRepository.searchUsers(searchText, 5);
     }
 }
