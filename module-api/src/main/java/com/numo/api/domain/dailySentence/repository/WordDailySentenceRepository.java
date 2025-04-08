@@ -1,7 +1,6 @@
-package com.numo.api.domain.wordbook.detail.repository;
+package com.numo.api.domain.dailySentence.repository;
 
-import com.numo.domain.wordbook.detail.WordDetail;
-import com.numo.domain.wordbook.detail.WordGroup;
+import com.numo.domain.sentence.WordDailySentence;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,12 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface WordDetailRepository extends JpaRepository<WordDetail, Long> {
-    boolean existsByWordGroupAndWord_User_UserId(WordGroup wordGroup, Long userId);
-
+public interface WordDailySentenceRepository extends JpaRepository<WordDailySentence, Long> {
     @Transactional
     @Modifying
-    @Query(value = "delete from word_detail " +
+    @Query(value = "delete from word_daily_sentence " +
                     "where word_id in :wordIds",
             nativeQuery = true)
     void deleteByWord_WordIdIn(@Param("wordIds") List<Long> wordIds);

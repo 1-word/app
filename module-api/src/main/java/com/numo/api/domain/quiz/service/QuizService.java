@@ -148,7 +148,4 @@ public class QuizService {
         return new PageResponse<>(result);
     }
 
-    public void deleteByWordId(Long wordId) {
-        quizRepository.deleteByWord_WordId(wordId);
-    }
 }

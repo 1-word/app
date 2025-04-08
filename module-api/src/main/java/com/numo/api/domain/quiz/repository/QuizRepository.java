@@ -28,8 +28,12 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     List<Quiz> findAllByIdIn(List<Long> ids);
 
+    @Transactional
     @Modifying
-    void deleteByWord_WordId(Long wordId);
+    @Query(value = "delete from quiz " +
+                    "where word_id in :wordIds",
+            nativeQuery = true)
+    void deleteByWord_WordIdIn(@Param("wordIds") List<Long> wordIds);
 
     @Transactional
     @Modifying
