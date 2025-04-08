@@ -6,7 +6,7 @@ import com.numo.api.domain.quiz.repository.QuizRepository;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
 import com.numo.api.domain.wordbook.detail.repository.WordDetailRepository;
-import com.numo.api.domain.wordbook.service.WordBookService;
+import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
@@ -21,6 +21,7 @@ import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
+import com.numo.api.listener.event.WordBookEvent;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.sound.Sound;
@@ -29,6 +30,7 @@ import com.numo.domain.wordbook.type.UpdateType;
 import com.numo.domain.wordbook.word.Word;
 import com.numo.domain.wordbook.word.dto.UpdateWordDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -47,8 +49,9 @@ public class WordService {
     private final WordDetailRepository wordDetailRepository;
     private final WordDailySentenceRepository wordDailySentenceRepository;
     private final QuizRepository quizRepository;
-    private final WordBookService wordBookService;
+    private final WordBookRepository wordBookRepository;
     private final SoundService soundService;
+    private final ApplicationEventPublisher publisher;
 
     /**
      * 단어 저장
@@ -61,7 +64,7 @@ public class WordService {
     @Transactional
     public WordResponseDto saveWord(Long userId, Long wordBookId, GttsCode gttsType, WordRequestDto requestDto){
         // 단어장 확인
-        WordBook wordBook = wordBookService.findWordBook(wordBookId);
+        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
 
         // 발음 파일 생성
         Sound sound = soundService.createSound(requestDto.word(), gttsType);
@@ -96,13 +99,13 @@ public class WordService {
     public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
         Word word = wordRepository.findByWordId(wordId);
         WordBook preWordbook = word.getWordBook();
-        WordBook targetWordBook = wordBookService.findWordBook(targetWordBookId);
+        WordBook targetWordBook = wordBookRepository.findWordBookById(targetWordBookId);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
-        String memorization = word.getMemorization();
-        wordBookService.decrementPreviousWordBookCount(preWordbook.getId(), memorization);
         word.updateWordBook(targetWordBook);
+        String memorization = word.getMemorization();
+        publisher.publishEvent(new WordBookEvent(preWordbook.getId(), memorization));
     }
 
     /**
@@ -179,7 +182,7 @@ public class WordService {
      */
     @Transactional
     public void copyWord(Long userId, Long wordBookId, Long targetWordBookId) {
-        WordBook targetWordBook = wordBookService.findWordBook(targetWordBookId);
+        WordBook targetWordBook = wordBookRepository.findWordBookById(targetWordBookId);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }

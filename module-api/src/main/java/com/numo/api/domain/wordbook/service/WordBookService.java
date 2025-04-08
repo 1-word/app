@@ -5,6 +5,7 @@ import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
 import com.numo.api.domain.wordbook.word.repository.WordRepository;
+import com.numo.api.domain.wordbook.word.service.WordService;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.domain.wordbook.WordBook;
@@ -23,6 +24,7 @@ public class WordBookService {
     private final WordRepository wordRepository;
     private final WordBookRepository wordBookRepository;
     private final WordBookQueryRepository wordBookQueryRepository;
+    private final WordService wordService;
 
     /**
      * 내 단어장 다건 조회
@@ -78,7 +80,7 @@ public class WordBookService {
 
     /**
      * 단어장 삭제
-     * 본인 단어장이 아니거나 단어장에 단어가 있으면 삭제 실패
+     * 단어 삭제 여부가 true이면 단어 데이터 모두 삭제
      *
      * @param wordBookId  폴더 아이디
      * @param removeWords 단어 삭제 여부
@@ -88,6 +90,10 @@ public class WordBookService {
 
         if (!removeWords && !wordBook.isDeleteAllowed()) {
             throw new CustomException(ErrorCode.ASSOCIATED_DATA_EXISTS);
+        }
+
+        if (removeWords) {
+            wordService.removeWordsByWordBook(wordBookId);
         }
 
         wordBook.removeMember();
