@@ -86,3 +86,8 @@ Authorization: Bearer {{accessToken}}
 GET localhost:8088/api/user/search?q=
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+### 유저 온보딩 완료
+PATCH localhost:8088/api/user/onboarding/complete
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

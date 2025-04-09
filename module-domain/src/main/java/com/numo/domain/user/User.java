@@ -1,10 +1,8 @@
 package com.numo.domain.user;
 
 import com.numo.domain.base.Timestamped;
-import com.numo.domain.file.File;
 import com.numo.domain.user.dto.UpdateUserDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +16,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name="user")
 public class User extends Timestamped {
@@ -32,12 +29,33 @@ public class User extends Timestamped {
     private String password;
     private String profileImagePath;
     private LocalDateTime withdrawDate;
+    private boolean isOnboardingFinished;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userId", updatable = false)
     private Set<Authority> authorities;
 
     private String serviceType;
+
+    public User(Long userId,
+                String email,
+                String nickname,
+                String password,
+                String profileImagePath,
+                LocalDateTime withdrawDate,
+                boolean isOnboardingFinished,
+                Set<Authority> authorities,
+                String serviceType) {
+        this.userId = userId;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.profileImagePath = profileImagePath;
+        this.withdrawDate = withdrawDate;
+        this.isOnboardingFinished = false;
+        this.authorities = authorities;
+        this.serviceType = serviceType;
+    }
 
     public User(Long userId) {
         this.userId = userId;
@@ -57,6 +75,10 @@ public class User extends Timestamped {
             list.add(authority.getName().name());
         }
         return list;
+    }
+
+    public void completeOnboarding() {
+        this.isOnboardingFinished = true;
     }
 
     public boolean isActivatedUser() {
@@ -83,16 +105,7 @@ public class User extends Timestamped {
     public User update(String nickname, String profileImagePath) {
         this.nickname = nickname;
         this.profileImagePath = profileImagePath;
-//        if (!Objects.equals(this.serviceType, userInfo.clientName())) {
-//            throw new CustomException(ErrorCode.OAUTH2_EMAIL_EXISTS);
-//        }
         return this;
-    }
-
-    private File getThumbnail(String fileId) {
-        return File.builder()
-                .fileId(fileId)
-                .build();
     }
 
 }

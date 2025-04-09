@@ -188,6 +188,12 @@ public class UserService {
         return userQueryRepository.searchUsers(searchText, 5);
     }
 
+    @Transactional
+    public void completeOnboarding(Long userId) {
+        User user = getUserById(userId);
+        user.completeOnboarding();
+    }
+
     private User checkAndUpdateUser(OAuth2UserInfo userInfo, User u) {
         if (!Objects.equals(u.getServiceType(), userInfo.clientName())) {
             throw new CustomException(ErrorCode.OAUTH2_EMAIL_EXISTS);

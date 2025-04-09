@@ -71,4 +71,10 @@ public class UserController {
         return ResponseEntity.ok(userService.searchUsers(searchText));
     }
 
+    @Operation(description = "유저 온보딩 완료")
+    @PatchMapping("/onboarding/complete")
+    public ResponseEntity<Void> completeOnboarding(@AuthenticationPrincipal UserDetailsImpl user) {
+        userService.completeOnboarding(user.getUserId());
+        return ResponseEntity.noContent().build();
+    }
 }
