@@ -25,14 +25,12 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "folderNameUpdate",
-  "memo": "memoUpdate",
+  "name": "folderNameUpdate1",
+  "memo": "memoUpdate11",
   "color": "#ffff",
   "background": "#0000"
 }
 
-###
-@wordBookId = 34
 
 ### 단어장 삭제
 DELETE localhost:8088/api/wordbooks/{{wordBookId}}
@@ -80,6 +78,6 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 멤버 삭제
-DELETE localhost:8088/api/wordbooks/6/members/16
+DELETE localhost:8088/api/wordbooks/6/members/23
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

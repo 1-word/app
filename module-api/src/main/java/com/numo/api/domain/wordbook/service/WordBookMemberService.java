@@ -62,7 +62,7 @@ public class WordBookMemberService {
      * @param wordBookMemberId 멤버
      */
     public void deleteWordBookMemberRole(Long wordBookMemberId) {
-        WordBookMember member = wordBookMemberRepository.findMemberById( wordBookMemberId);
+        WordBookMember member = wordBookMemberRepository.findMemberById(wordBookMemberId);
         wordBookMemberRepository.delete(member);
     }
 

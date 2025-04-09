@@ -1,27 +1,27 @@
 package com.numo.api.domain.auth;
 
+import com.numo.api.domain.auth.dto.EmailRequestDto;
+import com.numo.api.domain.auth.dto.LoginDto;
+import com.numo.api.domain.user.dto.TokenDto;
+import com.numo.api.domain.user.dto.UserDto;
+import com.numo.api.domain.user.dto.VerificationRequestDto;
+import com.numo.api.domain.user.repository.UserRepository;
+import com.numo.api.domain.user.service.RefreshTokenService;
+import com.numo.api.domain.user.service.UserService;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.mail.MailService;
 import com.numo.api.global.comm.mail.template.AuthMailTemplate;
 import com.numo.api.global.comm.mail.template.MailTemplate;
 import com.numo.api.global.comm.redis.RedisService;
-import com.numo.api.domain.auth.dto.EmailRequestDto;
-import com.numo.api.domain.auth.dto.LoginDto;
-import com.numo.api.domain.user.dto.TokenDto;
-import com.numo.api.domain.user.dto.UserDto;
-import com.numo.api.domain.user.dto.VerificationRequestDto;
+import com.numo.api.security.jwt.TokenProvider;
 import com.numo.domain.auth.VerificationCode;
 import com.numo.domain.auth.VerificationType;
 import com.numo.domain.user.RefreshToken;
-import com.numo.api.security.jwt.TokenProvider;
-import com.numo.api.domain.user.service.RefreshTokenService;
-import com.numo.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final RedisService redisService;
     private final MailService mailService;
+    private final UserRepository userRepository;
 
     /**
      * 인증코드 검증
@@ -66,8 +67,7 @@ public class AuthService {
      * @return 메일 전송 완료 메시지
      */
     public String sendEmailVerificationCode(VerificationType type, EmailRequestDto emailDto) {
-
-        boolean check = userService.existsByEmail(emailDto.email());
+        boolean check = userRepository.existsByEmail(emailDto.email());
         if (type == VerificationType.pw) {
             // 비밀번호 변경의 경우 존재하는 이메일이 있어야 한다.
             check = !check;
@@ -99,7 +99,6 @@ public class AuthService {
      * @return 생성한 랜덤 인증코드
      */
     private int generateVerificationCode() {
-        Random random = new Random();
         return (int)(Math.random() * 899999) + 100000;
     }
 

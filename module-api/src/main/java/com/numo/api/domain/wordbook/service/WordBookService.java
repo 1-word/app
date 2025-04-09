@@ -2,9 +2,9 @@ package com.numo.api.domain.wordbook.service;
 
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
+import com.numo.api.domain.wordbook.repository.WordBookMemberRepository;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
-import com.numo.api.domain.wordbook.word.repository.WordRepository;
 import com.numo.api.domain.wordbook.word.service.WordService;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
@@ -12,6 +12,7 @@ import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.WordBookRole;
 import com.numo.domain.wordbook.dto.WordBookUpdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class WordBookService {
-
-    private final WordRepository wordRepository;
+    private final WordBookCacheService wordBookCacheService;
     private final WordBookRepository wordBookRepository;
     private final WordBookQueryRepository wordBookQueryRepository;
+    private final WordBookMemberRepository wordBookMemberRepository;
     private final WordService wordService;
 
     /**
@@ -50,7 +51,7 @@ public class WordBookService {
      * @return 조회한 단어장 단건 데이터
      */
     public WordBookResponseDto getWordBook(Long wordBookId) {
-        WordBook wordBook = findWordBook(wordBookId);
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
         return WordBookResponseDto.of(wordBook);
     }
 
@@ -68,14 +69,15 @@ public class WordBookService {
     /**
      * 단어장 수정
      * @param wordBookId 단어장 아이디
-     * @param WordBookDto 단어장 데이터
+     * @param wordBookDto 단어장 데이터
      * @return 수정된 단어장 데이터
      */
-    @Transactional
-    public WordBookResponseDto updateWordBook(Long wordBookId, WordBookUpdateDto WordBookDto){
-        WordBook wordBook = findWordBook(wordBookId);
-        wordBook.update(WordBookDto);
-        return WordBookResponseDto.of(wordBook);
+    @CacheEvict(cacheNames = "wordBook", key = "#p0")
+    public WordBookResponseDto updateWordBook(Long wordBookId, WordBookUpdateDto wordBookDto){
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
+        wordBook.update(wordBookDto);
+        WordBook savedWordBook = wordBookRepository.save(wordBook);
+        return WordBookResponseDto.of(savedWordBook);
     }
 
     /**
@@ -85,8 +87,10 @@ public class WordBookService {
      * @param wordBookId  폴더 아이디
      * @param removeWords 단어 삭제 여부
      */
+    @CacheEvict(cacheNames = "wordBook", key = "#p0")
+    @Transactional
     public void removeWordBook(Long wordBookId, boolean removeWords) {
-        WordBook wordBook = findWordBook(wordBookId);
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
 
         if (!removeWords && !wordBook.isDeleteAllowed()) {
             throw new CustomException(ErrorCode.ASSOCIATED_DATA_EXISTS);
@@ -96,7 +100,7 @@ public class WordBookService {
             wordService.removeWordsByWordBook(wordBookId);
         }
 
-        wordBook.removeMember();
+        wordBookMemberRepository.deleteByWordBook_Id(wordBookId);
         wordBookRepository.delete(wordBook);
     }
 
@@ -107,14 +111,8 @@ public class WordBookService {
      */
     @Transactional
     public void decrementPreviousWordBookCount(Long preWordBookId, String memorization) {
-        WordBook wordBook = findWordBook(preWordBookId);
+        WordBook wordBook = wordBookCacheService.findWordBook(preWordBookId);
         wordBook.deleteCount(memorization);
-    }
-
-    public WordBook findWordBook(Long id) {
-        return wordBookRepository.findById(id).orElseThrow(
-                () -> new CustomException(ErrorCode.DATA_NOT_FOUND)
-        );
     }
 
     /**
@@ -125,7 +123,7 @@ public class WordBookService {
      * @return 권한 여부
      */
     public boolean hasPermission(Long userId, Long wordBookId, WordBookRole targetRole) {
-        WordBook wordBook = findWordBook(wordBookId);
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
         return wordBook.hasPermission(userId, targetRole);
     }
 

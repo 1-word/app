@@ -73,10 +73,6 @@ public class WordBook extends Timestamped {
         this.memo = updateDto.memo();
     }
 
-    public void removeMember() {
-        wordBookMembers.clear();
-    }
-
     public boolean isDeleteAllowed() {
         return wordCount.isDeleteAllowed();
     }

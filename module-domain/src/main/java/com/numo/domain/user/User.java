@@ -59,8 +59,8 @@ public class User extends Timestamped {
         return list;
     }
 
-    public boolean checkUser() {
-        return this.withdrawDate != null;
+    public boolean isActivatedUser() {
+        return this.withdrawDate == null;
     }
 
     public void update(UpdateUserDto userDto) {

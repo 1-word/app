@@ -6,7 +6,7 @@ import com.numo.api.domain.quiz.repository.QuizRepository;
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDto;
 import com.numo.api.domain.wordbook.detail.repository.WordDetailRepository;
-import com.numo.api.domain.wordbook.repository.WordBookRepository;
+import com.numo.api.domain.wordbook.service.WordBookCacheService;
 import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
@@ -49,8 +49,8 @@ public class WordService {
     private final WordDetailRepository wordDetailRepository;
     private final WordDailySentenceRepository wordDailySentenceRepository;
     private final QuizRepository quizRepository;
-    private final WordBookRepository wordBookRepository;
     private final SoundService soundService;
+    private final WordBookCacheService wordBookCacheService;
     private final ApplicationEventPublisher publisher;
 
     /**
@@ -64,7 +64,7 @@ public class WordService {
     @Transactional
     public WordResponseDto saveWord(Long userId, Long wordBookId, GttsCode gttsType, WordRequestDto requestDto){
         // 단어장 확인
-        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
 
         // 발음 파일 생성
         Sound sound = soundService.createSound(requestDto.word(), gttsType);
@@ -99,7 +99,7 @@ public class WordService {
     public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
         Word word = wordRepository.findByWordId(wordId);
         WordBook preWordbook = word.getWordBook();
-        WordBook targetWordBook = wordBookRepository.findWordBookById(targetWordBookId);
+        WordBook targetWordBook = wordBookCacheService.findWordBook(targetWordBookId);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
@@ -182,7 +182,7 @@ public class WordService {
      */
     @Transactional
     public void copyWord(Long userId, Long wordBookId, Long targetWordBookId) {
-        WordBook targetWordBook = wordBookRepository.findWordBookById(targetWordBookId);
+        WordBook targetWordBook = wordBookCacheService.findWordBook(targetWordBookId);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }

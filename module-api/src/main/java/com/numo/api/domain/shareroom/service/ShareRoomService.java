@@ -4,7 +4,7 @@ import com.numo.api.domain.shareroom.dto.MyShareRoomListDto;
 import com.numo.api.domain.shareroom.dto.ShareRoomListDto;
 import com.numo.api.domain.shareroom.repository.ShareRoomQueryRepository;
 import com.numo.api.domain.shareroom.repository.ShareRoomRepository;
-import com.numo.api.domain.wordbook.service.WordBookService;
+import com.numo.api.domain.wordbook.service.WordBookCacheService;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageRequestDto;
@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ShareRoomService {
-    private final WordBookService wordBookService;
+    private final WordBookCacheService wordBookCacheService;
     private final ShareRoomRepository shareRoomRepository;
     private final ShareRoomQueryRepository shareRoomQueryRepository;
 
@@ -31,7 +31,7 @@ public class ShareRoomService {
             throw new CustomException(ErrorCode.SHARE_ROOM_EXISTS);
         }
 
-        WordBook wordBook = wordBookService.findWordBook(wordBookId);
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
 
         if (!wordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
