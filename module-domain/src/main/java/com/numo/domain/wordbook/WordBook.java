@@ -80,12 +80,16 @@ public class WordBook extends Timestamped {
     /**
      * 단어 삭제 시 count 삭제
      */
-    public void deleteCount(String memorization) {
+    public void decrementCount(String memorization) {
         wordCount = wordCount.decrementCount(memorization);
     }
 
     public void updateCount(int memorizedCount, int unMemorizedCount) {
         wordCount = wordCount.updateCount(memorizedCount, unMemorizedCount);
+    }
+
+    public void updateCount(int totalCount, int memorizedCount, int unMemorizedCount) {
+        wordCount = new WordCount(totalCount, memorizedCount, unMemorizedCount);
     }
 
     /**
@@ -104,7 +108,7 @@ public class WordBook extends Timestamped {
     /**
      * 단어 추가 시 count 추가
      */
-    public void saveWord(String memorization) {
+    public void incrementCount(String memorization) {
         wordCount = wordCount.incrementCount(memorization);
     }
 

@@ -8,6 +8,7 @@ import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDt
 import com.numo.api.domain.wordbook.detail.repository.WordDetailRepository;
 import com.numo.api.domain.wordbook.service.WordBookCacheService;
 import com.numo.api.domain.wordbook.sound.service.SoundService;
+import com.numo.api.domain.wordbook.word.dto.WordCountDto;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
 import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
@@ -22,6 +23,7 @@ import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.api.listener.event.WordBookEvent;
+import com.numo.batch.listener.WordBatchEvent;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.sound.Sound;
@@ -30,6 +32,7 @@ import com.numo.domain.wordbook.type.UpdateType;
 import com.numo.domain.wordbook.word.Word;
 import com.numo.domain.wordbook.word.dto.UpdateWordDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -87,25 +90,6 @@ public class WordService {
         Word word = wordRepository.findByWordId(wordId);
         Word updatedWord = updateWord.update(dto, word);
         return WordResponseDto.of(wordRepository.save(updatedWord));
-    }
-
-    /**
-     * 단어장을 옮긴다.
-     * 소유자만 단어의 단어장 이동 가능
-     * @param targetWordBookId 옮길 단어장
-     * @param wordId 옮길 단어
-     */
-    @Transactional
-    public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
-        Word word = wordRepository.findByWordId(wordId);
-        WordBook preWordbook = word.getWordBook();
-        WordBook targetWordBook = wordBookCacheService.findWordBook(targetWordBookId);
-        if (!targetWordBook.isOwner(userId)) {
-            throw new CustomException(ErrorCode.NOT_OWNER);
-        }
-        word.updateWordBook(targetWordBook);
-        String memorization = word.getMemorization();
-        publisher.publishEvent(new WordBookEvent(preWordbook.getId(), memorization));
     }
 
     /**
@@ -174,26 +158,39 @@ public class WordService {
     }
 
     /**
+     * 단어장을 옮긴다.
+     * 소유자만 단어의 단어장 이동 가능
+     * @param targetWordBookId 옮길 단어장
+     * @param wordId 옮길 단어
+     */
+    @Transactional
+    @CacheEvict(cacheNames = "wordBook", key = "#p1")
+    public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
+        Word word = wordRepository.findByWordId(wordId);
+        WordBook preWordBook = word.getWordBook();
+        word.updateWordBook(targetWordBookId);
+        WordBook targetWordBook = wordBookCacheService.findWordBook(targetWordBookId);
+        if (!targetWordBook.isOwner(userId)) {
+            throw new CustomException(ErrorCode.NOT_OWNER);
+        }
+        String memorization = word.getMemorization();
+        preWordBook.decrementCount(memorization);
+        publisher.publishEvent(new WordBookEvent(targetWordBookId, memorization));
+    }
+
+    /**
      * 해당 단어장의 단어를 복사한다.
      *
      * @param userId 유저
      * @param wordBookId 복사할 단어장
      * @param targetWordBookId 복사 대상 단어장
      */
-    @Transactional
     public void copyWord(Long userId, Long wordBookId, Long targetWordBookId) {
         WordBook targetWordBook = wordBookCacheService.findWordBook(targetWordBookId);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
-        List<Word> copyWords = wordRepository.findByWordBook_id(wordBookId);
-
-        List<Word> targetWords = copyWords.stream()
-                .map(copyWord -> copyWord.copyWithWordBook(userId, targetWordBookId))
-                .toList();
-        wordRepository.saveAll(targetWords);
-        // 단어장 동기화
-        targetWordBook.updateCount(0, copyWords.size());
+        publisher.publishEvent(new WordBatchEvent(userId, wordBookId, targetWordBookId));
     }
 
     /**
@@ -203,7 +200,7 @@ public class WordService {
     @Transactional
     public void removeWord(Long wordId){
         Word word = wordRepository.findByWordId(wordId);
-        removeRelation(List.of(word));
+        removeRelatedData(List.of(word));
         wordRepository.delete(word);
     }
 
@@ -214,8 +211,12 @@ public class WordService {
     @Transactional
     public void removeWordsByWordBook(Long wordBookId) {
         List<Word> words = wordRepository.findByWordBook_id(wordBookId);
-        removeRelation(words);
+        removeRelatedData(words);
         wordRepository.deleteByWordBook_id(wordBookId);
+    }
+
+    public WordCountDto getWordCountByWordBookId(Long wordBookId) {
+        return wordRepository.findCountByWordBookId(wordBookId);
     }
 
     /**
@@ -223,7 +224,7 @@ public class WordService {
      * 연관 관계에 있는 모든 데이터를 삭제한다.
      * @param words 삭제할 단어 리스트
      */
-    private void removeRelation(List<Word> words){
+    private void removeRelatedData(List<Word> words){
         List<Long> wordIds = words.stream().map(Word::getWordId).toList();
         quizRepository.deleteByWord_WordIdIn(wordIds);
         wordDailySentenceRepository.deleteByWord_WordIdIn(wordIds);

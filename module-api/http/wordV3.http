@@ -1,4 +1,3 @@
-@wordBookId = 30
 
 ### 단어 저장
 POST localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/EN
@@ -36,7 +35,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회
-GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words?current=1&lastWordId=62
+GET localhost:8088/api/v3/wordbooks/{{wordBookId}}/words
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -112,7 +111,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "targetWordBookId": 35
+  "targetWordBookId": 43
 }
 
 
@@ -121,11 +120,15 @@ DELETE localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+###
+@wordBookId = 44
+@wordId = 198088
+
 ### 단어 복사
 POST localhost:8088/api/v3/wordbooks/{{wordBookId}}/words/copy
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "targetWordBookId": 34
+  "targetWordBookId": 44
 }

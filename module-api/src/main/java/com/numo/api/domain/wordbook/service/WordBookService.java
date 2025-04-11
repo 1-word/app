@@ -5,6 +5,7 @@ import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
 import com.numo.api.domain.wordbook.repository.WordBookMemberRepository;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
+import com.numo.api.domain.wordbook.word.dto.WordCountDto;
 import com.numo.api.domain.wordbook.word.service.WordService;
 import com.numo.api.global.comm.exception.CustomException;
 import com.numo.api.global.comm.exception.ErrorCode;
@@ -105,14 +106,15 @@ public class WordBookService {
     }
 
     /**
-     * 단어를 옮기기 위해 이전 단어장의 단어 수를 업데이트 해준다.
-     * @param preWordBookId
+     * 단어를 옮기기 위해 이전 단어장, 옮길 단어장의 단어 수를 업데이트 해준다.
+     * @param wordBookId
      * @param memorization
      */
     @Transactional
-    public void decrementPreviousWordBookCount(Long preWordBookId, String memorization) {
-        WordBook wordBook = wordBookCacheService.findWordBook(preWordBookId);
-        wordBook.deleteCount(memorization);
+    @CacheEvict(cacheNames = "wordBook", key = "#p0")
+    public void incrementWordCount(Long wordBookId, String memorization) {
+        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
+        wordBook.incrementCount(memorization);
     }
 
     /**
@@ -127,4 +129,13 @@ public class WordBookService {
         return wordBook.hasPermission(userId, targetRole);
     }
 
+    @Transactional
+    public void asyncWordCount(Long wordBookId, WordCountDto wordCount) {
+        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
+        wordBook.updateCount(
+                wordCount.totalCount().intValue(),
+                wordCount.memorizedCount().intValue(),
+                wordCount.unMemorizedCount().intValue()
+        );
+    }
 }
