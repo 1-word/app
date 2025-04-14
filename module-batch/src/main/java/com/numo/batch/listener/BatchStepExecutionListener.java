@@ -29,7 +29,7 @@ public class BatchStepExecutionListener implements StepExecutionListener {
             log.error("[{}] 작업 중 오류가 발생했습니다 : {}", cls.getSimpleName(), stepExecution.getFailureExceptions());
             return ExitStatus.FAILED;
         }
-        log.debug("[{}] 현재 읽은 데이터 수: {}", cls.getSimpleName(), stepExecution.getReadCount());
+        log.info("[{}] 읽은 데이터 수: {}", cls.getSimpleName(), stepExecution.getReadCount());
         return ExitStatus.COMPLETED;
     }
 }

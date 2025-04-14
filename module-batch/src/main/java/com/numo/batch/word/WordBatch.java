@@ -28,11 +28,10 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class WordBatch {
-    private static final int chunkSize = 1000;
+    private static final int chunkSize = 500;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final WordBatchRepository wordBatchRepository;
-    private final WordBatchQueryRepositoryImpl wordBatchQueryRepositoryImpl;
 
     @Bean
     public Job wordCopyJob() {
