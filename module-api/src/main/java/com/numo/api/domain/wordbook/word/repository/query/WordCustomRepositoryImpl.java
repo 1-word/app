@@ -6,7 +6,7 @@ import com.numo.api.domain.dailySentence.dto.wordDailySentence.DailyWordDetailDt
 import com.numo.api.domain.wordbook.detail.dto.WordDetailResponseDto;
 import com.numo.api.domain.wordbook.word.dto.WordDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
-import com.numo.api.global.comm.page.PageUtil;
+import com.numo.api.global.comm.page.SliceUtil;
 import com.numo.domain.wordbook.detail.QWordDetail;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.type.SortType;
@@ -73,7 +73,7 @@ public class WordCustomRepositoryImpl implements WordCustomRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return PageUtil.of(results, pageable);
+        return SliceUtil.of(results, pageable);
     }
 
     /**
