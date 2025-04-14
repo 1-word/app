@@ -40,4 +40,8 @@ public class WordDetail extends Timestamped {
                 .build();
     }
 
+    public Long getWordId() {
+        return word.getWordId();
+    }
+
 }

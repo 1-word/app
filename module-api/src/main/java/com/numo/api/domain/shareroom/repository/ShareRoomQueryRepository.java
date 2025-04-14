@@ -2,7 +2,7 @@ package com.numo.api.domain.shareroom.repository;
 
 import com.numo.api.domain.shareroom.dto.MyShareRoomListDto;
 import com.numo.api.domain.shareroom.dto.ShareRoomListDto;
-import com.numo.api.global.comm.page.PageUtil;
+import com.numo.api.global.comm.page.SliceUtil;
 import com.numo.domain.shareroom.QShareRoom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -40,7 +40,7 @@ public class ShareRoomQueryRepository {
                 .where(gtLastId(lastId))
                 .limit(page.getPageSize() + 1)
                 .fetch();
-        return PageUtil.of(shareRooms, page);
+        return SliceUtil.of(shareRooms, page);
     }
 
     private BooleanExpression gtLastId(Long lastId) {

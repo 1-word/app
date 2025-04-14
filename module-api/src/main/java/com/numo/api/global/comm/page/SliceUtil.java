@@ -6,7 +6,7 @@ import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
-public class PageUtil {
+public class SliceUtil {
     public static <T> Slice<T> of(List<T> data, Pageable page) {
         boolean hasNext = false;
         if (data.size() > page.getPageSize()) {

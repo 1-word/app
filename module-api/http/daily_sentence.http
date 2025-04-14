@@ -1,5 +1,5 @@
 ### 오늘의 문장 저장
-POST localhost:8088/api/daily-sentence
+POST {{host}}/daily-sentence
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -13,42 +13,42 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 오늘의 문장 전체 조회
-GET localhost:8088/api/daily-sentence
+GET {{host}}/daily-sentence
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 연도 별 조회
-GET localhost:8088/api/daily-sentence?year=2024
+GET {{host}}/daily-sentence?year=2024
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 월별 조회
-GET localhost:8088/api/daily-sentence?year=2024&month=12
+GET {{host}}/daily-sentence?year=2024&month=12
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 일별 조회
-GET localhost:8088/api/daily-sentence?year=2024&month=11&day=26
+GET {{host}}/daily-sentence?year=2024&month=11&day=26
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 주별 조회
-GET localhost:8088/api/daily-sentence?year=2024&month=11&week=4
+GET {{host}}/daily-sentence?year=2024&month=11&week=4
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 날짜 리스트 조회
-GET localhost:8088/api/daily-sentence/days?year=2024&month=12
+GET {{host}}/daily-sentence/days?year=2024&month=12
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 연관 단어 정보 조회
-GET localhost:8088/api/daily-sentence/relation/33
+GET {{host}}/daily-sentence/relation/33
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 오늘의 문장 수정 - 뜻
-PUT localhost:8088/api/daily-sentence/{{dailySentenceId}}
+PUT {{host}}/daily-sentence/{{dailySentenceId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -58,7 +58,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 오늘의 문장 수정 - 문장과 뜻
-PUT localhost:8088/api/daily-sentence/{{dailySentenceId}}
+PUT {{host}}/daily-sentence/{{dailySentenceId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -68,6 +68,6 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 오늘의 문장 삭제
-DELETE localhost:8088/api/daily-sentence/28
+DELETE {{host}}/daily-sentence/28
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

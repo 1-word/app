@@ -1,8 +1,11 @@
 package com.numo.batch.word;
 
+import com.numo.batch.listener.BatchStepExecutionListener;
 import com.numo.domain.wordbook.word.Word;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -23,20 +26,12 @@ import java.util.Map;
 
 @Configuration
 @Slf4j
+@RequiredArgsConstructor
 public class WordBatch {
-    private static final int chunkSize = 100;
+    private static final int chunkSize = 500;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final WordBatchRepository wordBatchRepository;
-
-    public WordBatch(
-            JobRepository jobRepository,
-            PlatformTransactionManager platformTransactionManager,
-            WordBatchRepository wordBatchRepository) {
-        this.jobRepository = jobRepository;
-        this.platformTransactionManager = platformTransactionManager;
-        this.wordBatchRepository = wordBatchRepository;
-    }
 
     @Bean
     public Job wordCopyJob() {
@@ -53,26 +48,7 @@ public class WordBatch {
                 .reader(wordReader(null))
                 .processor(wordProcessor(null, null))
                 .writer(wordWriter())
-                .listener(new StepExecutionListener() {
-                    @Override
-                    public void beforeStep(StepExecution stepExecution) {
-                        log.info("[word copy] 작업 시작: {}", stepExecution.getStepName());
-                    }
-
-                    @Override
-                    public ExitStatus afterStep(StepExecution stepExecution) {
-                        if (stepExecution.getReadCount() == 0) {
-                            log.info("[word copy] 복사할 데이터가 없어 종료합니다.");
-                            return ExitStatus.COMPLETED;
-                        }
-                        if (stepExecution.getStatus() == BatchStatus.FAILED) {
-                            log.error("[word copy] 작업 중 오류가 발생했습니다 : {}", stepExecution.getFailureExceptions());
-                            return ExitStatus.FAILED;
-                        }
-                        log.info("[word copy] 현재 복사한 단어 수: {}", stepExecution.getReadCount());
-                        return ExitStatus.COMPLETED;
-                    }
-                })
+                .listener(new BatchStepExecutionListener(this.getClass()))
                 .build();
     }
 
@@ -81,7 +57,7 @@ public class WordBatch {
     public RepositoryItemReader<Word> wordReader(@Value("#{jobParameters['wordBookId']}") Long wordBookId) {
         return new RepositoryItemReaderBuilder<Word>()
                 .name("wordReader")
-                .methodName("findByWordBook_Id")
+                .methodName("findWordsBy")
                 .arguments(wordBookId)
                 .repository(wordBatchRepository)
                 .pageSize(chunkSize)
