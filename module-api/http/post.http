@@ -1,5 +1,5 @@
 ### 게시글 작성
-POST localhost:8088/api/posts
+POST {{host}}/posts
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -13,17 +13,17 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 게시글 조회
-GET localhost:8088/api/posts/{{postId}}
+GET {{host}}/posts/{{postId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 게시글 리스트 조회
-GET localhost:8088/api/posts?page=0&size=5
+GET {{host}}/posts?page=0&size=5
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 게시글 수정
-PUT localhost:8088/api/posts/{{postId}}
+PUT {{host}}/posts/{{postId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -33,7 +33,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 게시글 삭제
-DELETE localhost:8088/api/posts/{{postId}}
+DELETE {{host}}/posts/{{postId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

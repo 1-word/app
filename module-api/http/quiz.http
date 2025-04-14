@@ -1,5 +1,5 @@
 ### 퀴즈 정보 생성
-POST localhost:8088/api/quiz-info
+POST {{host}}/quiz-info
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -16,32 +16,32 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 퀴즈 정보 조회
-GET localhost:8088/api/quiz-info/{{quizInfoId}}
+GET {{host}}/quiz-info/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 정보 삭제
-DELETE localhost:8088/api/quiz-info/{{quizInfoId}}
+DELETE {{host}}/quiz-info/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 생성
-POST localhost:8088/api/quiz/{{quizInfoId}}
+POST {{host}}/quiz/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 단어 리스트 조회
-GET localhost:8088/api/quiz/6/words
+GET {{host}}/quiz/6/words
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 조회
-GET localhost:8088/api/quiz/{{quizInfoId}}?continue=false&current=0
+GET {{host}}/quiz/{{quizInfoId}}?continue=false&current=0
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 단건 풀이
-PUT localhost:8088/api/quiz/433
+PUT {{host}}/quiz/433
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -50,7 +50,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 퀴즈 다건 풀이
-PUT localhost:8088/api/quiz
+PUT {{host}}/quiz
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -65,22 +65,22 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 퀴즈 이어하기 정보 조회
-GET localhost:8088/api/quiz-info/incomplete
+GET {{host}}/quiz-info/incomplete
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 이어하기 시 단어 리스트 조회
-GET localhost:8088/api/quiz/6/words
+GET {{host}}/quiz/6/words
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 이어하기
-GET localhost:8088/api/quiz/continue/{{quizInfoId}}?current=0
+GET {{host}}/quiz/continue/{{quizInfoId}}?current=0
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 퀴즈 완료
-PUT localhost:8088/api/quiz-info/complete/{{quizInfoId}}
+PUT {{host}}/quiz-info/complete/{{quizInfoId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
