@@ -38,7 +38,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
-@wordBookId = 45
+@wordBookId = 37
 
 ### 단어장 삭제 - 연관 데이터 삭제
 DELETE {{host}}/wordbooks/{{wordBookId}}?removeWords=true
@@ -61,7 +61,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "userId": 13,
+  "userId": 36,
   "role": "view"
 }
 

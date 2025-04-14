@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vocabox</title>
+</head>
+<body>
+<table
+        border="0"
+        width="100%"
+        cellspacing="0"
+        style="
+        margin: auto;
+        padding-bottom: 20px;
+        max-width: 516px;
+        min-width: 220px;
+        font-family: 'Noto Sans KR', sans-serif;
+      "
+>
+    <tbody>
+    <tr>
+        <td style="height: 24px"></td>
+    </tr>
+    <tr>
+        <td>
+            <div
+                    align="center"
+                    style="
+                padding: 40px 24px;
+                border-style: solid;
+                border-width: thin;
+                border-color: #ddd;
+                border-radius: 8px;
+              "
+            >
+                <!-- 이미지 들어가는 영역 -->
+                <img src='cid:logo' width="100px">
+                <div
+                        style="
+                  font-weight: bold;
+                  font-size: 24px;
+                  margin-top: 24px;
+                  color: #4a4453;
+                  font-family: 'Noto Sans KR', sans-serif;
+                  letter-spacing: -1.5px;
+                "
+                        th:text="${wordBookName} + ' 단어장에 추가되었어요'"
+                >
+                </div>
+                <div
+                        style="
+                  margin-top: 24px;
+                  color: #4a4453;
+                  font-family: 'Noto Sans KR', sans-serif;
+                  letter-spacing: -1.5px;
+                "
+                        th:text="${nickname} + ' 님이 회원님과 단어장을 공유했어요'"
+                >
+                </div>
+                <div
+                        style="
+                  margin-top: 24px;
+                  letter-spacing: -1.5px;
+                  color: #666666;
+                  font-family: 'Noto Sans KR', sans-serif;
+                "
+                >
+                    추가된 페이지를 보려면 아래 버튼을 클릭하세요
+                </div>
+                <a style="
+                    display: block;
+                    margin-top: 24px;
+                    padding: 8px;
+                    border-radius: 8px;
+                    background-color: #946cf4;
+                    color: white;
+                    font-size: 16px;
+                    font-weight: bold;
+                    letter-spacing: -1.5px;
+                    font-family: 'Noto Sans KR', sans-serif;
+                    text-decoration: none;
+                " th:href="${link}"
+                > 보러 가기
+                </a>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style="height: 24px"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
