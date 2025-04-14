@@ -22,14 +22,14 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseEntity<CommonResult> defaultException(HttpServletRequest request, Exception e){
-        log.info("Exception: {}", e.getCause());
+        log.info("Exception: ", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommonResult.getFailResult());
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseEntity<CommonResult> defaultRuntimeException(HttpServletRequest request, Exception e){
-        log.info("RuntimeException: {}", e.getCause());
+        log.info("RuntimeException: ", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommonResult.getFailResult());
     }
 
@@ -47,7 +47,7 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<CommonResult> methodArgumentNotValidException(HttpServletRequest request, BindException e) {
-        log.info("MethodArgumentNotValidException: {}", e.getCause());
+        log.info("MethodArgumentNotValidException: ", e);
         BindingResult bindingResult = e.getBindingResult();
         FieldError fieldError = bindingResult.getFieldError();
         String errorMessage = fieldError.getDefaultMessage();

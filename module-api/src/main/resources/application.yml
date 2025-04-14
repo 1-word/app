@@ -13,7 +13,6 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: update
-    open-in-view: false
 
   datasource:
     password: ${DB_PASSWORD}
