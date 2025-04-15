@@ -3,6 +3,7 @@ package com.numo.batch.word;
 import com.numo.domain.wordbook.detail.WordDetail;
 import com.numo.domain.wordbook.word.Word;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -20,24 +21,28 @@ public class WordBatchQueryRepositoryImpl implements WordBatchQueryRepository {
 
     public Slice<Word> findWordsBy(Long wordBookId, Pageable pageable) {
         String selectWord = "SELECT w FROM Word w join fetch w.sound join fetch w.user WHERE w.wordBook.id = :wordBookId";
-        List<Word> word = em.createQuery(selectWord)
-                .setParameter("wordBookId", wordBookId)
+        TypedQuery<Word> query = em.createQuery(selectWord, Word.class);
+        List<Word> words = query.setParameter("wordBookId", wordBookId)
                 .setMaxResults(pageable.getPageSize() + 1)
-                .setFirstResult((pageable.getPageNumber() * pageable.getPageSize()))
+                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
                 .getResultList();
-        List<Long> wordIds = word.stream().map(Word::getWordId).toList();
-        String selectDetails = "SELECT d FROM WordDetail d WHERE d.word.wordId IN :wordIds";
-        List<WordDetail> wordDetails = em.createQuery(selectDetails)
-                .setParameter("wordIds", wordIds)
-                .getResultList();
-        Map<Long, List<WordDetail>> detailsMap = wordDetails.stream()
-                .collect(Collectors.groupingBy(WordDetail::getWordId));
-        word.forEach(w -> w.addWordDetails(detailsMap.get(w.getWordId())));
+        List<Long> wordIds = words.stream().map(Word::getWordId).toList();
+        Map<Long, List<WordDetail>> detailsMap = getDetailsMap(wordIds);
+        words.forEach(w -> w.addWordDetails(detailsMap.get(w.getWordId())));
 
-        return of(word, pageable);
+        return of(words, pageable);
     }
 
-    public <T> Slice<T> of(List<T> data, Pageable page) {
+    private Map<Long, List<WordDetail>> getDetailsMap(List<Long> wordIds) {
+        String selectDetails = "SELECT d FROM WordDetail d WHERE d.word.wordId IN :wordIds";
+        TypedQuery<WordDetail> query = em.createQuery(selectDetails, WordDetail.class);
+        List<WordDetail> wordDetails = query.setParameter("wordIds", wordIds)
+                .getResultList();
+        return wordDetails.stream()
+                .collect(Collectors.groupingBy(WordDetail::getWordId));
+    }
+
+    private  <T> Slice<T> of(List<T> data, Pageable page) {
         boolean hasNext = false;
         if (data.size() > page.getPageSize()) {
             data.remove(page.getPageSize());
