@@ -21,10 +21,7 @@ public class WordHistory extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Operation operation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "word_id")
-    private Word word;
-
+    private Long wordId;
     private Long wordBookId;
 
     @Column(columnDefinition = "TEXT")
@@ -35,37 +32,56 @@ public class WordHistory extends Timestamped {
     @Comment("단어의 저장 이후 json 데이터")
     private String afterData;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by")
     private User modifiedBy;
 
     private boolean isRestored;
 
+    private Long restoreId;
+
     @Builder
-    public WordHistory(Long id, Operation operation, Word word, String beforeData, String afterData, User modifiedBy, Boolean isRestored) {
+    public WordHistory(Long id, Operation operation, Long wordId, Long wordBookId, String beforeData, String afterData, User modifiedBy, Boolean isRestored, Long restoreId) {
         this.id = id;
         this.operation = operation;
-        this.word = word;
-        this.wordBookId = word.getWordBookId();
+        this.wordId = wordId;
+        this.wordBookId = wordBookId;
         this.beforeData = beforeData;
         this.afterData = afterData;
         this.modifiedBy = modifiedBy;
         this.isRestored = isRestored != null && isRestored;
+        this.restoreId = restoreId;
     }
 
-    public WordHistory createRestoreHistory() {
+    public WordHistory createRestoreHistory(User modifiedBy) {
+        isRestored = true;
+        Operation newOperation = operation;
         switch (operation) {
-            case INSERT -> operation = Operation.DELETE;
-            case DELETE -> operation = Operation.INSERT;
+            case INSERT -> newOperation = Operation.DELETE;
+            case DELETE -> newOperation = Operation.INSERT;
             case UPDATE -> {}
         }
+        // INSERT의 경우 이전 데이터가 없으므로 현재 데이터를 넣어준다.
+        String newBeforeData = beforeData;
+        if (beforeData == null) {
+            newBeforeData = afterData;
+        }
+        Long newRestoreId = restoreId == null? id : restoreId;
         // 데이터 되돌리기
         return WordHistory.builder()
-                .operation(operation)
-                .word(word)
+                .operation(newOperation)
+                .wordBookId(wordBookId)
+                .wordId(wordId)
                 .beforeData(afterData)
-                .afterData(beforeData)
-                .isRestored(true)
+                .afterData(newBeforeData)
+                .modifiedBy(modifiedBy)
+                .restoreId(newRestoreId)
                 .build();
+    }
+
+    public void update(Long wordId, String afterData) {
+        this.wordId = wordId;
+        this.afterData = afterData;
     }
 
     public enum Operation {

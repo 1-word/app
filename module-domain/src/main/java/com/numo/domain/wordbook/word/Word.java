@@ -1,7 +1,6 @@
 package com.numo.domain.wordbook.word;
 
 import com.numo.domain.base.Timestamped;
-import com.numo.domain.sentence.WordDailySentence;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.detail.WordDetail;
@@ -54,12 +53,8 @@ public class Word extends Timestamped {
     @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDetail> wordDetails;
 
-    // 오늘의 문장 추가
-    @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WordDailySentence> wordDailySentences;
-
     @Builder
-    public Word(Long wordId, User user, String word, String mean, String read, String memo, Sound sound, String memorization, GttsCode lang, WordBook wordBook, List<WordDetail> wordDetails, List<WordDailySentence> wordDailySentences) {
+    public Word(Long wordId, User user, String word, String mean, String read, String memo, Sound sound, String memorization, GttsCode lang, WordBook wordBook, List<WordDetail> wordDetails) {
         this.wordId = wordId;
         this.user = user;
         this.word = word;
@@ -71,7 +66,6 @@ public class Word extends Timestamped {
         this.lang = lang;
         this.wordBook = wordBook;
         this.wordDetails = wordDetails;
-        this.wordDailySentences = wordDailySentences;
         addWordDetails(wordDetails);
     }
 

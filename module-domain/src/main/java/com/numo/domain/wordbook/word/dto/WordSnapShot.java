@@ -6,11 +6,13 @@ import com.numo.domain.wordbook.detail.WordDetail;
 import com.numo.domain.wordbook.sound.Sound;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.word.Word;
-import lombok.Builder;
-import lombok.Getter;
+import com.numo.domain.wordbook.word.WordHistory;
+import lombok.*;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
 @Getter
 public class WordSnapShot {
@@ -43,12 +45,13 @@ public class WordSnapShot {
                 .build();
     }
 
-    public Word toEntity() {
+    public Word toEntity(WordHistory.Operation operation) {
         User user = new User(userId);
         Sound sound = new Sound(soundId);
         WordBook wordBook = new WordBook(wordBookId);
-        List<WordDetail> wordDetail = wordDetails.stream().map(WordDetailSnapShot::toEntity).toList();
+        List<WordDetail> wordDetail = getWordDetails(operation);
         return Word.builder()
+                .wordId(getWordId(operation))
                 .user(user)
                 .wordBook(wordBook)
                 .sound(sound)
@@ -61,4 +64,19 @@ public class WordSnapShot {
                 .lang(lang)
                 .build();
     }
+
+    private Long getWordId(WordHistory.Operation operation) {
+        if (operation == WordHistory.Operation.INSERT) {
+            return null;
+        }
+        return wordId;
+    }
+
+    private List<WordDetail> getWordDetails(WordHistory.Operation operation) {
+        if (operation == WordHistory.Operation.INSERT) {
+            return wordDetails.stream().map(WordDetailSnapShot::toInsertEntity).toList();
+        }
+        return wordDetails.stream().map(WordDetailSnapShot::toEntity).toList();
+    }
+
 }

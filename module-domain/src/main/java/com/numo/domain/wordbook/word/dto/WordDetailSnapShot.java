@@ -2,9 +2,10 @@ package com.numo.domain.wordbook.word.dto;
 
 import com.numo.domain.wordbook.detail.WordDetail;
 import com.numo.domain.wordbook.detail.WordGroup;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
 @Getter
 public class WordDetailSnapShot {
@@ -26,6 +27,15 @@ public class WordDetailSnapShot {
         WordGroup wordGroup = new WordGroup(wordGroupId);
         return WordDetail.builder()
                 .wordDetailId(wordDetailId)
+                .wordGroup(wordGroup)
+                .title(title)
+                .content(content)
+                .build();
+    }
+
+    public WordDetail toInsertEntity() {
+        WordGroup wordGroup = new WordGroup(wordGroupId);
+        return WordDetail.builder()
                 .wordGroup(wordGroup)
                 .title(title)
                 .content(content)

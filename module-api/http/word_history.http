@@ -1,0 +1,9 @@
+@wordBookId = 60
+@wordHistoryId = 15
+
+### 단어 복구
+PUT {{host}}/wordbooks/{{wordBookId}}/histories/{{wordHistoryId}}/restore
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 히스토리 조회

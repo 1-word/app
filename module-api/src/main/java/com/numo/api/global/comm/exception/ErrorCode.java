@@ -56,6 +56,8 @@ public enum ErrorCode {
     SHARE_ROOM_EXISTS(6000, "이미 공유된 단어장입니다", "해당하는 단어장은 이미 공유된 단어장입니다."),
     WORD_BOOK_MEMBER_EXISTS(6050, "이미 해당하는 단어장의 멤버입니다.", "이미 해당하는 단어장의 멤버입니다."),
     WORD_BOOK_MEMBER_NOT_FOUND(6051, "해당하는 단어장의 멤버가 없습니다.", "해당하는 단어장의 멤버가 없습니다."),
+
+    ALREADY_RESTORED_DATA(7000, "이미 복구된 데이터입니다.", "이미 복구된 데이터입니다."),
     ;
 
     private final int code;

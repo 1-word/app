@@ -20,7 +20,6 @@ import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.api.global.comm.util.JsonUtil;
-import com.numo.api.listener.event.WordBookEvent;
 import com.numo.batch.listener.WordBatchEvent;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
@@ -78,7 +77,7 @@ public class WordService {
 
         Word savedWord = wordRepository.save(word);
         String afterData = JsonUtil.toJson(WordSnapShot.copyOf(savedWord));
-        AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.INSERT, user, savedWord, null, afterData);
+        AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.INSERT, user, wordBookId, savedWord.getWordId(), null, afterData);
         wordHistoryService.saveWordHistory(wordHistoryData);
         return WordResponseDto.of(savedWord);
     }
@@ -93,8 +92,13 @@ public class WordService {
     public WordResponseDto updateWord(Long wordId, UpdateWordDto dto, UpdateType type) {
         UpdateWord updateWord = UpdateFactory.create(type);
         Word word = wordRepository.findByWordId(wordId);
+        String beforeData = JsonUtil.toJson(WordSnapShot.copyOf(word));
         Word updatedWord = updateWord.update(dto, word);
-        return WordResponseDto.of(wordRepository.save(updatedWord));
+        wordRepository.save(updatedWord);
+        String afterData = JsonUtil.toJson(WordSnapShot.copyOf(updatedWord));
+        AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.UPDATE, updatedWord.getUser(), updatedWord.getWordBookId(), wordId, beforeData, afterData);
+        wordHistoryService.saveWordHistory(wordHistoryData);
+        return WordResponseDto.of(updatedWord);
     }
 
     /**
@@ -180,7 +184,7 @@ public class WordService {
         }
         String memorization = word.getMemorization();
         preWordBook.decrementCount(memorization);
-        publisher.publishEvent(new WordBookEvent(targetWordBookId, memorization));
+
     }
 
     /**
@@ -205,8 +209,13 @@ public class WordService {
     @Transactional
     public void removeWord(Long wordId){
         Word word = wordRepository.findByWordId(wordId);
-        removeRelatedData(List.of(word));
+        String beforeData = JsonUtil.toJson(WordSnapShot.copyOf(word));
+        List<Long> wordIds = List.of(wordId);
+        quizRepository.deleteByWord_WordIdIn(wordIds);
+        wordDailySentenceRepository.deleteByWord_WordIdIn(wordIds);
         wordRepository.delete(word);
+        AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.DELETE, word.getUser(), word.getWordBookId(), wordId, beforeData, null);
+        wordHistoryService.saveWordHistory(wordHistoryData);
     }
 
     /**

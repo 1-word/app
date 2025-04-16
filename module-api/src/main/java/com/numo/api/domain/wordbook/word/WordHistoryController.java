@@ -8,10 +8,7 @@ import com.numo.domain.wordbook.WordBookRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,9 +19,17 @@ public class WordHistoryController {
     private final WordHistoryService wordHistoryService;
 
     @GetMapping
-    @WordBookAccess(WordBookRole.view)
+    @WordBookAccess(WordBookRole.edit)
     public ResponseEntity<List<WordHistoryDto>> getWordHistoryByWordBook(@AuthenticationPrincipal UserDetailsImpl user,
                                                                          @PathVariable("wordBookId") Long wordBookId) {
         return ResponseEntity.ok(wordHistoryService.getWordHistoryByWordBook(wordBookId));
+    }
+
+    @PutMapping("/{wordHistoryId}/restore")
+    @WordBookAccess(WordBookRole.edit)
+    public ResponseEntity<Void> restoreWord(@AuthenticationPrincipal UserDetailsImpl user,
+                                            @PathVariable("wordHistoryId") Long wordHistoryId) {
+        wordHistoryService.restore(user.getUserId(), wordHistoryId);
+        return ResponseEntity.noContent().build();
     }
 }
