@@ -8,10 +8,7 @@ import com.numo.api.domain.wordbook.detail.dto.read.ReadWordDetailListResponseDt
 import com.numo.api.domain.wordbook.detail.repository.WordDetailRepository;
 import com.numo.api.domain.wordbook.service.WordBookCacheService;
 import com.numo.api.domain.wordbook.sound.service.SoundService;
-import com.numo.api.domain.wordbook.word.dto.WordCountDto;
-import com.numo.api.domain.wordbook.word.dto.WordDto;
-import com.numo.api.domain.wordbook.word.dto.WordRequestDto;
-import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
+import com.numo.api.domain.wordbook.word.dto.*;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordRequestDto;
 import com.numo.api.domain.wordbook.word.dto.read.ReadWordResponseDto;
 import com.numo.api.domain.wordbook.word.repository.WordRepository;
@@ -22,6 +19,7 @@ import com.numo.api.global.comm.exception.ErrorCode;
 import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
+import com.numo.api.global.comm.util.JsonUtil;
 import com.numo.api.listener.event.WordBookEvent;
 import com.numo.batch.listener.WordBatchEvent;
 import com.numo.domain.user.User;
@@ -30,7 +28,9 @@ import com.numo.domain.wordbook.sound.Sound;
 import com.numo.domain.wordbook.sound.type.GttsCode;
 import com.numo.domain.wordbook.type.UpdateType;
 import com.numo.domain.wordbook.word.Word;
+import com.numo.domain.wordbook.word.WordHistory;
 import com.numo.domain.wordbook.word.dto.UpdateWordDto;
+import com.numo.domain.wordbook.word.dto.WordSnapShot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,6 +54,7 @@ public class WordService {
     private final QuizRepository quizRepository;
     private final SoundService soundService;
     private final WordBookCacheService wordBookCacheService;
+    private final WordHistoryService wordHistoryService;
     private final ApplicationEventPublisher publisher;
 
     /**
@@ -75,7 +76,11 @@ public class WordService {
 
         Word word = requestDto.toEntity(user, sound, wordBook, gttsType);
 
-        return WordResponseDto.of(wordRepository.save(word));
+        Word savedWord = wordRepository.save(word);
+        String afterData = JsonUtil.toJson(WordSnapShot.copyOf(savedWord));
+        AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.INSERT, user, savedWord, null, afterData);
+        wordHistoryService.saveWordHistory(wordHistoryData);
+        return WordResponseDto.of(savedWord);
     }
 
     /**

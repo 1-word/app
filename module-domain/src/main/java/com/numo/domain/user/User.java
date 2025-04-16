@@ -66,6 +66,9 @@ public class User extends Timestamped {
     }
 
     public List<String> getAuthNameList(){
+        if (authorities == null) {
+            return null;
+        }
         List<String> list = new ArrayList<>();
         if (authorities.isEmpty()) {
             return list;

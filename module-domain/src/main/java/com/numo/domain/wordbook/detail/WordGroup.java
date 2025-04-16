@@ -30,6 +30,10 @@ public class WordGroup extends Timestamped {
     @ColumnDefault("'N'")
     private String defaultGroup;
 
+    public WordGroup(Long wordGroupId) {
+        this.wordGroupId = wordGroupId;
+    }
+
     public void update(WordGroupRequestDto requestDto) {
         this.name = requestDto.name();
         this.description = requestDto.description();
