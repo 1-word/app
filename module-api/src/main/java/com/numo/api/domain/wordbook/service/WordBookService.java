@@ -1,7 +1,9 @@
 package com.numo.api.domain.wordbook.service;
 
+import com.numo.api.domain.wordbook.dto.ShareWordBookResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
+import com.numo.api.domain.wordbook.dto.WordBookSettingDto;
 import com.numo.api.domain.wordbook.repository.WordBookMemberRepository;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
@@ -42,7 +44,7 @@ public class WordBookService {
      * @param userId 유저 아이디
      * @return 조회한 공유 단어장 데이터
      */
-    public List<WordBookResponseDto> getShareWordBooks(Long userId) {
+    public List<ShareWordBookResponseDto> getShareWordBooks(Long userId) {
         return wordBookQueryRepository.findShareWordBooks(userId);
     }
 
@@ -141,5 +143,16 @@ public class WordBookService {
                 wordCount.memorizedCount().intValue(),
                 wordCount.unMemorizedCount().intValue()
         );
+    }
+
+    public WordBookSettingDto getWordBookSetting(Long wordBookId) {
+        return wordBookQueryRepository.findSettingById(wordBookId);
+    }
+
+    @Transactional
+    @CacheEvict(cacheNames = "wordBook", key = "#p0")
+    public void updateWordBookSetting(Long wordBookId, WordBookSettingDto settingDto) {
+        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
+        wordBook.settingUpdate(settingDto.isShared(), settingDto.anyoneBasicRole(), settingDto.memberBasicRole());
     }
 }

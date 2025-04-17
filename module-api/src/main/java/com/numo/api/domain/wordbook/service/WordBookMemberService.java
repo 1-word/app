@@ -104,6 +104,7 @@ public class WordBookMemberService {
             case view -> member.hasReadPermission();
             case edit -> member.hasWritePermission();
             case admin -> member.hasAdminPermission();
+            case none -> false;
         };
     }
 }

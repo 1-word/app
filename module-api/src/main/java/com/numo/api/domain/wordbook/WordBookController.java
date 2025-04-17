@@ -1,8 +1,10 @@
 package com.numo.api.domain.wordbook;
 
 import com.numo.api.domain.wordbook.aop.WordBookAccess;
+import com.numo.api.domain.wordbook.dto.ShareWordBookResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
+import com.numo.api.domain.wordbook.dto.WordBookSettingDto;
 import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.domain.wordbook.WordBookRole;
@@ -29,14 +31,14 @@ public class WordBookController {
 
     @Operation(description = "공유 단어장 리스트를 가져온다.")
     @GetMapping("/share")
-    public ResponseEntity<List<WordBookResponseDto>> getShareWordBooks(@AuthenticationPrincipal UserDetailsImpl user){
+    public ResponseEntity<List<ShareWordBookResponseDto>> getShareWordBooks(@AuthenticationPrincipal UserDetailsImpl user){
         return ResponseEntity.ok(wordBookService.getShareWordBooks(user.getUserId()));
     }
 
     @Operation(description = "단어장 정보를 가져온다.")
     @GetMapping("/{wordBookId}")
     @WordBookAccess(WordBookRole.view)
-    public ResponseEntity<WordBookResponseDto> getWordBook(@PathVariable("wordBookId") Long wordBookId){
+    public ResponseEntity<WordBookResponseDto> getWordBook(@PathVariable("wordBookId") Long wordBookId) {
         return ResponseEntity.ok(wordBookService.getWordBook(wordBookId));
     }
 
@@ -68,4 +70,19 @@ public class WordBookController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "단어장 설정 조회", description = "단어장 설정 조회, admin만 가능")
+    @GetMapping("/{wordBookId}/setting")
+    @WordBookAccess
+    public ResponseEntity<WordBookSettingDto> getWordBookSetting(@PathVariable("wordBookId") Long wordBookId) {
+        return ResponseEntity.ok(wordBookService.getWordBookSetting(wordBookId));
+    }
+
+    @Operation(summary = "단어장 설정 변경", description = "단어장 설정 변경, admin만 가능")
+    @PutMapping("/{wordBookId}/setting")
+    @WordBookAccess
+    public ResponseEntity<Void> updateWordBookSetting(@PathVariable("wordBookId") Long wordBookId,
+                                                      @RequestBody WordBookSettingDto settingDto) {
+        wordBookService.updateWordBookSetting(wordBookId, settingDto);
+        return ResponseEntity.noContent().build();
+    }
 }

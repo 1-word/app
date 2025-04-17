@@ -58,7 +58,7 @@ public class WordBook extends Timestamped {
         this.wordCount = new WordCount(totalCount, memorizedCount, unMemorizedCount);
         this.link = link;
         this.isShared = isShared;
-        this.anyoneBasicRole = WordBookRole.view;
+        this.anyoneBasicRole = WordBookRole.none;
         this.memberBasicRole = WordBookRole.view;
     }
 
@@ -71,6 +71,18 @@ public class WordBook extends Timestamped {
         this.color = updateDto.color();
         this.background = updateDto.background();
         this.memo = updateDto.memo();
+    }
+
+    public void settingUpdate(Boolean isShared, WordBookRole anyoneBasicRole, WordBookRole memberBasicRole) {
+        if (isShared != null) {
+            this.isShared = isShared;
+        }
+        if (anyoneBasicRole != null) {
+            this.anyoneBasicRole = anyoneBasicRole;
+        }
+        if (memberBasicRole != null) {
+            this.memberBasicRole = memberBasicRole;
+        }
     }
 
     public boolean isDeleteAllowed() {
@@ -151,6 +163,7 @@ public class WordBook extends Timestamped {
             case view -> anyoneBasicRole.hasViewPermission();
             case edit -> anyoneBasicRole.hasEditPermission();
             case admin -> anyoneBasicRole.hasAdminPermission();
+            case none -> false;
         };
     }
 

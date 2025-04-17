@@ -1,6 +1,7 @@
 package com.numo.domain.wordbook;
 
 public enum WordBookRole {
+    none(false, false, false),
     view(true, false, false),
     edit(true, true, false),
     admin(true, true, true)
