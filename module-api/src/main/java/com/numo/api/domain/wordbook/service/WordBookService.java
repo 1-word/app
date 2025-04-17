@@ -82,7 +82,7 @@ public class WordBookService {
     }
 
     /**
-     * 단어장 삭제
+     * 단어장 삭제, 쉐어룸에 공유된 상태라면 삭제 불가
      * 단어 삭제 여부가 true이면 단어 데이터 모두 삭제
      *
      * @param wordBookId  폴더 아이디
@@ -92,6 +92,10 @@ public class WordBookService {
     @Transactional
     public void removeWordBook(Long wordBookId, boolean removeWords) {
         WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
+
+        if (wordBook.isShared()) {
+            throw new CustomException(ErrorCode.SHARE_ROOM_WORD_BOOK_IS_NOT_DELETE);
+        }
 
         if (!removeWords && !wordBook.isDeleteAllowed()) {
             throw new CustomException(ErrorCode.ASSOCIATED_DATA_EXISTS);

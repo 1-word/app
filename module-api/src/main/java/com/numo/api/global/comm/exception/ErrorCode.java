@@ -56,6 +56,7 @@ public enum ErrorCode {
     SHARE_ROOM_EXISTS(6000, "이미 공유된 단어장입니다", "해당하는 단어장은 이미 공유된 단어장입니다."),
     WORD_BOOK_MEMBER_EXISTS(6050, "이미 해당하는 단어장의 멤버입니다.", "이미 해당하는 단어장의 멤버입니다."),
     WORD_BOOK_MEMBER_NOT_FOUND(6051, "해당하는 단어장의 멤버가 없습니다.", "해당하는 단어장의 멤버가 없습니다."),
+    SHARE_ROOM_WORD_BOOK_IS_NOT_DELETE(6052, "라운지에 공유된 단어장은 삭제가 불가합니다. 삭제 후 다시 시도해주세요.", "라운지에 공유된 단어장은 삭제가 불가합니다."),
 
     ALREADY_RESTORED_DATA(7000, "이미 복구된 데이터입니다.", "이미 복구된 데이터입니다."),
     ;
