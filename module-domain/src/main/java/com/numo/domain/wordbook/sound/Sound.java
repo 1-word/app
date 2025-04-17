@@ -19,4 +19,7 @@ public class Sound extends Timestamped {
     private String word;
     private String memo;    //메모
 
+    public Sound(Long soundId) {
+        this.soundId = soundId;
+    }
 }

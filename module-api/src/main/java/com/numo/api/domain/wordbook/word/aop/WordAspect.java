@@ -3,7 +3,6 @@ package com.numo.api.domain.wordbook.word.aop;
 import com.numo.api.domain.dictionary.dto.DictionaryDto;
 import com.numo.api.domain.dictionary.service.DictionaryCacheService;
 import com.numo.api.domain.dictionary.service.DictionaryService;
-import com.numo.api.domain.wordbook.sound.service.SoundService;
 import com.numo.api.domain.wordbook.word.dto.WordResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -17,13 +16,11 @@ public class WordAspect {
 
     private final DictionaryService dictionaryService;
     private final DictionaryCacheService dictionaryCacheService;
-    private final SoundService soundService;
 
     public WordAspect(DictionaryService dictionaryService,
-                      DictionaryCacheService dictionaryCacheService, SoundService soundService) {
+                      DictionaryCacheService dictionaryCacheService){
         this.dictionaryService = dictionaryService;
         this.dictionaryCacheService = dictionaryCacheService;
-        this.soundService = soundService;
     }
 
     /**

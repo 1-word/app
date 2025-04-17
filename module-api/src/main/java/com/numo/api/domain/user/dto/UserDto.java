@@ -13,6 +13,7 @@ public record UserDto(
         String nickname,
         String profileImagePath,
         LocalDateTime withdrawDate,
+        boolean isOnboardingFinished,
         List<String> authorities
 ) {
     public static UserDto of(User user) {
@@ -22,6 +23,7 @@ public record UserDto(
                 .nickname(user.getNickname())
                 .profileImagePath(user.getProfileImagePath())
                 .withdrawDate(user.getWithdrawDate())
+                .isOnboardingFinished(user.isOnboardingFinished())
                 .authorities(user.getAuthNameList())
                 .build();
     }

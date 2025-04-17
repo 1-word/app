@@ -58,36 +58,31 @@ public class WordBook extends Timestamped {
         this.wordCount = new WordCount(totalCount, memorizedCount, unMemorizedCount);
         this.link = link;
         this.isShared = isShared;
-        this.anyoneBasicRole = WordBookRole.view;
+        this.anyoneBasicRole = WordBookRole.none;
         this.memberBasicRole = WordBookRole.view;
     }
 
-    public boolean hasReadPermission(Long userId) {
-        if (isOwner(userId)) {
-            return true;
-        }
-
-        for (WordBookMember wordBookMember : wordBookMembers) {
-            if (wordBookMember.isMember(userId)) {
-                return true;
-            }
-        }
-        return false;
+    public WordBook(Long id) {
+        this.id = id;
     }
 
-    public boolean update(Long userId, WordBookUpdateDto updateDto) {
-        if (!isOwner(userId)) {
-            return false;
-        }
+    public void update(WordBookUpdateDto updateDto) {
         this.name = updateDto.name();
         this.color = updateDto.color();
         this.background = updateDto.background();
         this.memo = updateDto.memo();
-        return true;
     }
 
-    public void removeMember() {
-        wordBookMembers.clear();
+    public void settingUpdate(Boolean isShared, WordBookRole anyoneBasicRole, WordBookRole memberBasicRole) {
+        if (isShared != null) {
+            this.isShared = isShared;
+        }
+        if (anyoneBasicRole != null) {
+            this.anyoneBasicRole = anyoneBasicRole;
+        }
+        if (memberBasicRole != null) {
+            this.memberBasicRole = memberBasicRole;
+        }
     }
 
     public boolean isDeleteAllowed() {
@@ -97,8 +92,16 @@ public class WordBook extends Timestamped {
     /**
      * 단어 삭제 시 count 삭제
      */
-    public void deleteCount(String memorization) {
+    public void decrementCount(String memorization) {
         wordCount = wordCount.decrementCount(memorization);
+    }
+
+    public void updateCount(int memorizedCount, int unMemorizedCount) {
+        wordCount = wordCount.updateCount(memorizedCount, unMemorizedCount);
+    }
+
+    public void updateCount(int totalCount, int memorizedCount, int unMemorizedCount) {
+        wordCount = new WordCount(totalCount, memorizedCount, unMemorizedCount);
     }
 
     /**
@@ -117,7 +120,7 @@ public class WordBook extends Timestamped {
     /**
      * 단어 추가 시 count 추가
      */
-    public void saveWord(String memorization) {
+    public void incrementCount(String memorization) {
         wordCount = wordCount.incrementCount(memorization);
     }
 
@@ -133,6 +136,37 @@ public class WordBook extends Timestamped {
         return Objects.equals(userId, user.getUserId());
     }
 
+    /**
+     * 소유자 확인 및 사용자 권한 확인
+     * 공유된 단어장이 아니라면 소유자만 접근 가능
+     * @param targetRole 체크할 권한
+     * @return 권한 여부
+     */
+    public boolean hasPermission(Long userId, WordBookRole targetRole) {
+        if (isOwner(userId)) {
+            return true;
+        }
+        return verifyAnyOnePermission(targetRole);
+    }
+
+    /**
+     * 멤버가 아닌 사용자 권한 체크
+     * 공유된 단어장이 아니라면 소유자만 접근 가능
+     * @param targetRole 체크할 권한
+     * @return 권한 여부
+     */
+    private boolean verifyAnyOnePermission(WordBookRole targetRole) {
+        if (!isShared) {
+            return false;
+        }
+        return switch (targetRole) {
+            case view -> anyoneBasicRole.hasViewPermission();
+            case edit -> anyoneBasicRole.hasEditPermission();
+            case admin -> anyoneBasicRole.hasAdminPermission();
+            case none -> false;
+        };
+    }
+
     public int getTotalCount() {
         return wordCount.getTotalCount();
     }
@@ -144,5 +178,4 @@ public class WordBook extends Timestamped {
     public int getUnMemorizedCount() {
         return wordCount.getTotalCount();
     }
-
 }

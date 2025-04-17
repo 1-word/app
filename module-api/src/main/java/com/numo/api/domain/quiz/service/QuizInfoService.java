@@ -4,6 +4,7 @@ import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoRequestDto;
 import com.numo.api.domain.quiz.dto.quizInfo.QuizInfoResponseDto;
 import com.numo.api.domain.quiz.repository.QuizInfoRepository;
 import com.numo.api.domain.quiz.repository.QuizRepository;
+import com.numo.api.domain.wordbook.service.WordBookCacheService;
 import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.domain.quiz.QuizInfo;
 import com.numo.domain.user.User;
@@ -15,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class QuizInfoService {
-    private final WordBookService wordBookService;
+    private final WordBookCacheService wordBookCacheService;
     private final QuizInfoRepository quizInfoRepository;
     private final QuizRepository quizRepository;
 
     public Long createQuizInfo(Long userId, QuizInfoRequestDto requestDto) {
         User user = new User(userId);
-        WordBook wordBook = wordBookService.findWordBook(requestDto.wordBookId());
+        WordBook wordBook = wordBookCacheService.findWordBook(requestDto.wordBookId());
         QuizInfo quizInfo = requestDto.toEntity(user, wordBook);
         return quizInfoRepository.save(quizInfo).getId();
     }

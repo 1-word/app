@@ -1,5 +1,5 @@
 ### 단어장 생성
-POST localhost:8088/api/wordBooks
+POST {{host}}/wordbooks
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -11,37 +11,76 @@ Authorization: Bearer {{accessToken}}
 }
 
 > {%
-    client.global.set("wordBookId", response.body.id)
+    client.global.set("wordBookId", response.body.wordBookId)
 %}
 
 ### 단어장 조회
-GET localhost:8088/api/wordBooks
+GET {{host}}/wordbooks
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어장 수정
-PUT localhost:8088/api/wordBooks/{{wordBookId}}
+PUT {{host}}/wordbooks/{{wordBookId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "folderNameUpdate",
-  "memo": "memoUpdate",
+  "name": "folderNameUpdate1",
+  "memo": "memoUpdate11",
   "color": "#ffff",
   "background": "#0000"
 }
 
+
 ### 단어장 삭제
-DELETE localhost:8088/api/wordBooks/{{wordBookId}}
+DELETE {{host}}/wordbooks/{{wordBookId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+@wordBookId = 37
+
+### 단어장 삭제 - 연관 데이터 삭제
+DELETE {{host}}/wordbooks/{{wordBookId}}?removeWords=true
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어장 단건 조회
-GET localhost:8088/api/wordBooks/{{wordBookId}}
+GET {{host}}/wordbooks/{{wordBookId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 공유 단어장 조회
-GET localhost:8088/api/wordBooks/share
+GET {{host}}/wordbooks/share
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 멤버 추가
+POST {{host}}/wordbooks/6/members
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": 36,
+  "role": "view"
+}
+
+### 단어장 멤버 조회
+GET {{host}}/wordbooks/6/members
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 멤버 권한 변경
+PUT {{host}}/wordbooks/6/members/role
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": 13,
+  "role": "admin"
+}
+
+### 단어장 멤버 삭제
+DELETE {{host}}/wordbooks/6/members/23
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

@@ -1,6 +1,6 @@
 package com.numo.api.domain.post.repository.query;
 
-import com.numo.api.global.comm.page.PageUtil;
+import com.numo.api.global.comm.page.SliceUtil;
 import com.numo.api.domain.post.dto.PostListResponseDto;
 import com.numo.api.domain.post.dto.PostResponseDto;
 import com.numo.domain.post.QPost;
@@ -54,6 +54,6 @@ public class PostQueryRepository {
                 .orderBy(qPost.updateTime.desc())
                 .fetch();
 
-       return PageUtil.of(posts, page);
+       return SliceUtil.of(posts, page);
     }
 }

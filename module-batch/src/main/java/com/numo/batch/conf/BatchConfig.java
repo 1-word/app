@@ -5,8 +5,10 @@ import org.springframework.batch.core.configuration.support.JobRegistrySmartInit
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
+@EnableScheduling
 public class BatchConfig {
     @Bean
     public static BeanDefinitionRegistryPostProcessor jobRegistryBeanPostProcessorRemover() {

@@ -2,7 +2,7 @@ package com.numo.api.domain.shareroom.repository;
 
 import com.numo.api.domain.shareroom.dto.MyShareRoomListDto;
 import com.numo.api.domain.shareroom.dto.ShareRoomListDto;
-import com.numo.api.global.comm.page.PageUtil;
+import com.numo.api.global.comm.page.SliceUtil;
 import com.numo.domain.shareroom.QShareRoom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -34,19 +34,20 @@ public class ShareRoomQueryRepository {
                         qShareRoom.wordBook.user.nickname,
                         qShareRoom.wordBook.name,
                         qShareRoom.wordBook.background,
-                        qShareRoom.wordBook.color
+                        qShareRoom.wordBook.color,
+                        qShareRoom.wordBook.wordCount.totalCount
                 )).from(qShareRoom)
-                .where(ltLastId(lastId))
+                .where(gtLastId(lastId))
                 .limit(page.getPageSize() + 1)
                 .fetch();
-        return PageUtil.of(shareRooms, page);
+        return SliceUtil.of(shareRooms, page);
     }
 
-    private BooleanExpression ltLastId(Long lastId) {
+    private BooleanExpression gtLastId(Long lastId) {
         if (lastId == null) {
             return null;
         }
-        return qShareRoom.id.lt(lastId);
+        return qShareRoom.id.gt(lastId);
     }
 
     public List<MyShareRoomListDto> getMyShareRooms(Long userId) {
@@ -54,8 +55,10 @@ public class ShareRoomQueryRepository {
                         MyShareRoomListDto.class,
                         qShareRoom.id,
                         qShareRoom.wordBook.id,
-                        qShareRoom.wordBook.anyoneBasicRole,
-                        qShareRoom.wordBook.memberBasicRole
+                        qShareRoom.wordBook.name,
+                        qShareRoom.wordBook.background,
+                        qShareRoom.wordBook.isShared,
+                        qShareRoom.wordBook.link
                 )).from(qShareRoom)
                 .where(
                         qShareRoom.wordBook.user.userId.eq(userId)

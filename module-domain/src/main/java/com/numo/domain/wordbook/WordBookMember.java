@@ -5,8 +5,6 @@ import com.numo.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Objects;
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -28,7 +26,20 @@ public class WordBookMember extends Timestamped {
     @Enumerated(EnumType.STRING)
     private WordBookRole role;
 
-    public boolean isMember(Long userId) {
-        return Objects.equals(user.getUserId(), userId);
+    public boolean hasReadPermission() {
+        return role.hasViewPermission();
     }
+
+    public boolean hasWritePermission() {
+        return role.hasEditPermission();
+    }
+
+    public boolean hasAdminPermission() {
+        return role.hasAdminPermission();
+    }
+
+    public void setRole(WordBookRole role) {
+        this.role = role;
+    }
+
 }

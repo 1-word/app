@@ -3,6 +3,7 @@ package com.numo.api.global.comm.exception;
 import com.numo.api.global.comm.response.CommonResult;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -15,19 +16,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RequiredArgsConstructor
 @RestControllerAdvice
+@Slf4j
 public class ExceptionAdvice {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseEntity<CommonResult> defaultException(HttpServletRequest request, Exception e){
-        e.printStackTrace();
+        log.info("Exception: ", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommonResult.getFailResult());
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseEntity<CommonResult> defaultRuntimeException(HttpServletRequest request, Exception e){
-        e.printStackTrace();
+        log.info("RuntimeException: ", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommonResult.getFailResult());
     }
 
@@ -45,7 +47,7 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<CommonResult> methodArgumentNotValidException(HttpServletRequest request, BindException e) {
-        e.printStackTrace();
+        log.info("MethodArgumentNotValidException: ", e);
         BindingResult bindingResult = e.getBindingResult();
         FieldError fieldError = bindingResult.getFieldError();
         String errorMessage = fieldError.getDefaultMessage();

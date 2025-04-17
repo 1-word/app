@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -17,6 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableJpaAuditing  //JPA Auditing 활성화
 @EntityScan(basePackages = "com.numo.domain")
+@EnableJpaRepositories(basePackages = {"com.numo.api","com.numo.batch"})
 public class DatabaseConfig {
 
     @Bean

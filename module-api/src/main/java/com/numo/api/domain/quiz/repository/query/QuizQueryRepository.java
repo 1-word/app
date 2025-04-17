@@ -2,7 +2,7 @@ package com.numo.api.domain.quiz.repository.query;
 
 import com.numo.api.domain.quiz.dto.QuizResponseDto;
 import com.numo.api.domain.quiz.dto.stat.QuizStatWordDto;
-import com.numo.api.global.comm.page.PageUtil;
+import com.numo.api.global.comm.page.SliceUtil;
 import com.numo.domain.quiz.QQuiz;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -29,6 +29,7 @@ public class QuizQueryRepository {
                         QuizStatWordDto.class,
                         qQuiz.id,
                         qQuiz.word.wordId,
+                        qQuiz.word.wordBook.id,
                         qQuiz.word.word,
                         qQuiz.word.read,
                         qQuiz.word.mean,
@@ -45,7 +46,7 @@ public class QuizQueryRepository {
                 .offset(pageable.getOffset())
                 .fetch();
 
-        return PageUtil.of(results, pageable);
+        return SliceUtil.of(results, pageable);
     }
 
     private BooleanExpression createSearchCondition(Boolean correct) {
@@ -78,7 +79,7 @@ public class QuizQueryRepository {
                 .offset(pageable.getOffset())
                 .fetch();
 
-        return PageUtil.of(results, pageable);
+        return SliceUtil.of(results, pageable);
     }
 
     /**

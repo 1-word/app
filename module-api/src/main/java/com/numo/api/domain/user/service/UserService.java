@@ -1,5 +1,7 @@
 package com.numo.api.domain.user.service;
 
+import com.numo.api.domain.user.dto.SearchUserDto;
+import com.numo.api.domain.user.repository.query.UserQueryRepository;
 import com.numo.domain.auth.VerificationCode;
 import com.numo.domain.user.Authority;
 import com.numo.domain.user.Role;
@@ -14,16 +16,20 @@ import com.numo.api.domain.user.dto.UserRequestDto;
 import com.numo.api.domain.user.repository.UserRepository;
 import com.numo.api.security.oauth2.info.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserCacheService userCacheService;
     private final UserRepository userRepository;
+    private final UserQueryRepository userQueryRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
 
@@ -71,7 +77,7 @@ public class UserService {
      */
     @Transactional
     public void updatePassword(Long userId, ChangePasswordDto changePasswordDto) {
-        User user = findUserById(userId);
+        User user = getUserById(userId);
 
         if (!checkPassword(changePasswordDto.oldPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
@@ -89,7 +95,7 @@ public class UserService {
         String email = changePasswordDto.email();
 
         verifiedUpdatePasswordCode(email);
-        User user = findUserByEmail(email);
+        User user = userCacheService.getUserByEmail(email);
 
         updatePassword(user, changePasswordDto);
     }
@@ -120,14 +126,15 @@ public class UserService {
         user.updatePassword(newPassword);
     }
 
-
+    @CacheEvict(cacheNames = "user", key = "#p0")
     public UserDto updateUser(Long userId, UpdateUserDto userDto) {
-       User user = findUserById(userId);
+       User user = getUserById(userId);
        user.update(userDto);
        return UserDto.of(userRepository.save(user));
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "user", key = "#p0")
     public void withdraw(Long userId) {
         User user = userRepository.findUserByUserId(userId);
         user.withdraw();
@@ -138,16 +145,14 @@ public class UserService {
     }
 
     public UserDto findUserAndCheckPassword(String email, String inputPassword) {
-        User user = findUserByEmail(email);
+        User user = userCacheService.getUserByEmail(email);
         if (!checkPassword(inputPassword, user.getPassword())) {
             throw new CustomException(ErrorCode.LOGIN_PW_FAILED);
         }
-        user.checkUser();
+        if (!user.isActivatedUser()) {
+            throw new CustomException(ErrorCode.WITHDRAWN_ACCOUNT);
+        }
         return UserDto.of(user);
-    }
-
-    public boolean checkPassword(String inputPassword, String password) {
-        return passwordEncoder.matches(inputPassword, password);
     }
 
     public UserDto findByUserId(Long userId) {
@@ -179,27 +184,28 @@ public class UserService {
         return UserDto.of(user);
     }
 
-    private static User checkAndUpdateUser(OAuth2UserInfo userInfo, User u) {
+    public List<SearchUserDto> searchUsers(String searchText) {
+        return userQueryRepository.searchUsers(searchText, 5);
+    }
+
+    @Transactional
+    public void completeOnboarding(Long userId) {
+        User user = getUserById(userId);
+        user.completeOnboarding();
+    }
+
+    private User checkAndUpdateUser(OAuth2UserInfo userInfo, User u) {
         if (!Objects.equals(u.getServiceType(), userInfo.clientName())) {
             throw new CustomException(ErrorCode.OAUTH2_EMAIL_EXISTS);
         }
         return u.update(u.getNickname(), u.getProfileImagePath());
     }
 
-    public UserDto findByEmail(String email) {
-        User user = userRepository.findUserByEmail(email);
-        return UserDto.of(user);
-    }
-
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    private User findUserById(Long userId) {
+    private User getUserById(Long userId) {
         return userRepository.findUserByUserId(userId);
     }
 
-    private User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+    private boolean checkPassword(String inputPassword, String password) {
+        return passwordEncoder.matches(inputPassword, password);
     }
 }

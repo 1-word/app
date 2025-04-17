@@ -1,8 +1,9 @@
 package com.numo.api.global.comm.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /*
 * 클래스명: JsonUtil
@@ -12,28 +13,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 * 작성자: 정현경
 * */
 
-public class JsonUtil {
-
-    ObjectMapper mapper;
-
-    public JsonUtil(){
-       this.mapper = new ObjectMapper();
-    }
-
-    public String makeJson(Object obj){
-        String json = "";
-        try {
-            //json 정렬
-            json = mapper.enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return json;
-    }
+public abstract class JsonUtil {
 
     public static String toJson(Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            return getMapper().writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -41,13 +25,17 @@ public class JsonUtil {
 
     public static <T> T makeObject(String data, Class<T> classType){
         try {
-            return new ObjectMapper().readValue(data, classType);
+            return getMapper().readValue(data, classType);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String getJson(Object obj) {
-        return makeJson(obj);
+    private static ObjectMapper getMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return objectMapper;
     }
+
 }

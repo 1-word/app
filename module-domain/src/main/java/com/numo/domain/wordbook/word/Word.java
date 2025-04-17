@@ -1,7 +1,6 @@
 package com.numo.domain.wordbook.word;
 
 import com.numo.domain.base.Timestamped;
-import com.numo.domain.sentence.WordDailySentence;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.detail.WordDetail;
@@ -16,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -48,17 +48,13 @@ public class Word extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "word_book_id")
-    private WordBook wordbook;
+    private WordBook wordBook;
 
     @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordDetail> wordDetails;
 
-    // 오늘의 문장 추가
-    @OneToMany(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WordDailySentence> wordDailySentences;
-
     @Builder
-    public Word(Long wordId, User user, String word, String mean, String read, String memo, Sound sound, String memorization, GttsCode lang, WordBook wordbook, List<WordDetail> wordDetails, List<WordDailySentence> wordDailySentences) {
+    public Word(Long wordId, User user, String word, String mean, String read, String memo, Sound sound, String memorization, GttsCode lang, WordBook wordBook, List<WordDetail> wordDetails) {
         this.wordId = wordId;
         this.user = user;
         this.word = word;
@@ -68,11 +64,9 @@ public class Word extends Timestamped {
         this.sound = sound;
         this.memorization = memorization;
         this.lang = lang;
-        this.wordbook = wordbook;
+        this.wordBook = wordBook;
         this.wordDetails = wordDetails;
-        this.wordDailySentences = wordDailySentences;
         addWordDetails(wordDetails);
-        updateWordBook(wordbook);
     }
 
     public Word(Long wordId) {
@@ -129,17 +123,52 @@ public class Word extends Timestamped {
     }
 
     public void updateMemorization(String prevMemorization, String memorization) {
-        wordbook.updateMemorizationCount(prevMemorization, memorization);
+        wordBook.updateMemorizationCount(prevMemorization, memorization);
         this.memorization = memorization;
     }
 
-    public void updateWordBook(WordBook wordbook) {
-        wordbook.saveWord(memorization);
-        this.wordbook = wordbook;
+    public void updateWordBook(Long wordBookId) {
+        this.wordBook = new WordBook(wordBookId);
     }
 
     public Long getWordBookId(){
-        return wordbook.getId();
+        return wordBook.getId();
+    }
+
+    public Word copyWithWordBook(Long userId, Long wordBookId) {
+        Sound newSound = null;
+        if (sound != null) {
+            newSound = new Sound(sound.getSoundId());
+        }
+
+        Word copyWord = Word.builder()
+                .word(word)
+                .sound(newSound)
+                .wordBook(new WordBook(wordBookId))
+                .user(new User(userId))
+                .lang(lang)
+                .mean(mean)
+                .memo(memo)
+                .memorization("N")
+                .read(read)
+                .wordDetails(copyWordDetails(wordDetails, this))
+                .build();
+
+        return copyWord;
+    }
+
+    public List<WordDetail> copyWordDetails(List<WordDetail> details, Word word) {
+        List<WordDetail> copyWordDetails = new ArrayList<>();
+        for (WordDetail detail : details) {
+            WordDetail newWordDetail = WordDetail.builder()
+                    .word(word)
+                    .wordGroup(detail.getWordGroup())
+                    .title(detail.getTitle())
+                    .content(detail.getContent())
+                    .build();
+            copyWordDetails.add(newWordDetail);
+        }
+        return copyWordDetails;
     }
 
     public Sound getSound() {
@@ -149,11 +178,11 @@ public class Word extends Timestamped {
         return sound;
     }
 
-    public WordBook getWordbook() {
-        if (wordbook == null) {
+    public WordBook getWordBook() {
+        if (wordBook == null) {
             return WordBook.builder().build();
         }
-        return wordbook;
+        return wordBook;
     }
 
 }

@@ -1,5 +1,5 @@
 ### 단어 저장
-POST localhost:8088/api/word/EN
+POST {{host}}/word/EN
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -30,37 +30,37 @@ Authorization: Bearer {{accessToken}}
 %}
 
 ### 해당 단어 조회
-GET localhost:8088/api/word/item/89
+GET {{host}}/word/item/89
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회
-GET localhost:8088/api/word?current=1&lastWordId=62
+GET {{host}}/word?current=1&lastWordId=62
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회
-GET localhost:8088/api/word?current=0&sort=random&seed=U4Sa@2
+GET {{host}}/word?current=0&sort=random&seed=U4Sa@2
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 검색
-GET localhost:8088/api/word?current=0&searchText=word
+GET {{host}}/word?current=0&searchText=word
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회 - 암기 여부
-GET localhost:8088/api/word?current=1&memorization=N
+GET {{host}}/word?current=1&memorization=N
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 조회 - 언어
-GET localhost:8088/api/word?current=1&lang=EN
+GET {{host}}/word?current=1&lang=EN
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 단어 수정
-PUT localhost:8088/api/word/all/{{wordId}}
+PUT {{host}}/word/all/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -88,7 +88,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어 수정 - 메모
-PUT localhost:8088/api/word/memo/{{wordId}}
+PUT {{host}}/word/memo/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -97,7 +97,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어 수정 - 암기 여부
-PUT localhost:8088/api/word/memorization/{{wordId}}
+PUT {{host}}/word/memorization/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -106,12 +106,12 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 이동
-PUT localhost:8088/api/word/{{wordId}}/folder/6
+PUT {{host}}/word/{{wordId}}/folder/6
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
 ### 단어 삭제
-DELETE localhost:8088/api/word/{{wordId}}
+DELETE {{host}}/word/{{wordId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}

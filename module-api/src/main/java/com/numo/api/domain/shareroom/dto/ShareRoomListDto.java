@@ -6,6 +6,7 @@ public record ShareRoomListDto(
         String nickname,
         String name,
         String background,
-        String color
+        String color,
+        int totalCount
 ) {
 }
