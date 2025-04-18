@@ -127,8 +127,9 @@ public class Word extends Timestamped {
         this.memorization = memorization;
     }
 
-    public void updateWordBook(Long wordBookId) {
-        this.wordBook = new WordBook(wordBookId);
+    public void updateWordBook(WordBook wordBook) {
+        this.wordBook = wordBook;
+        wordBook.incrementCount(memorization);
     }
 
     public Long getWordBookId(){

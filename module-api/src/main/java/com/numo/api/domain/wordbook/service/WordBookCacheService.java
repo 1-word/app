@@ -16,4 +16,7 @@ public class WordBookCacheService {
         return wordBookRepository.findWordBookById(wordBookId);
     }
 
+    public WordBook findWordBookNoCache(Long wordBookId) {
+        return wordBookRepository.findWordBookById(wordBookId);
+    }
 }
