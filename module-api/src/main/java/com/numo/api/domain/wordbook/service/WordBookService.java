@@ -104,7 +104,7 @@ public class WordBookService {
         }
 
         if (removeWords) {
-            wordService.removeWordsByWordBook(wordBookId);
+            wordService.removeAllWordsByWordBook(wordBookId);
         }
 
         wordBookMemberRepository.deleteByWordBook_Id(wordBookId);

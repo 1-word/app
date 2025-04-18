@@ -20,6 +20,7 @@ import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.api.global.comm.util.JsonUtil;
+import com.numo.api.listener.event.WordCountEvent;
 import com.numo.batch.listener.WordBatchEvent;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
@@ -79,6 +80,8 @@ public class WordService {
         String afterData = JsonUtil.toJson(WordSnapShot.copyOf(savedWord));
         AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.INSERT, user, wordBookId, savedWord.getWordId(), null, afterData);
         wordHistoryService.saveWordHistory(wordHistoryData);
+        WordCountEvent wordCountEvent = new WordCountEvent(wordBookId);
+        publisher.publishEvent(wordCountEvent);
         return WordResponseDto.of(savedWord);
     }
 
@@ -184,7 +187,6 @@ public class WordService {
         }
         String memorization = word.getMemorization();
         preWordBook.decrementCount(memorization);
-
     }
 
     /**
@@ -216,6 +218,9 @@ public class WordService {
         wordRepository.delete(word);
         AddWordHistoryDto wordHistoryData = new AddWordHistoryDto(WordHistory.Operation.DELETE, word.getUser(), word.getWordBookId(), wordId, beforeData, null);
         wordHistoryService.saveWordHistory(wordHistoryData);
+        Long wordBookId = word.getWordBookId();
+        WordCountEvent wordCountEvent = new WordCountEvent(wordBookId);
+        publisher.publishEvent(wordCountEvent);
     }
 
     /**
@@ -223,7 +228,7 @@ public class WordService {
      * @param wordBookId 단어장
      */
     @Transactional
-    public void removeWordsByWordBook(Long wordBookId) {
+    public void removeAllWordsByWordBook(Long wordBookId) {
         List<Word> words = wordRepository.findByWordBook_id(wordBookId);
         removeRelatedData(words);
         wordRepository.deleteByWordBook_id(wordBookId);
