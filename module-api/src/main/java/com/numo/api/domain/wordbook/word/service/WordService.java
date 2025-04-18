@@ -179,9 +179,9 @@ public class WordService {
     @CacheEvict(cacheNames = "wordBook", key = "#p1")
     public void moveWordBook(Long userId, Long targetWordBookId, Long wordId) {
         Word word = wordRepository.findByWordId(wordId);
+        WordBook targetWordBook = wordBookCacheService.findWordBookNoCache(targetWordBookId);
         WordBook preWordBook = word.getWordBook();
-        word.updateWordBook(targetWordBookId);
-        WordBook targetWordBook = wordBookCacheService.findWordBook(targetWordBookId);
+        word.updateWordBook(targetWordBook);
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
