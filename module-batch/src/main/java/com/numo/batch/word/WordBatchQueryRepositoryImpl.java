@@ -18,17 +18,38 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WordBatchQueryRepositoryImpl implements WordBatchQueryRepository {
     private final EntityManager em;
+    private final DataShare<Long> dataShare;
 
     public Slice<Word> findWordsBy(Long wordBookId, Pageable pageable) {
-        String selectWord = "SELECT w FROM Word w join fetch w.sound join fetch w.user WHERE w.wordBook.id = :wordBookId";
+        Long lastWordId = dataShare.getData("lastWordId");
+        if (lastWordId == null) {
+            lastWordId = 0L;
+        }
+        System.out.println(" repository >>>>>>>>>>>> lastWordId: " + lastWordId);
+        String selectWord = "SELECT w FROM Word w " +
+                                "join fetch w.sound " +
+                                "join fetch w.user " +
+                             "WHERE w.wordBook.id = :wordBookId " +
+                                 "AND w.wordId > :lastWordId";
         TypedQuery<Word> query = em.createQuery(selectWord, Word.class);
-        List<Word> words = query.setParameter("wordBookId", wordBookId)
+        List<Word> words = query
+                .setParameter("wordBookId", wordBookId)
+                .setParameter("lastWordId", lastWordId)
                 .setMaxResults(pageable.getPageSize() + 1)
-                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
+//                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
                 .getResultList();
         List<Long> wordIds = words.stream().map(Word::getWordId).toList();
         Map<Long, List<WordDetail>> detailsMap = getDetailsMap(wordIds);
         words.forEach(w -> w.addWordDetails(detailsMap.get(w.getWordId())));
+
+        Long newLastWordId = 0L;
+
+        if (!wordIds.isEmpty()) {
+            newLastWordId = wordIds.get(wordIds.size() - 1);
+        }
+
+        // lastWordId 업데이트
+        dataShare.putData("lastWordId", newLastWordId);
 
         return of(words, pageable);
     }

@@ -1,6 +1,7 @@
 package com.numo.batch.word;
 
 import com.numo.batch.listener.BatchStepExecutionListener;
+import com.numo.batch.listener.WordItemWriteListener;
 import com.numo.domain.wordbook.word.Word;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class WordBatch {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final WordBatchRepository wordBatchRepository;
+    private final DataShare<Long> dataShare;
+    private final WordItemWriteListener wordItemWriteListener;
 
     @Bean
     public Job wordCopyJob() {
@@ -49,6 +52,7 @@ public class WordBatch {
                 .processor(wordProcessor(null, null))
                 .writer(wordWriter())
                 .listener(new BatchStepExecutionListener(this.getClass()))
+//                .listener((ItemWriteListener<Word>) wordItemWriteListener)
                 .build();
     }
 

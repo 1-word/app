@@ -35,18 +35,18 @@ public class WordBookController {
         return ResponseEntity.ok(wordBookService.getShareWordBooks(user.getUserId()));
     }
 
-    @Operation(description = "단어장 정보를 가져온다.")
-    @GetMapping("/{wordBookId}")
-    @WordBookAccess(WordBookRole.view)
-    public ResponseEntity<WordBookResponseDto> getWordBook(@PathVariable("wordBookId") Long wordBookId) {
-        return ResponseEntity.ok(wordBookService.getWordBook(wordBookId));
-    }
-
     @Operation(description = "단어장을 생성한다.")
     @PostMapping
     public ResponseEntity<WordBookResponseDto> saveWordBook(@AuthenticationPrincipal UserDetailsImpl user,
                                                             @RequestBody WordBookRequestDto folderDto){
         return ResponseEntity.ok(wordBookService.saveWordBook(user.getUserId(), folderDto));
+    }
+
+    @Operation(description = "단어장 정보를 가져온다.")
+    @GetMapping("/{wordBookId}")
+    @WordBookAccess(WordBookRole.view)
+    public ResponseEntity<WordBookResponseDto> getWordBook(@PathVariable("wordBookId") Long wordBookId) {
+        return ResponseEntity.ok(wordBookService.getWordBook(wordBookId));
     }
 
     @Operation(description = "단어장을 변경한다.")
