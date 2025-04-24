@@ -25,7 +25,6 @@ public class WordBatchQueryRepositoryImpl implements WordBatchQueryRepository {
         if (lastWordId == null) {
             lastWordId = 0L;
         }
-        System.out.println(" repository >>>>>>>>>>>> lastWordId: " + lastWordId);
         String selectWord = "SELECT w FROM Word w " +
                                 "join fetch w.sound " +
                                 "join fetch w.user " +
@@ -36,7 +35,6 @@ public class WordBatchQueryRepositoryImpl implements WordBatchQueryRepository {
                 .setParameter("wordBookId", wordBookId)
                 .setParameter("lastWordId", lastWordId)
                 .setMaxResults(pageable.getPageSize() + 1)
-//                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
                 .getResultList();
         List<Long> wordIds = words.stream().map(Word::getWordId).toList();
         Map<Long, List<WordDetail>> detailsMap = getDetailsMap(wordIds);
@@ -44,14 +42,13 @@ public class WordBatchQueryRepositoryImpl implements WordBatchQueryRepository {
 
         Long newLastWordId = 0L;
 
-        if (!wordIds.isEmpty()) {
-            newLastWordId = wordIds.get(wordIds.size() - 1);
+        Slice<Word> result = of(words, pageable);
+        if (result.hasContent()) {
+            int size = result.getContent().size();
+            newLastWordId = result.getContent().get(size - 1).getWordId();
         }
-
-        // lastWordId 업데이트
         dataShare.putData("lastWordId", newLastWordId);
-
-        return of(words, pageable);
+        return result;
     }
 
     private Map<Long, List<WordDetail>> getDetailsMap(List<Long> wordIds) {

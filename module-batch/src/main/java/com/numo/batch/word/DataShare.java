@@ -12,35 +12,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @JobScope
 public class DataShare<T> {
 
-    private Map<String, T> shareDataMap;
+    private final Map<String, T> shareDataMap;
 
     public DataShare() {
         this.shareDataMap = new ConcurrentHashMap<>();
     }
 
     public void putData(String key, T data) {
-        if (shareDataMap ==  null) {
-            log.error("Map is not initialize");
-            return;
-        }
-
         shareDataMap.put(key, data);
     }
 
     public T getData (String key) {
-        if (shareDataMap == null) {
-            return null;
-        }
-
         return shareDataMap.get(key);
     }
 
     public int getSize () {
-        if (this.shareDataMap == null) {
-            log.error("Map is not initialize");
-            return 0;
-        }
-
         return shareDataMap.size();
     }
 

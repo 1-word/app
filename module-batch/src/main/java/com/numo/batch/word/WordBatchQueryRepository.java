@@ -6,4 +6,5 @@ import org.springframework.data.domain.Slice;
 
 public interface WordBatchQueryRepository {
     Slice<Word> findWordsBy(Long wordBookId, Pageable pageable);
+
 }

@@ -121,7 +121,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
-@wordBookId = 62
+@wordBookId = 63
 @wordId = 198088
 
 ### 단어 복사
@@ -130,5 +130,5 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "targetWordBookId": 64
+  "targetWordBookId": 66
 }
