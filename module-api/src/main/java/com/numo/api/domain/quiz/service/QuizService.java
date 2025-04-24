@@ -116,7 +116,7 @@ public class QuizService {
      * @param userId 유저 아이디
      * @param requestDto 퀴즈 맞춤 여부
      */
-    @Transactional(rollbackFor = CustomException.class)
+    @Transactional
     public void solveQuizzes(Long userId, List<QuizSolvedRequestDto> requestDto) {
         List<Long> quizIds = requestDto.stream().map(QuizSolvedRequestDto::quizId).toList();
         List<Quiz> quizzes = quizRepository.findAllByIdIn(quizIds);

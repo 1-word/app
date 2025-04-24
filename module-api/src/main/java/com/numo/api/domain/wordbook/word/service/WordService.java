@@ -20,8 +20,8 @@ import com.numo.api.global.comm.page.PageDto;
 import com.numo.api.global.comm.page.PageRequestDto;
 import com.numo.api.global.comm.page.PageResponse;
 import com.numo.api.global.comm.util.JsonUtil;
+import com.numo.api.listener.event.WordCopyEvent;
 import com.numo.api.listener.event.WordCountEvent;
-import com.numo.batch.listener.WordBatchEvent;
 import com.numo.domain.user.User;
 import com.numo.domain.wordbook.WordBook;
 import com.numo.domain.wordbook.sound.Sound;
@@ -201,7 +201,7 @@ public class WordService {
         if (!targetWordBook.isOwner(userId)) {
             throw new CustomException(ErrorCode.NOT_OWNER);
         }
-        publisher.publishEvent(new WordBatchEvent(userId, wordBookId, targetWordBookId));
+        publisher.publishEvent(new WordCopyEvent(userId, wordBookId, targetWordBookId));
     }
 
     /**

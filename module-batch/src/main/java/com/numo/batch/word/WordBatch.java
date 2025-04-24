@@ -1,6 +1,7 @@
 package com.numo.batch.word;
 
 import com.numo.batch.listener.BatchStepExecutionListener;
+import com.numo.batch.listener.WordChunkListener;
 import com.numo.domain.wordbook.word.Word;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,7 @@ public class WordBatch {
                 .processor(wordProcessor(null, null))
                 .writer(wordWriter())
                 .listener(new BatchStepExecutionListener(this.getClass()))
+                .listener(new WordChunkListener())
                 .build();
     }
 

@@ -18,19 +18,37 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WordBatchQueryRepositoryImpl implements WordBatchQueryRepository {
     private final EntityManager em;
+    private final DataShare<Long> dataShare;
 
     public Slice<Word> findWordsBy(Long wordBookId, Pageable pageable) {
-        String selectWord = "SELECT w FROM Word w join fetch w.sound join fetch w.user WHERE w.wordBook.id = :wordBookId";
+        Long lastWordId = dataShare.getData("lastWordId");
+        if (lastWordId == null) {
+            lastWordId = 0L;
+        }
+        String selectWord = "SELECT w FROM Word w " +
+                                "join fetch w.sound " +
+                                "join fetch w.user " +
+                             "WHERE w.wordBook.id = :wordBookId " +
+                                 "AND w.wordId > :lastWordId";
         TypedQuery<Word> query = em.createQuery(selectWord, Word.class);
-        List<Word> words = query.setParameter("wordBookId", wordBookId)
+        List<Word> words = query
+                .setParameter("wordBookId", wordBookId)
+                .setParameter("lastWordId", lastWordId)
                 .setMaxResults(pageable.getPageSize() + 1)
-                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
                 .getResultList();
         List<Long> wordIds = words.stream().map(Word::getWordId).toList();
         Map<Long, List<WordDetail>> detailsMap = getDetailsMap(wordIds);
         words.forEach(w -> w.addWordDetails(detailsMap.get(w.getWordId())));
 
-        return of(words, pageable);
+        Long newLastWordId = 0L;
+
+        Slice<Word> result = of(words, pageable);
+        if (result.hasContent()) {
+            int size = result.getContent().size();
+            newLastWordId = result.getContent().get(size - 1).getWordId();
+        }
+        dataShare.putData("lastWordId", newLastWordId);
+        return result;
     }
 
     private Map<Long, List<WordDetail>> getDetailsMap(List<Long> wordIds) {
