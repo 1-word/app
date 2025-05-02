@@ -19,6 +19,16 @@ GET {{host}}/wordbooks
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+### 단어장 조회
+GET {{host}}/wordbooks/count
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 조회
+GET {{host}}/wordbooks/group-count
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 ### 단어장 수정
 PUT {{host}}/wordbooks/{{wordBookId}}
 Content-Type: application/json
@@ -66,7 +76,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 멤버 조회
-GET {{host}}/wordbooks/6/members
+GET {{host}}/wordbooks/65/members
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

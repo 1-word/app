@@ -1,16 +1,21 @@
 package com.numo.api.domain.wordbook.repository.query;
 
+import com.numo.api.domain.wordbook.dto.InWordCountDto;
 import com.numo.api.domain.wordbook.dto.ShareWordBookResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
 import com.numo.api.domain.wordbook.dto.WordBookSettingDto;
 import com.numo.domain.wordbook.QWordBook;
 import com.numo.domain.wordbook.QWordBookMember;
+import com.numo.domain.wordbook.WordBook;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -87,4 +92,38 @@ public class WordBookQueryRepository {
                 .fetchOne();
     }
 
+    public List<WordBookResponseDto> getWordBooksGrouping(Long userId, List<InWordCountDto> wordsCount) {
+        List<WordBook> wordbooks = queryFactory.select(qWordBook)
+                .from(qWordBook)
+                .join(qWordBook.user)
+                .fetchJoin()
+                .where(qWordBook.user.userId.eq(userId)).fetch();
+
+        Map<Long, InWordCountDto> wordsCountMap = wordsCount.stream().collect(Collectors.toMap(InWordCountDto::getWordBookId, Function.identity()));
+
+        return wordbooks.stream().map(
+                wordBook -> {
+                    InWordCountDto countDto = wordsCountMap.get(wordBook.getId());
+                    int totalCount = 0;
+                    int memorizedCount = 0;
+                    int unMemorizedCount = 0;
+                    if (countDto != null) {
+                        totalCount = countDto.getTotalCount() == null ? 0 : countDto.getTotalCount().intValue();
+                        memorizedCount = countDto.getMemorize() == null ? 0 : countDto.getMemorize().intValue();
+                        unMemorizedCount = countDto.getUnMemorize() == null ? 0 : countDto.getUnMemorize().intValue();
+                    }
+                    return WordBookResponseDto.builder()
+                            .wordBookId(wordBook.getId())
+                            .name(wordBook.getName())
+                            .nickname(wordBook.getUser().getNickname())
+                            .totalCount(totalCount)
+                            .memorizedCount(memorizedCount)
+                            .unMemorizedCount(unMemorizedCount)
+                            .memo(wordBook.getMemo())
+                            .color(wordBook.getColor())
+                            .background(wordBook.getBackground())
+                            .build();
+                }
+        ).toList();
+    }
 }

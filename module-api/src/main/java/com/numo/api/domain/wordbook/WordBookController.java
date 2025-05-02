@@ -1,10 +1,7 @@
 package com.numo.api.domain.wordbook;
 
 import com.numo.api.domain.wordbook.aop.WordBookAccess;
-import com.numo.api.domain.wordbook.dto.ShareWordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
-import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookSettingDto;
+import com.numo.api.domain.wordbook.dto.*;
 import com.numo.api.domain.wordbook.service.WordBookService;
 import com.numo.api.security.service.UserDetailsImpl;
 import com.numo.domain.wordbook.WordBookRole;
@@ -27,6 +24,18 @@ public class WordBookController {
     @GetMapping
     public ResponseEntity<List<WordBookResponseDto>> getWordBooks(@AuthenticationPrincipal UserDetailsImpl user){
         return ResponseEntity.ok(wordBookService.getWordBooks(user.getUserId()));
+    }
+
+    @Operation(description = "단어장 리스트를 가져온다. - join")
+    @GetMapping("/count")
+    public ResponseEntity<List<WordBookCountResponse>> getWordBooksCount(@AuthenticationPrincipal UserDetailsImpl user){
+        return ResponseEntity.ok(wordBookService.getWordBooksCount(user.getUserId()));
+    }
+
+    @Operation(description = "단어장 리스트를 가져온다. - 조립")
+    @GetMapping("/group-count")
+    public ResponseEntity<List<WordBookResponseDto>> getWordBooksGrouping(@AuthenticationPrincipal UserDetailsImpl user){
+        return ResponseEntity.ok(wordBookService.getWordBooksGrouping(user.getUserId()));
     }
 
     @Operation(description = "공유 단어장 리스트를 가져온다.")

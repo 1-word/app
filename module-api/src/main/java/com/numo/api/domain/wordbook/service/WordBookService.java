@@ -1,9 +1,6 @@
 package com.numo.api.domain.wordbook.service;
 
-import com.numo.api.domain.wordbook.dto.ShareWordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookRequestDto;
-import com.numo.api.domain.wordbook.dto.WordBookResponseDto;
-import com.numo.api.domain.wordbook.dto.WordBookSettingDto;
+import com.numo.api.domain.wordbook.dto.*;
 import com.numo.api.domain.wordbook.repository.WordBookMemberRepository;
 import com.numo.api.domain.wordbook.repository.WordBookRepository;
 import com.numo.api.domain.wordbook.repository.query.WordBookQueryRepository;
@@ -54,7 +51,8 @@ public class WordBookService {
      * @return 조회한 단어장 단건 데이터
      */
     public WordBookResponseDto getWordBook(Long wordBookId) {
-        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
+//        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
+        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
         return WordBookResponseDto.of(wordBook);
     }
 
@@ -154,5 +152,14 @@ public class WordBookService {
     public void updateWordBookSetting(Long wordBookId, WordBookSettingDto settingDto) {
         WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
         wordBook.settingUpdate(settingDto.isShared(), settingDto.anyoneBasicRole(), settingDto.memberBasicRole());
+    }
+
+    public List<WordBookCountResponse> getWordBooksCount(Long userId) {
+        return wordBookRepository.findWordBooksCount(userId);
+    }
+
+    public List<WordBookResponseDto> getWordBooksGrouping(Long userId) {
+        List<InWordCountDto> wordsCount = wordBookRepository.findWordsCount(userId);
+        return wordBookQueryRepository.getWordBooksGrouping(userId, wordsCount);
     }
 }

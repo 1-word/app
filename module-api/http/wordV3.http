@@ -121,7 +121,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
-@wordBookId = 63
+@wordBookId = 6
 @wordId = 198088
 
 ### 단어 복사

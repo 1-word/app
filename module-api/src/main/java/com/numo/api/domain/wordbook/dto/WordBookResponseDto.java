@@ -15,6 +15,10 @@ public record WordBookResponseDto(
     int memorizedCount,
     int unMemorizedCount
 ) {
+    public WordBookResponseDto(Long wordBookId, String nickname, String name, String memo, String color, String background, Long totalCount, Long memorizedCount, Long unMemorizedCount) {
+        this(wordBookId, nickname, name, memo, color, background, totalCount.intValue(), memorizedCount.intValue(), unMemorizedCount.intValue());
+    }
+
     public static WordBookResponseDto of(WordBook wordBook) {
         return WordBookResponseDto.builder()
                 .wordBookId(wordBook.getId())
