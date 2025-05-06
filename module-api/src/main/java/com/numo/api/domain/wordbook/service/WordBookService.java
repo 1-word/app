@@ -51,6 +51,12 @@ public class WordBookService {
      * @return 조회한 단어장 단건 데이터
      */
     public WordBookResponseDto getWordBook(Long wordBookId) {
+        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
+//        WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
+        return WordBookResponseDto.of(wordBook);
+    }
+
+    public WordBookResponseDto getWordBook_NoCache(Long wordBookId) {
 //        WordBook wordBook = wordBookCacheService.findWordBook(wordBookId);
         WordBook wordBook = wordBookRepository.findWordBookById(wordBookId);
         return WordBookResponseDto.of(wordBook);
@@ -155,11 +161,18 @@ public class WordBookService {
     }
 
     public List<WordBookCountResponse> getWordBooksCount(Long userId) {
-        return wordBookRepository.findWordBooksCount(userId);
+        long start = System.nanoTime();
+        List<WordBookCountResponse> wordBooksCount = wordBookRepository.findWordBooksCount(userId);
+        long end = System.nanoTime();
+        System.out.println("time: " + (end - start) / 1000_0000);
+        return wordBooksCount;
     }
 
     public List<WordBookResponseDto> getWordBooksGrouping(Long userId) {
+        long start = System.nanoTime();
         List<InWordCountDto> wordsCount = wordBookRepository.findWordsCount(userId);
+        long end = System.nanoTime();
+        System.out.println("time: " + (end - start) / 1000_0000);
         return wordBookQueryRepository.getWordBooksGrouping(userId, wordsCount);
     }
 }

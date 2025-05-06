@@ -14,17 +14,17 @@ Authorization: Bearer {{accessToken}}
     client.global.set("wordBookId", response.body.wordBookId)
 %}
 
-### 단어장 조회
+### 단어장 조회 - 반정규화
 GET {{host}}/wordbooks
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 단어장 조회
+### 단어장 조회 - join 쿼리
 GET {{host}}/wordbooks/count
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 단어장 조회
+### 단어장 조회 - 따로 조회 후 조립
 GET {{host}}/wordbooks/group-count
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
