@@ -14,9 +14,9 @@ class WordServiceTest {
     @Autowired
     ApplicationEventPublisher publisher;
 
-    Long userId = 36L;
-    Long wordBookId = 43L;
-    Long targetWordBookId = 44L;
+    Long userId = 9L;
+    Long wordBookId = 66L;
+    Long targetWordBookId = 66L;
 
     @Test
     void copyWord() {

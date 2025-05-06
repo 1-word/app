@@ -58,6 +58,13 @@ public class WordBookController {
         return ResponseEntity.ok(wordBookService.getWordBook(wordBookId));
     }
 
+    @Operation(description = "단어장 정보를 가져온다.")
+    @GetMapping("/{wordBookId}/nocache")
+    @WordBookAccess(WordBookRole.view)
+    public ResponseEntity<WordBookResponseDto> getWordBookNoCache(@PathVariable("wordBookId") Long wordBookId) {
+        return ResponseEntity.ok(wordBookService.getWordBook_NoCache(wordBookId));
+    }
+
     @Operation(description = "단어장을 변경한다.")
     @PutMapping (value = "/{wordBookId}")
     @WordBookAccess(WordBookRole.edit)

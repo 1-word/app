@@ -48,15 +48,20 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
-@wordBookId = 37
+@wordBookId = 68
 
 ### 단어장 삭제 - 연관 데이터 삭제
 DELETE {{host}}/wordbooks/{{wordBookId}}?removeWords=true
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 단어장 단건 조회
+### 단어장 단건 조회(캐싱)
 GET {{host}}/wordbooks/{{wordBookId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 단어장 단건 조회(일반)
+GET {{host}}/wordbooks/{{wordBookId}}/nocache
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -76,7 +81,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 단어장 멤버 조회
-GET {{host}}/wordbooks/65/members
+GET {{host}}/wordbooks/{{wordBookId}}/members
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

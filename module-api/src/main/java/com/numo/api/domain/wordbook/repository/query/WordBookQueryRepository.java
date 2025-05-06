@@ -109,8 +109,8 @@ public class WordBookQueryRepository {
                     int unMemorizedCount = 0;
                     if (countDto != null) {
                         totalCount = countDto.getTotalCount() == null ? 0 : countDto.getTotalCount().intValue();
-                        memorizedCount = countDto.getMemorize() == null ? 0 : countDto.getMemorize().intValue();
-                        unMemorizedCount = countDto.getUnMemorize() == null ? 0 : countDto.getUnMemorize().intValue();
+                        memorizedCount = countDto.getMemorizedCount() == null ? 0 : countDto.getMemorizedCount().intValue();
+                        unMemorizedCount = countDto.getUnMemorizedCount() == null ? 0 : countDto.getUnMemorizedCount().intValue();
                     }
                     return WordBookResponseDto.builder()
                             .wordBookId(wordBook.getId())

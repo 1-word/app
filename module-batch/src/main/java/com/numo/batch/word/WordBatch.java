@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class WordBatch {
-    private static final int chunkSize = 500;
+    private static final int chunkSize = 10000;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final WordBatchRepository wordBatchRepository;

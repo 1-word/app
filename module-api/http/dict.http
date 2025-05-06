@@ -3,12 +3,12 @@ GET {{host}}/dict/stay in shape
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 사전 조회 (자동완성)
+### redis 사전 조회 (자동완성)
 GET {{host}}/dict/list/excep
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-### 사전 조회 (자동완성)
+### db 사전 조회 (자동완성)
 GET {{host}}/dict/list/db/excep
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
