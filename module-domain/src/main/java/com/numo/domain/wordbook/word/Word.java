@@ -158,6 +158,44 @@ public class Word extends Timestamped {
         return copyWord;
     }
 
+    public Word copyWithWordBook(Long wordId, Long wordDetailId, Long userId, Long wordBookId) {
+        Sound newSound = null;
+        if (sound != null) {
+            newSound = new Sound(sound.getSoundId());
+        }
+
+        Word copyWord = Word.builder()
+                .wordId(wordId)
+                .word(word)
+                .sound(newSound)
+                .wordBook(new WordBook(wordBookId))
+                .user(new User(userId))
+                .lang(lang)
+                .mean(mean)
+                .memo(memo)
+                .memorization("N")
+                .read(read)
+                .wordDetails(copyWordDetails(wordDetailId, wordDetails, this))
+                .build();
+
+        return copyWord;
+    }
+
+    public List<WordDetail> copyWordDetails(Long wordDetailId, List<WordDetail> details, Word word) {
+        List<WordDetail> copyWordDetails = new ArrayList<>();
+        for (WordDetail detail : details) {
+            WordDetail newWordDetail = WordDetail.builder()
+                    .wordDetailId(wordDetailId++)
+                    .word(word)
+                    .wordGroup(detail.getWordGroup())
+                    .title(detail.getTitle())
+                    .content(detail.getContent())
+                    .build();
+            copyWordDetails.add(newWordDetail);
+        }
+        return copyWordDetails;
+    }
+
     public List<WordDetail> copyWordDetails(List<WordDetail> details, Word word) {
         List<WordDetail> copyWordDetails = new ArrayList<>();
         for (WordDetail detail : details) {

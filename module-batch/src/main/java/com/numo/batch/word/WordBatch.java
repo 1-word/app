@@ -12,11 +12,9 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
-import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
-import org.springframework.batch.item.data.builder.RepositoryItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +31,7 @@ public class WordBatch {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final WordBatchRepository wordBatchRepository;
+    private final WordBatchJdbcRepository wordBatchJdbcRepository;
 
     @Bean
     public Job wordCopyJob() {
@@ -47,8 +46,8 @@ public class WordBatch {
         return new StepBuilder("wordCopyStep", jobRepository)
                 .<Word, Word>chunk(chunkSize, platformTransactionManager)
                 .reader(wordReader(null))
-                .processor(wordProcessor(null, null))
-                .writer(wordWriter())
+//                .processor(wordProcessor(null, null))
+                .writer(wordWriter(null, null))
                 .listener(new BatchStepExecutionListener(this.getClass()))
                 .listener(new WordChunkListener())
                 .build();
@@ -67,20 +66,25 @@ public class WordBatch {
                 .build();
     }
 
-    @Bean
-    @StepScope
-    public ItemProcessor<Word, Word> wordProcessor(
-            @Value("#{jobParameters['userId']}") Long userId,
-            @Value("#{jobParameters['targetWordBookId']}") Long targetWordBookId) {
-        return word -> word.copyWithWordBook(userId, targetWordBookId);
-    }
+//    @Bean
+//    @StepScope
+//    public ItemProcessor<Word, Word> wordProcessor(
+//            @Value("#{jobParameters['userId']}") Long userId,
+//            @Value("#{jobParameters['targetWordBookId']}") Long targetWordBookId) {
+//        return word -> {
+//            Long maxWordId = wordBatchJdbcRepository.getMaxWordId();
+//
+//            return word.copyWithWordBook(userId, targetWordBookId);
+//        };
+//    }
 
     @Bean
     @StepScope
-    public RepositoryItemWriter<Word> wordWriter() {
-        return new RepositoryItemWriterBuilder<Word>()
-                .repository(wordBatchRepository)
-                .build();
+    public ItemWriter<Word> wordWriter(
+            @Value("#{jobParameters['userId']}") Long userId,
+            @Value("#{jobParameters['targetWordBookId']}") Long targetWordBookId
+    ) {
+        return new WordItemWriter(wordBatchJdbcRepository, userId, targetWordBookId);
     }
 
 }
